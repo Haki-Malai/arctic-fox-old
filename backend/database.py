@@ -1,3 +1,6 @@
+import string
+import random
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -107,14 +110,31 @@ class Task(db.Model):
             'submited': self.submited,
         }, indent=4, default=str, sort_keys=True)
 
-def get_user_data(username):
-    return User.query.filter_by(username=username).first().get_data()
-    
-def get_user_id(username):
-    return User.query.filter_by(username=username).first().id
+def add_user(username, password, email, invitedFrom='NOBODY'):
+    user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
+    db.session.add(user)
+    db.session.commit()
+    return user.id
+
+def get_user_data(id):
+    return User.query.filter_by(id=id).first().get_data()
 
 def credentials_valid(username, password):
     user = User.query.filter_by(username=username).first()
     if user:
         return user.validate_password(password)
     return False
+
+def username_exists(username):
+    return User.query.filter_by(username=username).first()
+
+def email_exists(email):
+    return User.query.filter_by(email=email).first()
+
+def create_random_code():
+    chars=string.ascii_uppercase + string.digits
+    size = 10
+    code = ''.join(random.choice(chars) for _ in range(size))
+    while User.query.filter_by(invitationCode=code).first():
+        code = ''.join(random.choice(chars) for _ in range(size))
+    return code

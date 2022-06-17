@@ -116,3 +116,22 @@ def logout():
             tokens.remove(index)
             users.remove(index)
     return SUCCESS
+
+@app.route('/tasks', methods=['POST'])
+def task():
+    function = request.json['function']
+    if function == 'get':
+        username = request.json['username'].lower()
+        tasks = database.get_user_tasks(username)
+        return json.dumps({'tasks': tasks})
+    elif function == 'add':
+        username = request.json['username'].lower()
+        social = request.json['social']
+        if database.add_task(username, social) == 0:
+            return ERROR
+        else:
+            return SUCCESS
+    elif function == 'update':
+        id = request.json['id']
+        database.update_task(id, 1)
+        return SUCCESS

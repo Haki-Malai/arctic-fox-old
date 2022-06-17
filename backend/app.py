@@ -95,3 +95,24 @@ def signup():
         response = {'access_token': access_token, 'user_data': json.dumps(user_data, default=str)}
         return response
     return SIGNUP_ERROR
+
+@app.route('/password', methods=['POST'])
+def password():
+    username = request.json['username'].lower()
+    password = request.json['password']
+    new = request.json['new']
+    if database.credentials_valid(username, password):
+        if len(new) >= 8 and len(new) <= 25:
+            database.change_user_password(username, new)
+            return SUCCESS
+        return PASSWORD_ERROR
+    return INVALID_CREDENTIALS
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    access_token = request.json['access_token']
+    for index, token in enumerate(tokens):
+        if access_token == token:
+            tokens.remove(index)
+            users.remove(index)
+    return SUCCESS

@@ -1,6 +1,9 @@
 import database
 import json
 import re
+import random
+import string
+from datetime import datetime
 from flask import Flask, session, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
@@ -18,12 +21,16 @@ database.db.init_app(app)
 # Used to hold sessions
 tokens = []
 users = []
+# For the feed, for now it's faked with randomness
+feed_stack = []
+start_time = datetime.now()
+wait = random.randint(1, 59)
 
 # Responses
 INVALID_CREDENTIALS = json.dumps({'error': 'invalid_credentials'})
 SIGNUP_ERROR = json.dumps({'error': 'signup_error'})
 
-#=============================POST-REQUESTS=============================
+# =============================POST-REQUESTS=============================
 
 @app.route("/", methods=["POST"])
 def welcome():
@@ -179,3 +186,38 @@ def task():
         id = request.json['id']
         database.update_task(id, 1)
         return SUCCESS
+
+# =============================GET-REQUESTS=============================
+@app.route('/feed', methods=['GET'])
+def feed():
+    """
+        Returns the recents update from which users have upgraded level and more (currently faked with randomness)
+    """
+    global start_time, wait
+    if len(feed_stack) == 0:
+        for i in range(0, 6):
+            # Create random username and level
+            username = random.choice(string.ascii_letters) + random.randint(7, 14)*"*" + random.choice(string.ascii_letters)
+            upgraded_to = random.randint(2, 6)
+            feed_stack.append([username, upgraded_to])
+        return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
+    elif (start_time - datetime.now()).total_seconds() >= wait:
+        stack.pop()
+        start_time = datetime.now()
+        wait = random.randint(1, 19)
+        # Create new feed
+        username = random.choice(string.ascii_letters) + random.randint(7, 19)*"*" + random.choice(string.ascii_letters)
+        upgraded_to = random.randint(2, 6)
+        feed_stack.append([username, upgraded_to])
+        stack.append()
+        return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
+    return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
+
+@app.route('/guide', methods=['GET'])
+def guide():
+    try:
+        file = open('assets/guide.json')
+        guide = json.load(file)
+        return guide
+    except:
+        return ERROR

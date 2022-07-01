@@ -28,7 +28,7 @@ export default class Home extends React.Component {
             mode: 'cors',
         }
 
-        fetch(this.state.url+'feed', requestOptions)
+        fetch(this.props.url+'feed', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.feed) {
@@ -36,7 +36,7 @@ export default class Home extends React.Component {
                 }
             })
             .catch(e => {
-                alert(e);
+                console.log(e);
             });
         setTimeout( () => this.getFeedData(), 30000);
     }
@@ -48,9 +48,9 @@ export default class Home extends React.Component {
         var feed=[];
         for (let i=0; i<this.state.feed.length; i++) {
             feed.push(
-                <View style={styles.feed}>
+                <View key={i} style={styles.feed}>
                     <Image style={styles.feedPic} source={'https://fer-uig.glitch.me/?uuid=712'+i}/>
-                    <Text style={styles.feedText}>User {this.state.feed[i][0]} just upgraded to level {this.state.feed[i][1]}!</Text>
+                    User {this.state.feed[i][0]} just upgraded to level {this.state.feed[i][1]}!
                 </View>
             )
         }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, Text, Image } from 'react-native';
-import styles from '../style';
+import styles from '../../../style';
 
 export default class Media extends React.Component {
     constructor(props) {

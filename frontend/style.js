@@ -8,7 +8,7 @@ if (ScreenHeight < ScreenWidth) {
         ScreenWidth = ScreenWidth/2
 }
 const BLACK = '242526';
-const BLUE = '2CA9C6';
+const BLUE = 'royalblue';
 const WHITE = '#F0FFF0';
 const navHeight = ScreenHeight/20;
 const navIconDimensions = ScreenWidth/20;
@@ -25,7 +25,7 @@ export default StyleSheet.create({
         flexGrow: 'row',
         height: ScreenHeight,
         alignItems: 'center',
-        backgroundColor: white,
+        backgroundColor: WHITE,
         marginBottom: navIconDimensions
     },
 
@@ -87,7 +87,7 @@ export default StyleSheet.create({
 
     menuPressable: {
         fontWeight: 'bold',
-        backgroundColor: mainOrange,
+        backgroundColor: BLUE,
         minWidth: PressableWidth,
         height: '4em',
         borderRadius: '1em',

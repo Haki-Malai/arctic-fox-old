@@ -71,7 +71,6 @@ export default class App extends React.Component {
 						this.setState({userData: data.user_data});
 						this.setState({page: 'home'});
 					} else {
-						alert('secwq')
 						this.setState({page: 'welcome'});
 					}
 				})

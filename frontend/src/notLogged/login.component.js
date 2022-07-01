@@ -35,7 +35,7 @@ export default class Login extends React.Component {
                     remember: this.props.remember
                 })
             }
-            fetch(data.url+'login', requestOptions)
+            fetch(this.props.url+'login', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.access_token) {

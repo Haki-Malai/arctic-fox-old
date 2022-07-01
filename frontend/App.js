@@ -7,18 +7,17 @@ import Signup  from './src/notLogged/signup.component';
 import Home from './src/logged/home.component';
 import styles from './style';
 
-var data = require('./data.json');
-
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			lang: 'el',
+			lang: 'en',
 			fontsLoaded: false,
 			page: 'welcome',
 			accessToken: localStorage.getItem('token'),
 			userData: {},
 			remember: false,
+			data: require('./data.json')
 		}
 		this.setPage = this.setPage.bind(this);
 		this.setToken = this.setToken.bind(this);
@@ -64,7 +63,7 @@ export default class App extends React.Component {
 				body: JSON.stringify({access_token: this.state.accessToken})
 			}
 
-			fetch(data.url, requestOptions)
+			fetch(this.state.data.url, requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.user_data) {
@@ -93,7 +92,7 @@ export default class App extends React.Component {
 				body: JSON.stringify({access_token: this.state.accessToken})
 			}
 
-			fetch(data.url, requestOptions)
+			fetch(this.state.data.url, requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.user_data) {
@@ -118,7 +117,7 @@ export default class App extends React.Component {
 			mode: 'cors',
 			body: JSON.stringify({access_token: this.state.accessToken})
 		}
-		fetch(data.url+'logout', requestOptions)
+		fetch(this.state.data.url+'logout', requestOptions)
 
 		localStorage.setItem('token', null);
 		localStorage.setItem('userdata', null);
@@ -161,6 +160,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'login') {
 			toRender = <Login 
+				url={this.state.data.url}
 				setRemember={this.setRemember}
 				remember={this.state.remember}
 				setLang={this.setLang}
@@ -173,6 +173,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'signup') {
 			toRender = <Signup 
+				url={this.state.data.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
@@ -183,6 +184,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'home') {
 			toRender = <Home 
+				url={this.state.data.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 

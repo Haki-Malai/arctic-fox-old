@@ -32,7 +32,7 @@ export default class Signup extends React.Component {
                 invitationCode: this.state.invitationCode
             })
         }
-        fetch(data.url+'signup', requestOptions)
+        fetch(this.props.url+'signup', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.access_token) {

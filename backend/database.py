@@ -116,6 +116,11 @@ def add_user(username, password, email, invitedFrom='NOBODY'):
     db.session.commit()
     return user.id
 
+def change_user_password(username, password):
+    user = User.query.filter_by(username=username).first()
+    user.password = generate_password_hash(password)
+    db.session.commit()
+
 def get_user_data(id):
     return User.query.filter_by(id=id).first().get_data()
 

@@ -25,21 +25,24 @@ SIGNUP_ERROR = json.dumps({'error': 'signup_error'})
 
 #=============================POST-REQUESTS=============================
 
-app.route("/", methods=["POST"])
+@app.route("/", methods=["POST"])
 def welcome():
     """
         Automatical login if access_token provided is in the 'tokens' list.
         Returns a json containing valueable data of the user.
     """
-    access_token = request.json['access_token']
-    if access_token in tokens:
-        while True:
-            user_data = ''
-            for index, token in enumerate(tokens):
-                if token == access_token:
-                    user_data = database.get_user_data(users[index])
-            if user_data != None and user_data != '': break
-        return json.dumps({'user_data': user_data})
+    try:
+        access_token = request.json['access_token']
+        if access_token in tokens:
+            while True:
+                user_data = ''
+                for index, token in enumerate(tokens):
+                    if token == access_token:
+                        user_data = database.get_user_data(users[index])
+                if user_data != None and user_data != '': break
+            return json.dumps({'user_data': user_data})
+    except:
+        return json.dumps({'state': 'no_access_token'})
     return json.dumps({'state': 'logout'})
 
 @app.route('/login', methods=['POST'])
@@ -52,9 +55,10 @@ def login():
     password = request.json['password']
     remember = request.json['remember']
     if database.credentials_valid(username, password):
+        id = database.get_user_id(username)
         access_token = create_access_token(identity=id)
         while True:
-            user_data = database.get_user_data(username)
+            user_data = database.get_user_data(id)
             if user_data != None and access_token != None: 
                 tokens.append(access_token)
                 users.append(database.get_user_id(username))

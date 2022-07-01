@@ -14,6 +14,8 @@ export default class Navigator extends React.Component {
                 task: styles.navPressableFaded,
                 account: styles.navPressableFaded,
             },
+            pages: ['home', 'earn', 'task', 'account'],
+            pageLabels: [['Home', 'Βάση'], ['Earn', 'Απέκτησε'], ['Task', 'Εργασία'], ['Account', 'Λογαριασμός']]
         }
     }
 
@@ -72,12 +74,18 @@ export default class Navigator extends React.Component {
     }
 
     render() {
+        var buttons = [];
+        for (let i=0; i<this.state.pages.length; i++) {
+            buttons.push(
+                <Pressable style={this.state.style.home} onPress={() => this.props.setPage(this.state.pages[i])} >
+					<Image style={styles.navPressableIcon} source={require('../../assets/navigator/'+this.state.pages[i]+'.png')}/>
+                    <Text style={styles.navPressableText}>{this.props.lang=='en'? this.state.pageLabels[i][0]: this.state.pageLabels[i][1]}</Text>
+				</Pressable>
+            )
+        }
         return(
             <View style={styles.navigator}>
-                <Pressable style={this.state.style.home} onPress={() => this.props.setPage('home')} >
-					<Image style={styles.navPressableIcon} source={require('../../assets/navigator/home.png')}/>
-                    <Text style={styles.navPressableText}>{this.props.lang=='en'? 'Home': 'Βάση'}</Text>
-				</Pressable>
+                {buttons}
             </View>
         );
     }

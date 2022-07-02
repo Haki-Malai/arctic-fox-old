@@ -77,7 +77,7 @@ export default class Navigator extends React.Component {
         var buttons = [];
         for (let i=0; i<this.state.pages.length; i++) {
             buttons.push(
-                <Pressable style={this.state.style.home} onPress={() => this.props.setPage(this.state.pages[i])} >
+                <Pressable key={i} style={this.state.style.home} onPress={() => this.props.setPage(this.state.pages[i])} >
 					<Image style={styles.navPressableIcon} source={require('../../assets/navigator/'+this.state.pages[i]+'.png')}/>
                     <Text style={styles.navPressableText}>{this.props.lang=='en'? this.state.pageLabels[i][0]: this.state.pageLabels[i][1]}</Text>
 				</Pressable>

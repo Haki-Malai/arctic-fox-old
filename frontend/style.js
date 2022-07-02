@@ -9,9 +9,13 @@ if (ScreenHeight < ScreenWidth) {
         ScreenWidth = ScreenWidth/2
 }
 
-const BLACK = '242526';
-const BLUE = 'royalblue';
-const WHITE = '#F0FFF0';
+const BLACK = '#242526';
+const BLUE = '#445C6D';
+const FADED_BLUE = '#879EB0';
+const MORE_FADED_BLUE = '#8BB3B4';
+const EVEN_MORE_FADED_BLUE = '#B0D2CF';
+const SUPER_FADED_BLUE = '#CEE9EA';
+const WHITE = SUPER_FADED_BLUE;//'#F0FFF0';
 const navHeight = ScreenHeight/20;
 const navIconDimensions = ScreenWidth/20;
 const logoDimensions = ScreenHeight/5
@@ -28,7 +32,7 @@ export default StyleSheet.create({
         height: ScreenHeight,
         alignItems: 'center',
         backgroundColor: WHITE,
-        marginBottom: navIconDimensions
+        paddingBottom: navIconDimensions
     },
 
     lang: {
@@ -167,12 +171,12 @@ export default StyleSheet.create({
 	mediaIcon: {
 		height: '2em',
 		width: '2em',
-		tintColor: 'white'
+		tintColor: 'WHITE'
 	},
 	mediaTitle: {
 		marginTop: '.5em',
 		marginLeft: '.5em',
-		color: 'white',
+		color: 'WHITE',
 		fondWeight: 'bold'
 	},
 	mediaF: {
@@ -196,7 +200,7 @@ export default StyleSheet.create({
 		backgroundColor: BLUE,
 		padding: '.1em',
 		borderRadius: '.5em',
-		color: 'white',
+		color: 'WHITE',
 		fontSize: '.8em'
 	},
 	homeMedia: {
@@ -222,5 +226,161 @@ export default StyleSheet.create({
 		height: '3em',
 		marginHorizontal: '1em',
 		marginVertical: '.5em',
+	},
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ACCOUNT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	accountScroll: {
+		alignItems: 'center',
+		minHeight: ScreenHeight,
+	},
+	account: {
+		backgroundColor: WHITE,
+		alignItems: 'center',
+		paddingBottom: navIconDimensions*2,
+	},
+	accountDetailsWrapper: {
+		backgroundColor: FADED_BLUE,
+		borderBottomLeftRadius: '7em',
+		borderBottomRightRadius: '7em',
+		width: ScreenWidth,
+		padding: '1em',
+		alignItems: 'center',
+		fontSize: '0.8em'
+	},
+	accountPic: {
+		height: '5em',
+		width: '5em',
+		borderRadius: '100%',
+		borderStyle: 'solid',
+		borderColor: BLUE,
+		borderWidth: '.2em'
+	},
+	accountUsername: {
+		fontSize: '1.5em',
+		fontWeight: 'bold',
+		margin: '.4em',
+		textAlign: 'center'
+	},
+	accountDetails: {
+		fontSize: '.8em',
+		fontWeight: 'bold',
+		margin: '.2em',
+		padding: '.2em',
+		textAlign: 'center'
+	},
+	accountPressable: {
+		backgroundColor: 'black',
+		borderRadius: '1em',
+		color: BLUE,
+		margin: '.4em',
+		paddingVertical: '.1em',
+		paddingHorizontal: '.4em'
+	},
+	accountTables: {
+		shadowColor: "#000",
+		shadowOpacity: 0.48,
+		shadowRadius: 11.95,
+		elevation: 18,
+		marginTop: '1em',
+		padding: '1em',
+		backgroundColor: MORE_FADED_BLUE,
+		borderRadius: '1em'
+	},
+	accountTable: {
+		flexDirection: 'row',
+		margin: '1em',
+		borderStyle: 'solid',
+		borderColor: 'grey',
+	},
+	accountTableItem: {
+		width: ScreenWidth/4,
+		fontSize: '1.5em',
+		textAlign: 'center',
+	},
+	accountTableItemLabel: {
+		display: 'block',
+		fontSize: '0.5em',
+		color: 'grey',
+	},
+	accountButtons: {
+		flexDirection: 'row',
+		width: ScreenWidth
+	},
+	accountButton: {
+		textAlign: 'center',
+		width: ScreenWidth/5,
+		alignItems: 'center',
+		marginVertical: '.5em',
+	},
+	accountPressableIcon: {
+		width: '3em',
+		height: '3em',
+	},
+	accountPressableText: {
+		fontSize: '.7em',
+		textAlign: 'center'
+	},
+	accountOption: {
+		padding: '.3em',
+		width: ScreenWidth/1.1,
+		borderStyle: 'solid',
+		borderColor: 'grey',
+		borderBottomWidth: '.1em',
+		marginBottom: '.4em',
+		alignItems: 'center'
+	},
+	accountOptionPressableText: {
+		flexDirection: 'row',
+		fontSize: '1em'
+	},
+	accountOptionPressableIcon: {
+		width: '1em',
+		height: '1em',
+		marginRight: '1em'
+	},
+	accountLogout: {
+		fontSize: '1.3em',
+		color: BLUE,
+		marginVertical: '.5em',
+		textAlign: 'center',
+		padding: '0.4em',
+		borderStyle: 'solid',
+		borderColor: 'grey',
+		borderWidth: '.01em'
+	},
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~OPTIONS-ACCOUNT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	optionContainer: {
+		alignSelf: 'center',
+		alignItems: 'center',
+		maxWidth: ScreenWidth/1.2,
+		textAlign: 'center'
+	},
+	optionInput: {
+		fontSize: '1.2em',
+		textAlign: 'center',
+		borderBottomWidth: '.1em',
+		borderBottomColor: 'grey',
+		marginVertical: '.4em'
+	},
+	optionPressable: {
+		borderWidth: '.1em',
+		borderRadius: '1em',
+		padding: '.4em',
+		borderColor: 'grey' 
+	},
+	optionPressableText: {
+		fontSize: '1.2em',
+		color: BLUE,
+	},
+	support: {
+		borderBottomWidth: '.1em',
+		borderBottomColor: 'grey',
+		margin: '.5em'
+	},
+	guideTitle: {
+		fontSize: '1.3em',
+		fontWeight: 'bold'
+	},
+	guideParagraph: {
+		marginVertical: '.3em'
 	},
 });

@@ -29,6 +29,7 @@ wait = random.randint(1, 59)
 # Responses
 INVALID_CREDENTIALS = json.dumps({'error': 'invalid_credentials'})
 SIGNUP_ERROR = json.dumps({'error': 'signup_error'})
+SUCCESS = json.dumps({'success': True})
 
 # =============================POST-REQUESTS=============================
 
@@ -218,6 +219,6 @@ def guide():
     try:
         file = open('assets/guide.json')
         guide = json.load(file)
-        return guide
+        return json.dumps(guide)
     except:
         return ERROR

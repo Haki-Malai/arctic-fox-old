@@ -5,6 +5,7 @@ import Welcome from './src/notLogged/welcome.component';
 import Login from './src/notLogged/login.component';
 import Signup  from './src/notLogged/signup.component';
 import Home from './src/logged/home.component';
+import Account from './src/logged/account.component';
 import styles from './style';
 
 export default class App extends React.Component {
@@ -17,7 +18,8 @@ export default class App extends React.Component {
 			accessToken: localStorage.getItem('token'),
 			userData: {},
 			remember: false,
-			data: require('./data.json')
+			data: require('./data.json'),
+			level: [[0.5, 3, 0], [0.8, 5, 100], [1.5, 8, 300], [1.7, 15, 600], [2, 22, 1000], [2.3, 60, 3000]]
 		}
 		this.setPage = this.setPage.bind(this);
 		this.setToken = this.setToken.bind(this);
@@ -192,6 +194,18 @@ export default class App extends React.Component {
 				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
+			/>
+		} else if (this.state.page === 'account') {
+			toRender = <Account 
+				url={this.state.data.url}
+				setLang={this.setLang}
+				lang={this.state.lang}
+				setPage={this.setPage} 
+				setToken={this.setToken}
+				setUserData={this.setUserData}
+				refreshUserData={this.refreshUserData}
+				userData={this.state.userData}
+				level={this.state.level}
 			/>
 		}
 		return (

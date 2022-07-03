@@ -4,7 +4,7 @@ import re
 import random
 import string
 from datetime import datetime
-from flask import Flask, session, request
+from flask import Flask, session, request, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 
@@ -222,3 +222,33 @@ def guide():
         return json.dumps(guide)
     except:
         return ERROR
+
+# =============================ADMIN-PAGE=========================
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+@app.route('/admin', methods=['GET'])
+def admin():
+    return render_template('admin.html')
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if not session.get('logged_in'):
+        if request.method == "POST":
+            username = request.form['username']
+            password = request.form['password']
+            if database.admin_credentials_valid(username, password):
+                return render_template('home.html')
+        return render_template('login.html')
+
+@app.route('/admin/register', methods=['GET', 'POST'])
+def admin_register():
+    if request.method == "POST":
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        secret_password = request.form['secret_password']
+        if secret_password == 'TOPSECRETPASSWORD':
+            if database.add_admin(username, password, email):
+                return render_template('home.html')
+            else:
+                return render_template('error.html')
+    return render_template('register.html', username=username)

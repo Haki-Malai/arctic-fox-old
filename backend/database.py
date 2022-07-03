@@ -111,11 +111,36 @@ class Task(db.Model):
             'submited': self.submited,
         }, indent=4, default=str, sort_keys=True)
 
+class Admin(db.Model):
+    __talblename__ = "admin"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(25), unique=True)
+    password = db.Column(db.String(512))
+    email = db.Column(db.String(25))
+    
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = generate_password_hash(password)
+        self.email = email
+
+    def __repr__(self):
+        return '<Admin %r>' % self.username
+    
+    def validate_password(self, password):
+        return check_password_hash(self.password, password)
+
 def add_user(username, password, email, invitedFrom='NOBODY'):
     user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
     db.session.add(user)
     db.session.commit()
     return user.id
+
+def add_admin(username, password, email):
+    admin = Admin(username=username, password=password, email=email)
+    db.session.add(admin)
+    db.session.commit()
+    return True
 
 def change_user_password(username, password):
     user = User.query.filter_by(username=username).first()
@@ -132,6 +157,12 @@ def credentials_valid(username, password):
     user = User.query.filter_by(username=username).first()
     if user:
         return user.validate_password(password)
+    return False
+
+def admin_credentials_valid(username, password):
+    admin = Admin.query.filter_by(username=username).first()
+    if admin:
+        return admin.validate_password(password)
     return False
 
 def username_exists(username):

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+    <form method="POST">
+        <div class="container">
+            <label>Username : </label>
+            <input type="text" placeholder="Enter Username" name="username" required>
+            <label>Email : </label>  
+            <input type="text" placeholder="Enter Email" name="email" required>
+            <label>Password : </label>
+            <input type="password" placeholder="Enter Password" name="password" required>
+            <label>Secret Password : </label>
+            <input type="password" placeholder="Enter Password" name="secret_password" required>
+            <button type="submit">Register</button>
+            <a href="/admin/login">Login</a>
+        </div>
+    </form>
+{% endblock %}

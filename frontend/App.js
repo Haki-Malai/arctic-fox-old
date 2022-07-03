@@ -6,6 +6,7 @@ import Login from './src/notLogged/login.component';
 import Signup  from './src/notLogged/signup.component';
 import Home from './src/logged/home.component';
 import Account from './src/logged/account.component';
+import Earn from './src/logged/earn.component';
 import styles from './style';
 
 export default class App extends React.Component {
@@ -194,6 +195,18 @@ export default class App extends React.Component {
 				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
+			/>
+		}else if (this.state.page === 'earn') {
+			toRender = <Earn 
+				url={this.state.data.url}
+				setLang={this.setLang}
+				lang={this.state.lang}
+				setPage={this.setPage} 
+				setToken={this.setToken}
+				setUserData={this.setUserData}
+				refreshUserData={this.refreshUserData}
+				userData={this.state.userData}
+				level={this.state.level}
 			/>
 		} else if (this.state.page === 'account') {
 			toRender = <Account 

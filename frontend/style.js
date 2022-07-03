@@ -383,4 +383,89 @@ export default StyleSheet.create({
 	guideParagraph: {
 		marginVertical: '.3em'
 	},
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~EARN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	earnTitle: {
+		backgroundColor: MORE_FADED_BLUE,
+		height: navHeight,
+		width: ScreenWidth,
+		textAlign: 'center',
+		paddingTop: '.2em',
+		fontSize: '1.2em'
+	},
+	earnTop: {
+		backgroundColor: BLUE,
+		width: ScreenWidth,
+		alignItems: 'center'
+	},
+	earnTextBig: {
+		fontSize: '1em'
+	},
+	earnTextIcon: {
+		width: '1.7em',
+		height: '1.7em',
+		marginVertical: '.3em'
+	},
+	earnText: {
+		fontSize: '.8em',
+		marginBottom: '.3em'
+	},
+	earnNavigator: {
+		flexDirection: 'row',
+		zIndex: 1,
+		width: ScreenWidth,
+		backgroundColor: FADED_BLUE,
+		paddingTop: '.5em',
+	},
+	earnNavPressable: {
+		width: ScreenWidth/6,
+		textAlign: 'center',
+		padding: '.1em'
+	},
+	earnNavPressablePressed: {
+		width: ScreenWidth/6,
+		textAlign: 'center',
+		padding: '.1em',
+		borderBottomColor: 'red',
+		borderBottomWidth: '.2em',
+	},
+	earnNavPressableText: {
+		fontSize: '.7em'
+	},
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~LEVEL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	level: {
+		width: ScreenWidth/1.1,
+		padding: '.5em',
+		paddingRight: '.7em',
+		margin: '.5em',
+		borderRadius: '1em',
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		backgroundColor: MORE_FADED_BLUE,
+		shadowColor: "#000",
+		shadowOpacity: 0.3,
+		shadowRadius: 6,
+		justifyContent: 'space-between',
+	},
+	levelIconAndText: {
+		flexDirection: 'row'
+	},
+	levelIcon: {
+		width: '2.5em',
+		height: '2.5em'
+	},
+	levelTextContainer: {
+		flexDirection: 'column'
+	},
+	levelTextSmall: {
+		fontSize: '.6em',
+	},
+	levelRight: {
+		alignSelf: 'flex-end',
+	},
+	levelPressable: {
+		backgroundColor: BLUE,
+		paddingVertical: '.2em',
+		paddingHorizontal: '.4em',
+		borderRadius: '.4em'
+	},
 });

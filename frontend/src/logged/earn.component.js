@@ -39,7 +39,7 @@ export default class Earn extends React.Component {
                     <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaF]} title={'Facebook'}></Media>
                     <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaI]} title={'Instagram'}></Media>
                     <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaY]} title={'Youtube'}></Media>
-                    <Navigator lang={this.props.lang} setPage={this.props.setPage} page='earn'/>
+                    <Navigator lang={this.props.lang} setPage={this.props.setPage} page={1}/>
                 </View>
             )
         } else {
@@ -47,7 +47,7 @@ export default class Earn extends React.Component {
                 <View style={styles.container}>
                     <Text style={styles.earnTitle}>{this.props.lang==='en'? 'Task List': 'Λίστα εργασιών'}</Text>
                     <Tasks style={[styles.media]} title={this.state.media} lang={this.props.lang} plus={this.props.level[this.state.page-1][0]} userData={this.props.userData}></Tasks>
-                    <Navigator setMedia={this.setMedia} lang={this.props.lang} setPage={this.props.setPage} page='earn'/>
+                    <Navigator lang={this.props.lang} setPage={this.props.setPage} page={1}/>
                 </View>
             )
         } 

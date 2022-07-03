@@ -64,7 +64,7 @@ export default class Home extends React.Component {
                     <Text style={styles.homeMediaText}>User feed</Text>
                     {feed}
                 </View>
-                <Navigator lang={this.props.lang} setPage={this.props.setPage} page='home'/>
+                <Navigator lang={this.props.lang} setPage={this.props.setPage} page={0}/>
             </View>
         );
     }

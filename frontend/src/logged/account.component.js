@@ -80,7 +80,7 @@ export default class Account extends React.Component {
                         <Options url={this.props.url} username={this.props.userData.username} lang={this.props.lang} logout={() => this.props.logout()}></Options>
                     </View>
                 </ScrollView>
-                <Navigator lang={this.props.lang} setPage={this.props.setPage} page='account'/>
+                <Navigator lang={this.props.lang} setPage={this.props.setPage} page={3}/>
             </View>
         );
     }

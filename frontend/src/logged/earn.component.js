@@ -19,10 +19,10 @@ export default class Earn extends React.Component {
         this.setMedia = this.setMedia.bind(this);
     }
     setPage(p) {
-        this.setState({page: p})
+        this.setState({page: p});
     }
     setMedia(media) {
-        this.setState({media: media})
+        this.setState({media: media});
     }
     componentDidMount() {
 		this.props.refreshUserData();
@@ -48,7 +48,7 @@ export default class Earn extends React.Component {
             main = (
                 <View style={styles.container}>
                     <Text style={styles.earnTitle}>{this.props.lang==='en'? 'Task List': 'Λίστα εργασιών'}</Text>
-                    <Tasks url={this.props.url} title={this.state.media} lang={this.props.lang} plus={this.props.level[this.state.page-1][0]} userData={this.props.userData}></Tasks>
+                    <Tasks url={this.props.url} title={this.state.media} lang={this.props.lang} plus={this.props.level[this.state.page-1][0]} userData={this.props.userData} setMedia={this.setMedia}></Tasks>
                     <Navigator lang={this.props.lang} setPage={this.props.setPage} page={1}/>
                 </View>
             )

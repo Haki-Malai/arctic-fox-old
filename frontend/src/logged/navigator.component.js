@@ -7,7 +7,7 @@ export default class Navigator extends React.Component {
         super(props);
         this.state = {
             pages: ['home', 'earn', 'task', 'account'],
-            pageLabels: [['Home', 'Βάση'], ['Earn', 'Απέκτησε'], ['Task', 'Εργασία'], ['Account', 'Λογαριασμός']]
+            pageLabels: [['Home', 'Βάση'], ['Earn', 'Απέκτησε'], ['Task', 'Εργασία'], ['Account', 'Λογαριασμός']],
         }
     }
 

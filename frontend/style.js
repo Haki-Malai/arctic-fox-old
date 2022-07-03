@@ -173,7 +173,7 @@ export default StyleSheet.create({
 	mediaIcon: {
 		height: '2em',
 		width: '2em',
-		tintColor: 'WHITE',
+		tintColor: WHITE,
 		marginLeft: '.2em',
 	},
 	mediaTitle: {
@@ -200,8 +200,15 @@ export default StyleSheet.create({
 		backgroundColor: BLUE,
 		padding: '.1em',
 		borderRadius: '.5em',
-		color: 'WHITE',
+		color: WHITE,
 		fontSize: '.8em'
+	},
+	mediaBack: {
+		justifyContent: 'center',
+		backgroundColor: FADED_BLUE,
+		color: BLACK,
+		fontSize: '1.2em',
+		cursor: 'pointer'
 	},
 	homeMedia: {
 		textAlign: 'center',

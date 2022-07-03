@@ -41,17 +41,27 @@ export default class Tasks extends React.Component {
     }
     render() {
         var task = [];
-        for (let i=0; i<=25; i++) {
+        task.push(
+                <Pressable style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia('none')}>
+                    {this.props.lang==='en'? 'Back': 'Επιστροφή'}
+                </Pressable>
+        )
+        for (let i=0; i<=Math.floor(Math.random() * 12); i++) { //RANDOM NUMBER FOR TESTING
             task.push(
                 <Pressable style={i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} disabled={!this.props.enabled}>
                     <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.title+'.png')}/>
-                    <Text style={styles.mediaTitle}>{this.props.title}-Like  +{this.props.plus}</Text>
+                    <Text style={styles.mediaTitle}>Find vulnerability  +{this.props.plus}</Text>
                     <Pressable style={styles.mediaReceive}>
                         <Text style={styles.mediaReceiveText} onClick={() => this.addTask()}>{this.props.lang==='en'? 'Receive': 'Απέκτησε'}</Text>
                     </Pressable>
                 </Pressable>
             )
         }
+        task.push(
+                <Pressable style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia('none')}>
+                    {this.props.lang==='en'? 'Back': 'Επιστροφή'}
+                </Pressable>
+        )
         return(
             task
         );

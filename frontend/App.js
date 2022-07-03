@@ -220,6 +220,7 @@ export default class App extends React.Component {
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				level={this.state.level}
+				logout={this.logout}
 			/>
 		}
 		return (

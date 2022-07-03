@@ -38,7 +38,7 @@ export default class Task extends React.Component {
 					if (data.tasks) {
                         var tasks = [];
                         for (let i=0; i<data.tasks.length; i++) {
-                            var obj = JSON.parse(data.tasks[i]);
+                            var obj = data.tasks[i];
                             tasks.push(JSON.parse(obj));
                         }
 						this.setState({tasks: tasks});
@@ -102,7 +102,7 @@ export default class Task extends React.Component {
                 var task_data = this.state.tasks[i];
                 if (task_data.status === 3) {
                     noData = false;
-                    toRender.push(<Media enabled={true} data={task_data} lang={this.props.lang}></Media>);
+                    toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);
                 }
             }
             if (noData) {

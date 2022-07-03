@@ -1,6 +1,7 @@
 import string
 import random
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -146,3 +147,75 @@ def create_random_code():
     while User.query.filter_by(invitationCode=code).first():
         code = ''.join(random.choice(chars) for _ in range(size))
     return code
+
+# TASKS
+def add_task(username, social, hours=3):
+    # Check if user is privileged to another task
+    user = User.query.filter_by(username=username).first()
+    today_done = len(get_user_tasks(username))
+    if (user.level == 1 and today_done == 3) or \
+           (user.level == 2 and today_done == 5) or \
+           (user.level == 3 and today_done == 8) or \
+           (user.level == 4 and today_done == 15) or \
+           (user.level == 5 and today_done == 22) or \
+           (user.level == 6 and today_done == 60):
+        return 0
+    else:
+        task = Task(user_id=user.id, social=social, hours=hours, link='https://www.facebook.com')
+        db.session.add(task)
+        db.session.commit()
+        return 1    
+
+def get_user_tasks(username):
+    user = User.query.filter_by(username=username).first()
+    tasks = Task.query.filter_by(user_id=user.id).all()
+    daily_tasks = []
+
+    # Query tasks where the created datetime is bigger than yesterday 
+    yesterday = datetime.now() - timedelta(days = 1)
+    last_week = datetime.now() - timedelta(days = 7)
+    last_3_hours = datetime.now() - timedelta(seconds=15)#hours = 3) # TODO custom timeout threshold
+    random_past_time = datetime.now() - timedelta(seconds=15)#hours = random.randint(0, 9)) 
+    final_tasks = []
+
+    # Delete very old tasks
+    for task in Task.query.filter(Task.user_id == user.id, Task.created < last_week).all():
+        db.session.delete(task)
+        db.session.commit()
+
+    # Update to timeout timeouted tasks
+    for task in Task.query.filter(Task.user_id == user.id, Task.created < last_3_hours, Task.status == 0).all():
+        update_task(task.id, 3)
+
+    # Update to finished and pay user
+    for task in Task.query.filter(Task.user_id == user.id, Task.status == 1, Task.submited < random_past_time).all():
+        update_task(task.id, 2)
+        user_to_pay = User.query.filter(User.id == task.user_id).first()
+        if user_to_pay.level == 1:
+            amount = 0.5
+        elif user_to_pay.level == 2:
+            amount = 0.8
+        elif user_to_pay.level == 3:
+            amount = 1.5
+        elif user_to_pay.level == 4:
+            amount = 1.7
+        elif user_to_pay.level == 5:
+            amount = 2
+        elif user_to_pay.level == 6:
+            amount = 2.3
+        user_to_pay.get_paid(amount, 'task')
+        db.session.commit()
+
+    # Return tasks from last 24h
+    for task in Task.query.filter(Task.user_id == user.id, Task.created > yesterday).all():
+        final_tasks.append(task.get_json())
+    return final_tasks
+
+def delete_task(id):
+    Task.query.filter_by(id=id).delete()
+    db.session.commit()
+
+def update_task(id, status):
+    Task.query.filter_by(id=id).first().status = status
+    Task.query.filter_by(id=id).first().submited = datetime.now()
+    db.session.commit()

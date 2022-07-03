@@ -10,12 +10,13 @@ if (ScreenHeight < ScreenWidth) {
 }
 
 const BLACK = '#242526';
+const FADED_BLACK = '#565656';
 const BLUE = '#445C6D';
 const FADED_BLUE = '#879EB0';
 const MORE_FADED_BLUE = '#8BB3B4';
 const EVEN_MORE_FADED_BLUE = '#B0D2CF';
 const SUPER_FADED_BLUE = '#CEE9EA';
-const WHITE = SUPER_FADED_BLUE;//'#F0FFF0';
+const WHITE = SUPER_FADED_BLUE;
 const navHeight = ScreenHeight/20;
 const navIconDimensions = ScreenWidth/20;
 const logoDimensions = ScreenHeight/5
@@ -167,26 +168,25 @@ export default StyleSheet.create({
 		padding: '.4em',
 		marginVertical: '.4em',
 		borderRadius: '.4em',
+		alignItems: 'center',
 	},
 	mediaIcon: {
 		height: '2em',
 		width: '2em',
-		tintColor: 'WHITE'
+		tintColor: 'WHITE',
+		marginLeft: '.2em',
 	},
 	mediaTitle: {
-		marginTop: '.5em',
 		marginLeft: '.5em',
-		color: 'WHITE',
-		fondWeight: 'bold'
+		color: WHITE,
+		fontWeight: 'bold',
+		fontSize: '1em'
 	},
-	mediaF: {
-		backgroundColor: '#3b5998',
+	mediaA: {
+		backgroundColor: FADED_BLACK,
 	},
-	mediaI: {
-		backgroundColor: '#bc2a8d',
-	},
-	mediaY: {
-		backgroundColor: '#c4302b',
+	mediaB: {
+		backgroundColor: BLUE,
 	},
 	mediaDisabled: {
 		backgroundColor: 'grey'

@@ -28,17 +28,19 @@ export default class Earn extends React.Component {
 		this.props.refreshUserData();
     }
     render() {
-        var enabled= (this.props.userData.level-1 < this.state.page);
         var main;
         if (this.state.media==='none') {
+            var media = [];
+            var enabled= (this.props.userData.level-1 < this.state.page);
+            for (let i=0; i<this.props.owaspList.length; i++) {
+                media.push(<Media enabled={enabled} setMedia={this.setMedia} style={ i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} title={this.props.owaspList[i]}></Media>)
+            }
             main = (
                 <View style={styles.container}>
                     <Top userData={this.props.userData} level={this.props.level} lang={this.props.lang}></Top>
                     <EarnNavigator setPage={this.setPage} level={this.props.level} userData={this.props.userData} lang={this.props.lang}></EarnNavigator>
                     <Level userData={this.props.userData} lang={this.props.lang} level={this.state.page} value={this.props.level[this.state.page-1][0]} daily={this.props.level[this.state.page-1][1]} buy={this.props.level[this.state.page-1][2]}></Level>
-                    <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaF]} title={'Facebook'}></Media>
-                    <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaI]} title={'Instagram'}></Media>
-                    <Media enabled={enabled} setMedia={this.setMedia} style={[styles.media, styles.mediaY]} title={'Youtube'}></Media>
+                    {media}
                     <Navigator lang={this.props.lang} setPage={this.props.setPage} page={1}/>
                 </View>
             )
@@ -46,7 +48,7 @@ export default class Earn extends React.Component {
             main = (
                 <View style={styles.container}>
                     <Text style={styles.earnTitle}>{this.props.lang==='en'? 'Task List': 'Λίστα εργασιών'}</Text>
-                    <Tasks style={[styles.media]} title={this.state.media} lang={this.props.lang} plus={this.props.level[this.state.page-1][0]} userData={this.props.userData}></Tasks>
+                    <Tasks url={this.props.url} title={this.state.media} lang={this.props.lang} plus={this.props.level[this.state.page-1][0]} userData={this.props.userData}></Tasks>
                     <Navigator lang={this.props.lang} setPage={this.props.setPage} page={1}/>
                 </View>
             )

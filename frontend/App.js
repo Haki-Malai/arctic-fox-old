@@ -207,6 +207,7 @@ export default class App extends React.Component {
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				level={this.state.level}
+				owaspList={this.state.data.owaspList}
 			/>
 		} else if (this.state.page === 'account') {
 			toRender = <Account 

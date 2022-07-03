@@ -26,7 +26,7 @@ export default class Tasks extends React.Component {
             mode: 'cors'
         }
 
-        fetch('http://localhost:8010/proxy/tasks', requestOptions)
+        fetch(this.props.url+'tasks', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -40,17 +40,10 @@ export default class Tasks extends React.Component {
             });
     }
     render() {
-        var task = [], background;
-        if (this.props.title==='Facebook') {
-            background = styles.mediaF;
-        } else if (this.props.title==='Instagram') {
-            background = styles.mediaI;
-        } else if (this.props.title==='Youtube') {
-            background = styles.mediaY;
-        }
+        var task = [];
         for (let i=0; i<=25; i++) {
             task.push(
-                <Pressable style={[this.props.style, background]} disabled={!this.props.enabled}>
+                <Pressable style={i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} disabled={!this.props.enabled}>
                     <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.title+'.png')}/>
                     <Text style={styles.mediaTitle}>{this.props.title}-Like  +{this.props.plus}</Text>
                     <Pressable style={styles.mediaReceive}>

@@ -30,15 +30,14 @@ export default class Account extends React.Component {
                         <View style={styles.accountDetailsWrapper}>
                             <Image style={styles.accountPic} source={'https://fer-uig.glitch.me/?uuid=7121'}/>
                             <Text style={styles.accountUsername}>{this.props.userData.username}</Text>
-                            <Text style={styles.accountDetails}>
-                                {this.props.lang==='en'? 'Email:': 'Ηλεκτρονική διεύθυνση:'} {this.props.userData.email}<br></br>
-                                {this.props.lang==='en'? 'Level:': 'Επίπεδο:'} {this.props.userData.level}
-                                    <Pressable style={styles.accountPressable} onPress={() => {this.props.setPage('level')}}><Text>Upgrade to level</Text></Pressable>
-                                    <br></br>
-                                {this.props.lang==='en'? 'Credit score:': 'Σκορ πίστης:'} {this.props.userData.level*600}<br></br>
-                                {this.props.lang==='en'? 'Invitation Code:': 'Κωδικός πρόσκλησης:'} {this.props.userData.invitationCode}
-                                <Pressable style={styles.accountPressable} onPress={() => navigator.clipboard.writeText(this.props.userData.invitationCode)} ><Text>Copy</Text></Pressable>
-                            </Text>
+                            <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Email:': 'Ηλεκτρονική διεύθυνση:'}{this.props.userData.email}</Text>
+                            <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Level:': 'Επίπεδο:'} {this.props.userData.level}</Text>
+                            <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Credit score:': 'Σκορ πίστης:'} {this.props.userData.level*600}</Text>
+                            <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Invitation Code:': 'Κωδικός πρόσκλησης:'} {this.props.userData.invitationCode}
+                                <Pressable style={styles.accountPressable} onPress={() => navigator.clipboard.writeText(this.props.userData.invitationCode)} >
+                                    <Text style={{color: 'white'}}>{this.props.lang==='en'? 'Copy': 'Αντιγραφή'}</Text>
+                                </Pressable>
+                           </Text> 
                         </View>
                         <Lang setLang={this.props.setLang}></Lang>
                         <View style={styles.accountTables}>
@@ -76,7 +75,6 @@ export default class Account extends React.Component {
                                 </Text>
                             </View>
                         </View>
-                        <Buttons lang={this.props.lang}></Buttons>
                         <Options url={this.props.url} username={this.props.userData.username} lang={this.props.lang} logout={() => this.props.logout()}></Options>
                     </View>
                 </ScrollView>

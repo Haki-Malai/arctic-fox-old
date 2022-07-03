@@ -267,12 +267,10 @@ export default StyleSheet.create({
 		margin: '.4em',
 		textAlign: 'center'
 	},
-	accountDetails: {
+	accountDetail: {
 		fontSize: '.8em',
 		fontWeight: 'bold',
-		margin: '.2em',
 		padding: '.2em',
-		textAlign: 'center'
 	},
 	accountPressable: {
 		backgroundColor: 'black',

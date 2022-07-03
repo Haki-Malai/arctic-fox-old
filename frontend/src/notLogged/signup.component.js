@@ -53,7 +53,7 @@ export default class Signup extends React.Component {
         return(
             <View style={[styles.container, styles.menuContainer]}>
                 <Image style={styles.signupLogo} source={require('../../assets/logo.png')}/>
-				<Text style={styles.signupTitle}>SpotFox</Text>
+				<Text style={styles.signupTitle}>ArcticFox</Text>
                 <TextInput 
                     style={styles.menuInput} 
                     placeholder={this.props.lang=='en'? 'Username': 'Όνομα χρήστη'}

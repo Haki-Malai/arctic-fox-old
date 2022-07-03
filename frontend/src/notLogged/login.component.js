@@ -54,7 +54,7 @@ export default class Login extends React.Component {
         return(
             <View style={[styles.container, styles.menuContainer]}>
                 <Image style={styles.welcomeLogo} source={require('../../assets/logo.png')}/>
-				<Text style={styles.welcomeTitle}>SpotFox</Text>
+				<Text style={styles.welcomeTitle}>ArcticFox</Text>
                 <TextInput 
                     style={styles.menuInput} 
                     placeholder={this.props.lang=='en'? 'Username': 'Όνομα χρήστη'}

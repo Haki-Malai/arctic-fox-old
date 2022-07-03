@@ -473,4 +473,29 @@ export default StyleSheet.create({
 		paddingHorizontal: '.4em',
 		borderRadius: '.4em'
 	},
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~TASK~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	taskNavigator: {
+		flexDirection: 'row',
+		zIndex: 1,
+		width: ScreenWidth,
+		backgroundColor: BLUE,
+		paddingTop: '.5em',
+	},
+	taskNavPressable: {
+		marginTop: '1em',
+		width: ScreenWidth/4,
+		textAlign: 'center',
+		padding: '.2em'
+	},
+	taskNavPressablePressed: {
+		marginTop: '1em',
+		width: ScreenWidth/4,
+		textAlign: 'center',
+		padding: '.2em',
+		borderBottomColor: 'red',
+		borderBottomWidth: '.2em',
+	},
+	taskNavPressableText: {
+		fontSize: '1em'
+	},
 });

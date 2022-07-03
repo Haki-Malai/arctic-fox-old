@@ -7,6 +7,7 @@ import Signup  from './src/notLogged/signup.component';
 import Home from './src/logged/home.component';
 import Account from './src/logged/account.component';
 import Earn from './src/logged/earn.component';
+import Task from './src/logged/task.component';
 import styles from './style';
 
 export default class App extends React.Component {
@@ -196,8 +197,21 @@ export default class App extends React.Component {
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 			/>
-		}else if (this.state.page === 'earn') {
+		} else if (this.state.page === 'earn') {
 			toRender = <Earn 
+				url={this.state.data.url}
+				setLang={this.setLang}
+				lang={this.state.lang}
+				setPage={this.setPage} 
+				setToken={this.setToken}
+				setUserData={this.setUserData}
+				refreshUserData={this.refreshUserData}
+				userData={this.state.userData}
+				level={this.state.level}
+				owaspList={this.state.data.owaspList}
+			/>
+		} else if (this.state.page === 'task') {
+			toRender = <Task 
 				url={this.state.data.url}
 				setLang={this.setLang}
 				lang={this.state.lang}

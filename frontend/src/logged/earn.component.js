@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 import Navigator from './navigator.component';
 import Top from './earn/top.component';
 import EarnNavigator from './earn/earnNavigator.component';
-import Media from './earn/media.component';
+import Media from './task/media.component';
 import Level from './earn/level.component';
 import Tasks from './earn/tasks.component';
 import styles from '../../style';

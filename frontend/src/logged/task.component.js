@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import Navigator from './navigator.component';
-import styles from '../style';
 import TaskNavigator from './task/taskNavigator.component';
 import Media from './task/media.component';
+import styles from '../../style';
 
 export default class Task extends React.Component {
     constructor(props) {
@@ -32,7 +32,7 @@ export default class Task extends React.Component {
 				body: JSON.stringify({username: this.props.userData.username, function: 'get'})
 			}
 
-			fetch('http://localhost:8010/proxy/tasks', requestOptions)
+			fetch(this.props.url+'tasks', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.tasks) {

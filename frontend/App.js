@@ -141,6 +141,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
+		document.title = "Arctic Fox";
         this.loadFonts();
 		this.getAuthorized();
 		this.refreshUserData();

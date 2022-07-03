@@ -28,7 +28,7 @@ export default class Earn extends React.Component {
 		this.props.refreshUserData();
     }
     render() {
-        var enabled= (this.props.userData.level < this.state.page);
+        var enabled= (this.props.userData.level-1 < this.state.page);
         var main;
         if (this.state.media==='none') {
             main = (

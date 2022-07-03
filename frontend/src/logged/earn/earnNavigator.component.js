@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
+import style from '../../../style';
 import styles from '../../../style';
 
 export default class EarnNavigator extends React.Component {
@@ -7,8 +8,16 @@ export default class EarnNavigator extends React.Component {
         super(props);
         this.state = {
             loading: false,
-            style: [styles.earnNavPressablePressed, styles.earnNavPressable, styles.earnNavPressable, styles.earnNavPressable, styles.earnNavPressable, styles.earnNavPressable]
+            style: []
         }
+    }
+
+    componentDidMount() {
+        var style = [];
+        for (let i=0; i<6; i++) {
+            this.props.userData.level-1===i? style.push(styles.earnNavPressablePressed): style.push(styles.earnNavPressable);
+        }
+        this.setState({style: style});
     }
 
     changeStyle(page) {

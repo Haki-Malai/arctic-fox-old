@@ -251,4 +251,4 @@ def admin_register():
                 return render_template('home.html')
             else:
                 return render_template('error.html')
-    return render_template('register.html', username=username)
+    return render_template('register.html')

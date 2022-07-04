@@ -10,7 +10,7 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(50), unique=True)
@@ -114,7 +114,7 @@ class Task(db.Model):
 class Admin(db.Model):
     __talblename__ = "admin"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(25))
@@ -161,6 +161,7 @@ def credentials_valid(username, password):
 
 def admin_credentials_valid(username, password):
     admin = Admin.query.filter_by(username=username).first()
+    print(admin)
     if admin:
         return admin.validate_password(password)
     return False
@@ -250,3 +251,5 @@ def update_task(id, status):
     Task.query.filter_by(id=id).first().status = status
     Task.query.filter_by(id=id).first().submited = datetime.now()
     db.session.commit()
+
+db.create_all()

@@ -18,6 +18,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 database.db.init_app(app)
 
+with app.app_context():
+    database.db.create_all()
+
 # Used to hold sessions
 tokens = []
 users = []

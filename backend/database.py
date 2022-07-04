@@ -251,5 +251,3 @@ def update_task(id, status):
     Task.query.filter_by(id=id).first().status = status
     Task.query.filter_by(id=id).first().submited = datetime.now()
     db.session.commit()
-
-db.create_all()

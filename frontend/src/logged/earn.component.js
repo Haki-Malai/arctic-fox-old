@@ -33,7 +33,7 @@ export default class Earn extends React.Component {
             var media = [];
             var enabled= (this.props.userData.level-1 < this.state.page);
             for (let i=0; i<this.props.owaspList.length; i++) {
-                media.push(<Media enabled={enabled} setMedia={this.setMedia} style={ i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} title={this.props.owaspList[i]}></Media>)
+                media.push(<Media key={i} enabled={enabled} setMedia={this.setMedia} style={ i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} title={this.props.owaspList[i]}></Media>)
             }
             main = (
                 <View style={styles.container}>

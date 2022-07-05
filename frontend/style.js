@@ -182,6 +182,9 @@ export default StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: '1em'
 	},
+	mediaNoData: {
+		justifyContent: 'center'
+	},
 	mediaA: {
 		backgroundColor: FADED_BLACK,
 	},
@@ -190,18 +193,6 @@ export default StyleSheet.create({
 	},
 	mediaDisabled: {
 		backgroundColor: 'grey'
-	},
-	mediaReceive: {
-		marginTop: '.4em',
-		left: '22%',
-		textAlign: 'center'
-	},
-	mediaReceiveText: {
-		backgroundColor: BLUE,
-		padding: '.1em',
-		borderRadius: '.5em',
-		color: WHITE,
-		fontSize: '.8em'
 	},
 	mediaBack: {
 		justifyContent: 'center',

@@ -9,8 +9,8 @@ Application created with the intention to be exploitable and security testing
 
 # TO-DO
 ## Frontend
-  - [ ] Load available tasks from db
-  - [ ] Get assigned on task
+  - [x] Load available tasks from db
+  - [x] Get assigned on task
   - [ ] Profile picture functionality 
   - [ ] Payment request (with btc address)
   - [ ] Payment history

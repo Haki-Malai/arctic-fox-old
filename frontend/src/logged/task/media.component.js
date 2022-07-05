@@ -75,40 +75,35 @@ export default class Media extends React.Component {
 
         if (this.state.expanded === true){
             mediaStyles.push(styles.expandedMedia)
-            // If status isn't on pending there is no need for the upload area
-            if (this.props.data.status != 0){
-                toRender = <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
-                                <View style={styles.upload} >
-                                    <Pressable style={styles.uploadLink} >
-                                        <Text style={styles.uploadLinkText}>Task: {toDo}</Text>
-                                        <Text style={styles.uploadLinkText} onPress={() => this.loadInBrowser(this.props.data.link )}>Link: {this.props.data.link }</Text>
-                                    </Pressable>
-                                </View>
-                            </Pressable>
-            } else {
-                toRender = <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
-                                <View style={styles.upload} >
-                                    <Pressable style={styles.uploadLink} >
-                                        <Text style={styles.uploadLinkText}>Task: {toDo}</Text>
-                                        <Text style={styles.uploadLinkText} onPress={() => this.loadInBrowser(this.props.data.link )}>Link: {this.props.data.link }</Text>
-                                        <Text style={styles.uploadLinkText}>Upload proof</Text>
-                                        <input 
-                                            id="thefile"
-                                            style={{ fontSize: '1.2em', marginTop: '.6em'}} 
-                                            type="file" 
-                                            accept='image/*'>
-                                        </input>
-                                        <Pressable style={styles.uploadButton} onPress={() => this.uploadFile() }>
-                                            <Text style={styles.uploadLinkText}>Upload</Text>
-                                        </Pressable>
-                                    </Pressable>
-                                </View>
-                            </Pressable>
+            var upload;
+            // If status isn't on process there is no need for the upload area
+            if (this.props.data.status == 0) {
+                upload = <View>
+                                <Text style={styles.uploadLinkText}>Upload proof</Text>
+                                <input 
+                                    id="file"
+                                    style={{ fontSize: '1.2em', marginTop: '.6em'}} 
+                                    type="file" 
+                                    accept='image/*'>
+                                </input>
+                                <Pressable style={styles.uploadButton} onPress={() => this.uploadFile()}>
+                                    <Text style={styles.uploadLinkText}>Upload</Text>
+                                </Pressable>
+                            </View>
             }
+            toRender = <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
+                            <View style={styles.upload}>
+                                <Pressable style={styles.uploadLink} >
+                                    <Text style={styles.uploadLinkText}>Task: {this.props.data.vulnerability}</Text>
+                                    <Text style={styles.uploadLinkText} onPress={() => this.loadInBrowser(this.props.data.url)}>Link: {this.props.data.url}</Text>
+                                </Pressable>
+                                {upload}
+                            </View>
+                        </Pressable>
         } else {
             toRender =  <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
-                            <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.data.social+'.png' )}/>
-                            <Text style={styles.mediaTitle}>{this.props.data.social } </Text>
+                            <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.data.vulnerability+'.png')}/>
+                            <Text style={styles.mediaTitle}>{this.props.data.vulnerability} {this.props.data.status==3? '(Timeout)': ''}</Text>
                         </Pressable>
         }
         return(

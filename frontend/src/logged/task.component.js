@@ -29,7 +29,7 @@ export default class Task extends React.Component {
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({username: this.props.userData.username, function: 'get'})
+				body: JSON.stringify({id: this.props.userData.id, function: 'assigned'})
 			}
 
 			fetch(this.props.url+'tasks', requestOptions)
@@ -100,6 +100,7 @@ export default class Task extends React.Component {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];
+                console.log(task_data)
                 if (task_data.status === 3) {
                     noData = false;
                     toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);

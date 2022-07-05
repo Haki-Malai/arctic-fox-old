@@ -175,17 +175,21 @@ def task():
         Returns success or failure status
     """
     function = request.json['function']
-    if function == 'get':
-        username = request.json['username'].lower()
-        tasks = database.get_user_tasks(username)
+    if function == 'available':
+        vulnerability = request.json['vulnerability']
+        tasks = database.get_available_tasks(vulnerability)
         return json.dumps({'tasks': tasks})
-    elif function == 'add':
-        username = request.json['username'].lower()
-        vulnerability = request.json['social']
-        if database.assign_task(username, vulnerability) == 0:
-            return ERROR
-        else:
+    elif function == 'assigned':
+        id = request.json['id']
+        tasks = database.get_user_tasks(id)
+        return json.dumps({'tasks': tasks})
+    elif function == 'assign':
+        task_id = request.json['task_id']
+        user_id = request.json['user_id']
+        if database.assign_task(user_id, task_id):
             return SUCCESS
+        else:
+            return json.dumps({'error': 'error'})
     elif function == 'update':
         id = request.json['id']
         database.update_task(id, 1)

@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>HOMEPAGE</h1>
+    <h1>ADMIN HOMEPAGE</h1>
+    {% for id in id %}
+        {{ id }}
+    {% endfor %}
     <form action="" method="POST">
-        <label for="tasks">Add task</label>
+        <input id="header" name="header" type="hidden" value="task">
+        <label for="task">Add task</label>
         <br>
-        <select id="tasks" name="tasks" required>
+        <select id="vulnerability" name="vulnerability" required>
             <br>
-            <option id="type" name="type" value="Broken Access Control">Broken Access Control</option>
+            <option value="Broken Access Control">Broken Access Control</option>
             <option value="Cryptographic Failures">Cryptographic Failures</option>
             <option value="Injection">Injection</option>
             <option value="Insecure Design">Insecure Design</option>
@@ -29,4 +33,5 @@
         <br>
         <input type="submit">
     </form>
+    <script src="../static/js/home.js"></script>
 {% endblock %}

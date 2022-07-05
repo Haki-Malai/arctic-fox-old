@@ -4,7 +4,7 @@ import re
 import random
 import string
 from datetime import datetime
-from flask import Flask, session, request, render_template
+from flask import Flask, session, request, render_template, redirect, url_for
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 
@@ -181,8 +181,8 @@ def task():
         return json.dumps({'tasks': tasks})
     elif function == 'add':
         username = request.json['username'].lower()
-        social = request.json['social']
-        if database.add_task(username, social) == 0:
+        vulnerability = request.json['social']
+        if database.assign_task(username, vulnerability) == 0:
             return ERROR
         else:
             return SUCCESS
@@ -227,7 +227,11 @@ def guide():
         return ERROR
 
 # =============================ADMIN-PAGE=========================
+app.secret_key = 'SUPER SECRET KEY'
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+admins = []
+admin_tokens = []
+
 @app.route('/admin', methods=['GET'])
 def admin():
     return render_template('admin.html')
@@ -239,7 +243,11 @@ def admin_login():
             username = request.form['username']
             password = request.form['password']
             if database.admin_credentials_valid(username, password):
-                return render_template('home.html')
+                access_token = create_access_token(identity=username)
+                admin_tokens.append(access_token)
+                admins.append(database.get_admin_id(username))
+                session['access_token'] = access_token
+                return redirect(url_for('.admin_home', access_token=access_token))
         return render_template('login.html')
 
 @app.route('/admin/register', methods=['GET', 'POST'])
@@ -255,3 +263,17 @@ def admin_register():
             else:
                 return render_template('error.html')
     return render_template('register.html')
+
+@app.route('/admin/home', methods=['GET', 'POST'])
+def admin_home():
+    if request.method == "POST":
+        if (request.form['header']=='task'):
+            vulnerability = request.form.get('vulnerability')
+            days = request.form['days']
+            url = request.form['url']
+            notes = request.form['notes']
+            access_token = request.args.get('access_token')
+            for index, token in enumerate(admin_tokens):
+                if token == access_token:
+                    database.create_task(admins[index], vulnerability, url, days, notes)
+    return render_template('home.html')

@@ -9,11 +9,14 @@ Application created with the intention to be exploitable and security testing
 
 # TO-DO
 ## Frontend
-  - Profile picture functionality
-  - Payment request (with btc address)
-  - Payment history
-  - Task upload proof
+  - [ ] Load available tasks from db
+  - [ ] Get assigned on task
+  - [ ] Profile picture functionality 
+  - [ ] Payment request (with btc address)
+  - [ ] Payment history
+  - [ ] Task upload proof
 ## Backend
-  - Admin page aproove payment (with btc address etc)
-  - Save payment details (new table on db)
-  - Approve tasks
+  - [x] Admin task creation
+  - [ ] Approve tasks
+  - [ ] Admin page approve payment (with btc address etc)
+  - [ ] Save payment details (new table on db)

@@ -76,39 +76,42 @@ class Task(db.Model):
     __tablename__ = "task"
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    social = db.Column(db.Integer)
-    status = db.Column(db.Integer)
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
+    vulnerability = db.Column(db.String(64))
+    status = db.Column(db.Integer, default=0)
     created = db.Column(db.DateTime)
-    duration = db.Column(db.Integer)
-    requirements = db.Column(db.Integer)
-    link = db.Column(db.String(64))
+    days = db.Column(db.Integer)
+    url = db.Column(db.String(64))
+    notes = db.Column(db.String(1024))
     submited = db.Column(db.DateTime, default=None)
 
-    def __init__(self, user_id, social, link, hours=0):
-        self.user_id = user_id
-        self.social = social
-        self.status = 0
+    def __init__(self, admin_id, vulnerability, url, days, notes):
+        self.admin_id = admin_id
+        self.vulnerability = vulnerability
         self.created = datetime.now()
-        self.duration = hours
-        self.requirements = 1
-        self.link = link
-        self.submited = None
+        self.days = days
+        self.url = url
+        self.notes = notes
 
     def __repr__(self):
         return '<Task %r>' % self.id
 
+    def assign(id):
+        self.user_id = id
+
     def get_json(self):
         return json.dumps({
             'id': self.id,
+            'admin_id': self.admin_id,
             'user_id': self.user_id,
-            'social': self.social,
+            'vulnerability': self.vulnerability,
             'status': self.status,
             'created': self.created,
-            'duration': self.duration,
-            'requirements': self.requirements,
-            'link': self.link,
+            'days': self.days,
+            'url': self.url,
             'submited': self.submited,
+            'notes': self.notes
         }, indent=4, default=str, sort_keys=True)
 
 class Admin(db.Model):
@@ -130,17 +133,12 @@ class Admin(db.Model):
     def validate_password(self, password):
         return check_password_hash(self.password, password)
 
+# =========================USER==============================================
 def add_user(username, password, email, invitedFrom='NOBODY'):
     user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
     db.session.add(user)
     db.session.commit()
     return user.id
-
-def add_admin(username, password, email):
-    admin = Admin(username=username, password=password, email=email)
-    db.session.add(admin)
-    db.session.commit()
-    return True
 
 def change_user_password(username, password):
     user = User.query.filter_by(username=username).first()
@@ -159,13 +157,6 @@ def credentials_valid(username, password):
         return user.validate_password(password)
     return False
 
-def admin_credentials_valid(username, password):
-    admin = Admin.query.filter_by(username=username).first()
-    print(admin)
-    if admin:
-        return admin.validate_password(password)
-    return False
-
 def username_exists(username):
     return User.query.filter_by(username=username).first()
 
@@ -180,8 +171,26 @@ def create_random_code():
         code = ''.join(random.choice(chars) for _ in range(size))
     return code
 
-# TASKS
-def add_task(username, social, hours=3):
+
+
+# ========================ADMIN-METHODS=========================================
+def add_admin(username, password, email):
+    admin = Admin(username=username, password=password, email=email)
+    db.session.add(admin)
+    db.session.commit()
+    return True
+
+def admin_credentials_valid(username, password):
+    admin = Admin.query.filter_by(username=username).first()
+    if admin:
+        return admin.validate_password(password)
+    return False
+
+def get_admin_id(username):
+    return Admin.query.filter_by(username=username).first().id
+
+# ========================TASKS=================================================
+def assign_task(username, social, days=3):
     # Check if user is privileged to another task
     user = User.query.filter_by(username=username).first()
     today_done = len(get_user_tasks(username))
@@ -193,10 +202,16 @@ def add_task(username, social, hours=3):
            (user.level == 6 and today_done == 60):
         return 0
     else:
-        task = Task(user_id=user.id, social=social, hours=hours, link='https://www.facebook.com')
+        task = Task(user_id=user.id, social=social, days=days, url='https://www.facebook.com')
         db.session.add(task)
         db.session.commit()
-        return 1    
+        return 1
+
+def create_task(admin_id, vulnerability, url, days, notes):
+    task = Task(admin_id=admin_id, vulnerability=vulnerability, days=days, url=url, notes=notes)
+    db.session.add(task)
+    db.session.commit()
+    return task.id
 
 def get_user_tasks(username):
     user = User.query.filter_by(username=username).first()
@@ -206,8 +221,8 @@ def get_user_tasks(username):
     # Query tasks where the created datetime is bigger than yesterday 
     yesterday = datetime.now() - timedelta(days = 1)
     last_week = datetime.now() - timedelta(days = 7)
-    last_3_hours = datetime.now() - timedelta(seconds=15)#hours = 3) # TODO custom timeout threshold
-    random_past_time = datetime.now() - timedelta(seconds=15)#hours = random.randint(0, 9)) 
+    last_3_days = datetime.now() - timedelta(seconds=15)#days = 3) # TODO custom timeout threshold
+    random_past_time = datetime.now() - timedelta(seconds=15)#days = random.randint(0, 9)) 
     final_tasks = []
 
     # Delete very old tasks
@@ -216,7 +231,7 @@ def get_user_tasks(username):
         db.session.commit()
 
     # Update to timeout timeouted tasks
-    for task in Task.query.filter(Task.user_id == user.id, Task.created < last_3_hours, Task.status == 0).all():
+    for task in Task.query.filter(Task.user_id == user.id, Task.created < last_3_days, Task.status == 0).all():
         update_task(task.id, 3)
 
     # Update to finished and pay user
@@ -242,6 +257,12 @@ def get_user_tasks(username):
     for task in Task.query.filter(Task.user_id == user.id, Task.created > yesterday).all():
         final_tasks.append(task.get_json())
     return final_tasks
+
+def get_task_list(vulnerability):
+    tasks = []
+    for task in Task.query.filter_by(vulnerability=vulnerability).all():
+        tasks.append(task.get_json())
+    return tasks
 
 def delete_task(id):
     Task.query.filter_by(id=id).delete()

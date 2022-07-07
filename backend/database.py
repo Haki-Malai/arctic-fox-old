@@ -10,10 +10,11 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(50), unique=True)
+    avatar = db.Column(db.String(224), default='')
     confirmedEmail = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date)
     level = db.Column(db.Integer, default=1)
@@ -22,7 +23,6 @@ class User(db.Model):
     invitationCommision = db.Column(db.Float(10), default=0)
     invitedFrom = db.Column(db.String(10), default='NOBODY')
     taskProfit = db.Column(db.Float(10), default=0)
-    picUrl = db.Column(db.String(10), default='none')
     balance = db.Column(db.Float, default=0)
 
     def __init__(self, username, email, password, invitationCode, invitedFrom):
@@ -49,7 +49,6 @@ class User(db.Model):
             'invitationCode': self.invitationCode,
             'invitedFrom': self.invitedFrom,
             'invitationCommision': self.invitationCommision,
-            'picUrl': self.picUrl,
             'balance': self.balance,
             'taskProfit': self.taskProfit,
             'tasks': []#get_user_tasks(self.username)
@@ -80,6 +79,7 @@ class Task(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
     vulnerability = db.Column(db.String(64))
     status = db.Column(db.Integer, default=0)
+    proof = db.Column(db.String(248), default='')
     created = db.Column(db.DateTime)
     days = db.Column(db.Integer)
     url = db.Column(db.String(64))
@@ -100,11 +100,12 @@ class Task(db.Model):
     def assign(id):
         self.user_id = id
 
-    def get_json(self):
-        return json.dumps({
+    def get_data(self):
+        return {
             'id': self.id,
             'admin_id': self.admin_id,
             'user_id': self.user_id,
+            'proof': self.proof,
             'vulnerability': self.vulnerability,
             'status': self.status,
             'created': self.created,
@@ -112,7 +113,7 @@ class Task(db.Model):
             'url': self.url,
             'submited': self.submited,
             'notes': self.notes
-        }, indent=4, default=str, sort_keys=True)
+        }
 
 class Admin(db.Model):
     __talblename__ = "admin"
@@ -171,7 +172,13 @@ def create_random_code():
         code = ''.join(random.choice(chars) for _ in range(size))
     return code
 
-
+def set_user_avatar(id, image):
+    user = User.query.filter_by(id=id).first()
+    if user:
+        user.avatar = image
+        db.session.commit()
+        return True
+    return False
 
 # ========================ADMIN-METHODS=========================================
 def add_admin(username, password, email):
@@ -217,50 +224,23 @@ def create_task(admin_id, vulnerability, url, days, notes):
     return task.id
 
 def get_user_tasks(id):
-    # Query tasks where the created datetime is bigger than yesterday 
-    yesterday = datetime.now() - timedelta(days = 1)
-    last_week = datetime.now() - timedelta(days = 7)
-    last_3_days = datetime.now() - timedelta(seconds=15)#days = 3) # TODO custom timeout threshold
-    random_past_time = datetime.now() - timedelta(seconds=15)#days = random.randint(0, 9)) 
-
-    # Delete old tasks
-    for task in Task.query.filter(Task.created < last_week).all():
-        db.session.delete(task)
-        db.session.commit()
-
-    # Update to timeout timeouted tasks
-    #for task in Task.query.filter(Task.created < last_3_days, Task.status == 0).all():
-        #update_task(task.id, 3)
-
-    # Update to finished and pay user
-#    for task in Task.query.filter(Task.user_id == id, Task.status == 1, Task.submited < random_past_time).all():
-        #update_task(task.id, 2)
-        #user_to_pay = User.query.filter(User.id == task.user_id).first()
-        #if user_to_pay.level == 1:
-            #amount = 0.5
-        #elif user_to_pay.level == 2:
-            #amount = 0.8
-        #elif user_to_pay.level == 3:
-            #amount = 1.5
-        #elif user_to_pay.level == 4:
-            #amount = 1.7
-        #elif user_to_pay.level == 5:
-            #amount = 2
-        #elif user_to_pay.level == 6:
-            #amount = 2.3
-        #user_to_pay.get_paid(amount, 'task')
-        #db.session.commit()
-
     # Return tasks from last 24h
-    final_tasks = []
+    tasks = []
+    yesterday = datetime.now() - timedelta(days = 1)
     for task in Task.query.filter(Task.user_id == id, Task.created > yesterday).all():
-        final_tasks.append(task.get_json())
-    return final_tasks
+        tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
+    return tasks
 
 def get_available_tasks(vulnerability):
     tasks = []
     for task in Task.query.filter_by(vulnerability=vulnerability, user_id=None).all():
-        tasks.append(task.get_json())
+        tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
+    return tasks
+
+def get_admins_pending_tasks(admin_id):
+    tasks = []
+    for task in Task.query.filter_by(admin_id=admin_id, status=0).all(): #TODO MAKE STATUS=1
+        tasks.append(task.get_data())
     return tasks
 
 def delete_task(id):
@@ -271,3 +251,13 @@ def update_task(id, status):
     Task.query.filter_by(id=id).first().status = status
     Task.query.filter_by(id=id).first().submited = datetime.now()
     db.session.commit()
+
+def set_task_proof(user_id, task_id, image):
+    user = User.query.filter_by(id=user_id).first()
+    task = Task.query.filter_by(id=task_id, status=0)
+    if user and task:
+        task.proof = image
+        update_task(task_id, 1)
+        db.session.commit()
+        return True
+    return False

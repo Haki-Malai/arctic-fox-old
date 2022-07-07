@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>APPROVE TASKS</h1>
+    {% for task in tasks %}
+        <br>
+        <form method="POST">
+            <img src="{{ task.proof }}" alt="" style="width:400px; height:auto;">
+            <figcaption>{{ task.url }}</figcaption>
+            <input type="hidden" name="id" value="{{ task.id }}">
+            <input type="submit" name="submit" value="Approve">
+            <input type="submit" name="submit" value="Disapprove">
+        </form>
+        <br>
+    {% endfor %}
+    <button onClick="goHome()">Go back</button>
+{% endblock %}

@@ -1,37 +1,15 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>ADMIN HOMEPAGE</h1>
-    {% for id in id %}
-        {{ id }}
-    {% endfor %}
-    <form action="" method="POST">
-        <input id="header" name="header" type="hidden" value="task">
-        <label for="task">Add task</label>
+    <form method="POST">
+        <label for="redirect">What would you like to do?</label>
         <br>
-        <select id="vulnerability" name="vulnerability" required>
+        <select id="redirect" name="redirect" required>
             <br>
-            <option value="Broken Access Control">Broken Access Control</option>
-            <option value="Cryptographic Failures">Cryptographic Failures</option>
-            <option value="Injection">Injection</option>
-            <option value="Insecure Design">Insecure Design</option>
-            <option value="Security Misconfiguration">Security Misconfiguration</option>
-            <option value="Vulnerable and Outdated Components">Vulnerable and Outdated Components</option>
-            <option value="Identification and Authentication Failures">Identification and Authentication Failures</option>
-            <option value="Software and Data Integrity Failures">Software and Data Integrity Failures</option>
-            <option value="Security Logging and Monitoring Failures">Security Logging and Monitoring Failures</option>
-            <option value="Server-Side Request Forgery (SSRF)">Server-Side Request Forgery (SSRF)</option>
+            <option value="add_tasks">Add a task</option>
+            <option value="approve_tasks">Approve pending tasks</option>
+            <option value="pay_users">Pay users</option>
         </select>
-        <br>
-        <label for="days">Days until finish:</label>
-        <input id="days" name="days" type="number" required>
-        <br>
-        <label for="url">Website url:</label>
-        <input id="url" name="url" type="text" placeholder="Website url" required>
-        <br>
-        <label for="notes">Notes:</label>
-        <input type="text" name="notes" required>
-        <br>
-        <input type="submit">
+        <input type="submit" value="Open page">
     </form>
-    <script src="../static/js/home.js"></script>
 {% endblock %}

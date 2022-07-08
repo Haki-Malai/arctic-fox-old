@@ -46,18 +46,17 @@ def welcome():
     """
     try:
         access_token = request.json['access_token']
+        if access_token in tokens:
+            while True:
+                user_data = ''
+                for index, token in enumerate(tokens):
+                    if token == access_token:
+                        user_data = database.get_user_data(users[index])
+                if user_data != None and user_data != '': break
+            return json.dumps({'user_data': user_data}, indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
-        return success(False)
-    if access_token in tokens:
-        while True:
-            user_data = ''
-            for index, token in enumerate(tokens):
-                if token == access_token:
-                    user_data = database.get_user_data(users[index])
-            if user_data != None and user_data != '': break
-        return json.dumps({'user_data': user_data}, indent=4, sort_keys=True, default=str)
-    return json.dumps({'state': 'logout'})
+    return success(False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -80,9 +79,10 @@ def login():
                     break
             response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
             return response
+        return INVALID_CREDENTIALS
     except Exception as e:
-        return success(False)
-    return INVALID_CREDENTIALS
+        print(str(e))
+    return success(False)
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -111,7 +111,8 @@ def signup():
         response = {'access_token': access_token, 'user_data': json.dumps(user_data, default=str)}
         return response
     except Exception as e:
-        return success(False)
+        print(str(e))
+    return success(False)
 
 @app.route('/password', methods=['POST'])
 def password():
@@ -127,7 +128,7 @@ def password():
             return success(database.change_user_password(username, new))
     except Exception as e:
         print(str(e))
-        return success(False)
+    return success(False)
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -143,7 +144,7 @@ def logout():
         return success(True)
     except Exception as e:
         print(str(e))
-        return success(False)
+    return success(False)
 
 @app.route('/tasks', methods=['POST'])
 def task():
@@ -152,21 +153,24 @@ def task():
         Does task based on function name
         Returns success or failure status
     """
-    function = request.json['function']
-    if function == 'available':
-        vulnerability = request.json['vulnerability']
-        tasks = database.get_available_tasks(vulnerability)
-        return json.dumps({'tasks': tasks})
-    elif function == 'assigned':
-        id = request.json['id']
-        tasks = database.get_user_tasks(id)
-        return json.dumps({'tasks': tasks})
-    elif function == 'assign':
-        task_id = request.json['task_id']
-        user_id = request.json['user_id']
-        if database.assign_task(user_id, task_id):
-            return success(True)
-    return json.dumps({'error': 'error'})
+    try:
+        function = request.json['function']
+        if function == 'available':
+            vulnerability = request.json['vulnerability']
+            tasks = database.get_available_tasks(vulnerability)
+            return json.dumps({'tasks': tasks})
+        elif function == 'assigned':
+            id = request.json['id']
+            tasks = database.get_user_tasks(id)
+            return json.dumps({'tasks': tasks})
+        elif function == 'assign':
+            task_id = request.json['task_id']
+            user_id = request.json['user_id']
+            if database.assign_task(user_id, task_id):
+                return success(True)
+    except Exception as e:
+        print(str(e))
+    return success(False)
 
 @app.route('/upload', methods=['POST'])
 def proof():
@@ -197,7 +201,7 @@ def proof():
     return success(False)
 
 # =============================GET-REQUESTS=============================
-@app.route('/feed', methods=['GET'])
+@app.route('/feed', methods=['GET']) #TODO CHANGE THIS!!!
 def feed():
     """
         Returns the recents update from which users have upgraded level and more (currently faked with randomness)

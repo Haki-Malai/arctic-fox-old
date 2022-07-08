@@ -7,7 +7,7 @@ import os
 import base64
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, session, request, render_template, redirect, url_for
+from flask import Flask, session, request, render_template, redirect, url_for, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.utils import secure_filename
@@ -335,3 +335,8 @@ def pay_users():
     if request.method == "POST":
         return 'TODO'
     return render_template('payusers.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')

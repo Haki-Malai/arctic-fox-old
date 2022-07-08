@@ -19,6 +19,7 @@ export default class App extends React.Component {
 			page: 'welcome',
 			accessToken: localStorage.getItem('token'),
 			userData: {},
+			avatar: '',
 			remember: false,
 			data: require('./data.json'),
 			level: [[0.5, 3, 0], [0.8, 5, 100], [1.5, 8, 300], [1.7, 15, 600], [2, 22, 1000], [2.3, 60, 3000]]
@@ -31,6 +32,7 @@ export default class App extends React.Component {
 		this.logout = this.logout.bind(this);
 		this.getAuthorized = this.getAuthorized.bind(this);
 		this.refreshUserData = this.refreshUserData.bind(this);
+		this.setUserAvatar = this.setUserAvatar.bind(this);
 	}
 
 	setRemember(bool) {
@@ -54,6 +56,10 @@ export default class App extends React.Component {
 		this.setState({userData: data});
 	}
 
+	setUserAvatar(data) {
+		this.setState({avatar: "data:image/jpg;base64," + data});
+	}
+
 	getAuthorized() {
 		// Authorization from saved cookie
 		if (this.state.accessToken) {
@@ -73,6 +79,7 @@ export default class App extends React.Component {
 					if (data.user_data) {
 						this.setState({userData: data.user_data});
 						this.setState({page: 'home'});
+						this.setUserAvatar(data.avatar);
 					} else {
 						this.setState({page: 'welcome'});
 					}
@@ -197,6 +204,7 @@ export default class App extends React.Component {
 				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
+				avatar={this.state.avatar}
 			/>
 		} else if (this.state.page === 'earn') {
 			toRender = <Earn 
@@ -210,6 +218,7 @@ export default class App extends React.Component {
 				userData={this.state.userData}
 				level={this.state.level}
 				owaspList={this.state.data.owaspList}
+				avatar={this.state.avatar}
 			/>
 		} else if (this.state.page === 'task') {
 			toRender = <Task 
@@ -223,6 +232,7 @@ export default class App extends React.Component {
 				userData={this.state.userData}
 				level={this.state.level}
 				owaspList={this.state.data.owaspList}
+				avatar={this.state.avatar}
 			/>
 		} else if (this.state.page === 'account') {
 			toRender = <Account 
@@ -236,6 +246,7 @@ export default class App extends React.Component {
 				userData={this.state.userData}
 				level={this.state.level}
 				logout={this.logout}
+				avatar={this.state.avatar}
 			/>
 		}
 		return (

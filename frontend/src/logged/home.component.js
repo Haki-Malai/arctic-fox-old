@@ -49,7 +49,7 @@ export default class Home extends React.Component {
         for (let i=0; i<this.state.feed.length; i++) {
             feed.push(
                 <View key={i} style={styles.feed}>
-                    <Image style={styles.feedPic} source={'https://fer-uig.glitch.me/?uuid=712'+i}/>
+                    <Image style={styles.feedPic} source={this.props.avatar}/>
                     <Text>User {this.state.feed[i][0]} just upgraded to level {this.state.feed[i][1]}!</Text>
                 </View>
             )

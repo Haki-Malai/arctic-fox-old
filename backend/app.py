@@ -52,8 +52,9 @@ def welcome():
                 for index, token in enumerate(tokens):
                     if token == access_token:
                         user_data = database.get_user_data(users[index])
-                if user_data != None and user_data != '': break
-            return json.dumps({'user_data': user_data}, indent=4, sort_keys=True, default=str)
+                        user_avatar = database.get_user_avatar(users[index], app.config['UPLOAD_FOLDER'])
+                if user_data: break
+            return json.dumps({'user_data': user_data, 'avatar': user_avatar}, indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
     return success(False)
@@ -186,7 +187,8 @@ def proof():
                 if request.form.get('user_id'):
                     user_id = request.form['user_id']
                     image_name = secure_filename(image.filename)
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/user' + user_id + image.filename))
+                    image_name = 'user' + user_id + image_name
+                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
                     if database.set_user_avatar(user_id, image_name):
                         return success(True)
                 elif request.form.get('task_id'):

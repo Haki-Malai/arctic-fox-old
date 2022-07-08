@@ -28,7 +28,7 @@ export default class Account extends React.Component {
                 <ScrollView contentContainerStyle={styles.accountScroll} horizontal={false} scrollEnabled={false}>
                     <View style={styles.account}>
                         <View style={styles.accountDetailsWrapper}>
-                            <Image style={styles.accountPic} source={'https://fer-uig.glitch.me/?uuid=7121'}/>
+                            <Image style={styles.accountPic} source={this.props.avatar}/>
                             <Text style={styles.accountUsername}>{this.props.userData.username}</Text>
                             <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Email:': 'Ηλεκτρονική διεύθυνση:'}{this.props.userData.email}</Text>
                             <Text style={styles.accountDetail}>{this.props.lang==='en'? 'Level:': 'Επίπεδο:'} {this.props.userData.level}</Text>

@@ -37,7 +37,7 @@ export default class Earn extends React.Component {
             }
             main = (
                 <View style={styles.container}>
-                    <Top userData={this.props.userData} level={this.props.level} lang={this.props.lang}></Top>
+                    <Top avatar={this.props.avatar} userData={this.props.userData} level={this.props.level} lang={this.props.lang}></Top>
                     <EarnNavigator setPage={this.setPage} level={this.props.level} userData={this.props.userData} lang={this.props.lang}></EarnNavigator>
                     <Level userData={this.props.userData} lang={this.props.lang} level={this.state.page} value={this.props.level[this.state.page-1][0]} daily={this.props.level[this.state.page-1][1]} buy={this.props.level[this.state.page-1][2]}></Level>
                     {media}

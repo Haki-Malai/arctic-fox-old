@@ -13,7 +13,7 @@ export default class Top extends React.Component {
         return(
             <View style={styles.earnTop}>
                 <Text style={styles.earnTitle}>{this.props.lang==='en'? 'Earn': 'Κέρδισε'}</Text>
-                <Image style={styles.accountPic} source={'https://fer-uig.glitch.me/?uuid=7121'}/>
+                <Image style={styles.accountPic} source={this.props.avatar}/>
                 <Text style={styles.earnTextBig}>{this.props.lang==='en'? 'Membership: Level': 'Ιδιότητα μέλους: Επίπεδο'} {this.props.userData.level}</Text>
                 <Image style={styles.earnTextIcon} source={require('../../../assets/levels/'+this.props.userData.level+'.png')}/>
                 <Text style={styles.earnText}>{this.props.lang==='en'? 'Achievable task: ': 'Εφικτές εργασίες: '} {this.props.level[this.props.userData.level-1][1]}</Text>

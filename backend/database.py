@@ -1,6 +1,8 @@
 import string
 import random
 import json
+import os
+import base64
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -14,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(50), unique=True)
-    avatar = db.Column(db.String(224), default='')
+    avatar = db.Column(db.String(224), default='default.jpeg')
     confirmedEmail = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date)
     level = db.Column(db.Integer, default=1)
@@ -204,6 +206,14 @@ def set_user_avatar(id, image):
         return True
     return False
 
+def get_user_avatar(id, path):
+    try:
+        user = User.query.filter_by(id=id).first()
+        with open(os.path.join(path+'avatars/'+user.avatar), 'rb') as image:
+            encoded_img = base64.b64encode(image.read())
+        return encoded_img.decode('utf-8')
+    except Exception as e:
+        print(str(e))
 # ========================ADMIN-METHODS=========================================
 def add_admin(username, password, email):
     try:

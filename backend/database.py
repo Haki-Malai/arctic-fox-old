@@ -166,13 +166,11 @@ def change_user_password(username, password):
 def get_user_data(id):
     return User.query.filter_by(id=id).first().get_data()
 
-def get_user_id(username):
-    return User.query.filter_by(username=username).first().id
-
 def credentials_valid(username, password):
     user = User.query.filter_by(username=username).first()
     if user:
-        return user.validate_password(password)
+        if user.validate_password(password):
+            return user.id 
     return False
 
 def create_random_code():

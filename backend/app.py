@@ -72,17 +72,17 @@ def login():
     except Exception as e:
         return success(False)
 
-    if database.credentials_valid(username, password):
-        id = database.get_user_id(username)
-        access_token = create_access_token(identity=id)
-        while True:
-            user_data = database.get_user_data(id)
-            if user_data != None and access_token != None: 
-                tokens.append(access_token)
-                users.append(database.get_user_id(username))
-                break
-        response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
-        return response
+        user_id = database.credentials_valid(username, password)
+        if user_id:
+            access_token = create_access_token(identity=user_id)
+            while True:
+                user_data = database.get_user_data(user_id)
+                if user_data != None and access_token != None: 
+                    tokens.append(access_token)
+                    users.append(user_id)
+                    break
+            response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
+            return response
     return INVALID_CREDENTIALS
 
 @app.route('/signup', methods=['POST'])

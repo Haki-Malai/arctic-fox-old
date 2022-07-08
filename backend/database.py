@@ -136,22 +136,26 @@ class Admin(db.Model):
 
 # =========================USER==============================================
 def add_user(username, password, email, invitedFrom='NOBODY'):
-    # Check for availability
-    email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if username == '' or password == '' or email == '':
-        return 'empty_fields'
-    elif User.query.filter_by(username=username).first():
-        return 'username_unavailable'
-    elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
-        return 'email_unavailable'
+    """
+        Tries to add the new entry
+        Returns result or new user id
+    """
     try:
+        # Check for availability
+        email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        if username == '' or password == '' or email == '':
+            return 'empty_fields'
+        elif User.query.filter_by(username=username).first():
+            return 'username_unavailable'
+        elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
+            return 'email_unavailable'
         user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
         db.session.add(user)
         db.session.commit()
+        return user.id
     except Exception as e:
         print(str(e))
         return str(e)
-    return user.id
 
 def change_user_password(username, password):
     try:
@@ -164,7 +168,11 @@ def change_user_password(username, password):
         return False
 
 def get_user_data(id):
-    return User.query.filter_by(id=id).first().get_data()
+    try:
+        return User.query.filter_by(id=id).first().get_data()
+    except Exception as e:
+        print(str(e))
+    return False
 
 def user_credentials_valid(username, password):
     try:
@@ -174,19 +182,23 @@ def user_credentials_valid(username, password):
                 return user.id 
     except Exception as e:
         print(str(e))
-        return False
+    return False
 
 def create_random_code():
-    chars=string.ascii_uppercase + string.digits
-    size = 10
-    code = ''.join(random.choice(chars) for _ in range(size))
-    while User.query.filter_by(invitationCode=code).first():
+    try:
+        chars=string.ascii_uppercase + string.digits
+        size = 10
         code = ''.join(random.choice(chars) for _ in range(size))
-    return code
+        while User.query.filter_by(invitationCode=code).first():
+            code = ''.join(random.choice(chars) for _ in range(size))
+        return code
+    except Exception as e:
+        print(str(e))
+    return False
 
 def set_user_avatar(id, image):
     user = User.query.filter_by(id=id).first()
-    if user:
+    if user:#TODO REMOVE OLD AVATAR
         user.avatar = image
         db.session.commit()
         return True
@@ -215,23 +227,26 @@ def admin_credentials_valid(username, password):
 
 # ========================TASKS=================================================
 def assign_task(user_id, task_id):
-    # Check if user is privileged to another task
-    user = User.query.filter_by(id=user_id).first()
-    if user:
-        yesterday = datetime.now() - timedelta(days = 1)
-        today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
-        if (user.level == 1 and today_done >= 3) or \
-            (user.level == 2 and today_done >= 5) or \
-            (user.level == 3 and today_done >= 8) or \
-            (user.level == 4 and today_done >= 15) or \
-            (user.level == 5 and today_done >= 22) or \
-            (user.level == 6 and today_done >= 60):
-            return False
-        else:
-            task = Task.query.filter_by(id=task_id).first()
-            task.user_id = user_id
-            db.session.commit()
-            return True
+    try:
+        # Check if user is privileged to another task
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            yesterday = datetime.now() - timedelta(days = 1)
+            today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
+            if (user.level == 1 and today_done >= 3) or \
+                (user.level == 2 and today_done >= 5) or \
+                (user.level == 3 and today_done >= 8) or \
+                (user.level == 4 and today_done >= 15) or \
+                (user.level == 5 and today_done >= 22) or \
+                (user.level == 6 and today_done >= 60):
+                return False
+            else:
+                task = Task.query.filter_by(id=task_id).first()
+                task.user_id = user_id
+                db.session.commit()
+                return True
+    except Exception as e:
+        print(str(e))
     return False
 
 def create_task(admin_id, vulnerability, url, days, notes):
@@ -265,19 +280,32 @@ def get_admin_tasks(admin_id, status):
     return tasks
 
 def delete_task(id):
-    Task.query.filter_by(id=id).delete()
-    db.session.commit()
-
-def update_task(id, status):
-    Task.query.filter_by(id=id).first().status = status
-    Task.query.filter_by(id=id).first().submited = datetime.now()
-    db.session.commit()
-
-def set_task_proof(task_id, image):
-    task = Task.query.filter_by(id=task_id, status=0)
-    if task:
-        task.proof = image
-        update_task(task_id, 1)
+    try:
+        Task.query.filter_by(id=id).delete()
         db.session.commit()
         return True
+    except Exception as e:
+        print(str(e))
+    return False
+
+def update_task(id, status):
+    try:
+        Task.query.filter_by(id=id).first().status = status
+        Task.query.filter_by(id=id).first().submited = datetime.now()
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(str(e))
+    return False
+
+def set_task_proof(task_id, image):
+    try:
+        task = Task.query.filter_by(id=task_id, status=0)
+        if task:
+            task.proof = image
+            update_task(task_id, 1)
+            db.session.commit()
+            return True
+    except Exception as e:
+        print(str(e))
     return False

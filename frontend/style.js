@@ -490,7 +490,7 @@ export default StyleSheet.create({
 		fontSize: '1em'
 	},
 	expandedMedia: {
-		height: '12em',
+		height: 'auto',
 	},
 	upload: {
 		paddingVertical: '.4em',
@@ -506,6 +506,14 @@ export default StyleSheet.create({
 		color: 'white',
 		marginVertical: '.2em',
 		fontSize: '1.2em'
+	},
+	uploadLinkTextTop: {
+		alignSelf: 'center',
+		cursor: 'pointer'
+	},
+	uploadLinkTextTopWrapper: {
+		width: ScreenWidth/1.2,
+		alignText: 'center',
 	},
 	uploadInput: {
 		fontSize: '1.2em'

@@ -202,7 +202,7 @@ def assign_task(user_id, task_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
         yesterday = datetime.now() - timedelta(days = 1)
-        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created < yesterday).all())
+        today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
         if (user.level == 1 and today_done >= 3) or \
             (user.level == 2 and today_done >= 5) or \
             (user.level == 3 and today_done >= 8) or \
@@ -223,11 +223,11 @@ def create_task(admin_id, vulnerability, url, days, notes):
     db.session.commit()
     return task.id
 
-def get_user_tasks(id):
+def get_user_tasks(user_id):
     # Return tasks from last 24h
     tasks = []
     yesterday = datetime.now() - timedelta(days = 1)
-    for task in Task.query.filter(Task.user_id == id, Task.created > yesterday).all():
+    for task in Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all():
         tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
     return tasks
 
@@ -239,7 +239,7 @@ def get_available_tasks(vulnerability):
 
 def get_admins_pending_tasks(admin_id):
     tasks = []
-    for task in Task.query.filter_by(admin_id=admin_id, status=0).all(): #TODO MAKE STATUS=1
+    for task in Task.query.filter_by(admin_id=admin_id, status=1).all():
         tasks.append(task.get_data())
     return tasks
 
@@ -252,10 +252,9 @@ def update_task(id, status):
     Task.query.filter_by(id=id).first().submited = datetime.now()
     db.session.commit()
 
-def set_task_proof(user_id, task_id, image):
-    user = User.query.filter_by(id=user_id).first()
+def set_task_proof(task_id, image):
     task = Task.query.filter_by(id=task_id, status=0)
-    if user and task:
+    if task:
         task.proof = image
         update_task(task_id, 1)
         db.session.commit()

@@ -6,11 +6,12 @@ export default class Media extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            uploaded: false,
-            expanded: false
+            expanded: false,
+            file: ''
         }
         this.setExpanded = this.setExpanded.bind(this);
-        this.uploadFile = this.uploadFile.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
+        this.loadImage = this.loadImage.bind(this);
     }
 
     setExpanded() {
@@ -21,30 +22,26 @@ export default class Media extends React.Component {
         Linking.openURL(url).catch(err => alert("Couldn't load page", err));
     }
 
-    uploadFile() {
-        var thefile = document.getElementById('thefile');
-        var filename = thefile.value.replace(/.*[\/\\]/, '');
-        if (filename) {
+    loadImage() {
+        this.setState({file: document.querySelector('input[type="file"]').files[0]});
+    }
+
+    uploadImage() {
+        if (this.state.file) {
+            var formData = new FormData();
+            formData.append('image', this.state.file);
+            formData.append('task_id', this.props.data.id);
             const requestOptions = {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*'
-                },
-                mode: 'cors',
-                body: JSON.stringify({
-                    filename: filename,
-                    id: this.props.data.id,
-                    function: 'update'
-                })
+				mode: 'cors',
+				body: formData
             }
 
-            fetch(this.props.url+'tasks', requestOptions)
+            fetch(this.props.url+'upload', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         alert('Image uploaded successfully!');
-                        this.setState({uploaded: true}); // Useless, but makes the component reload
                     } else {
                         alert('Something went wrong, please try again!');
                     }
@@ -54,6 +51,7 @@ export default class Media extends React.Component {
             });
         }
     }
+
     render() {
         var toRender, mediaStyles = [styles.media], toDo;
         if (this.props.data.requirements === 1) {
@@ -78,32 +76,37 @@ export default class Media extends React.Component {
             var upload;
             // If status isn't on process there is no need for the upload area
             if (this.props.data.status == 0) {
-                upload = <View>
+                upload = <View key={this.props.mkey}>
                                 <Text style={styles.uploadLinkText}>Upload proof</Text>
-                                <input 
+                                <input
                                     id="file"
-                                    style={{ fontSize: '1.2em', marginTop: '.6em'}} 
+                                    style={{ fontSize: '1.2em', marginTop: '.6em'}}
                                     type="file" 
-                                    accept='image/*'>
+                                    accept='image/*'
+                                    onChange={() => this.loadImage()}
+                                >
                                 </input>
-                                <Pressable style={styles.uploadButton} onPress={() => this.uploadFile()}>
+                                <Pressable style={styles.uploadButton} onPress={() => this.uploadImage()}>
                                     <Text style={styles.uploadLinkText}>Upload</Text>
                                 </Pressable>
                             </View>
             }
-            toRender = <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
+            toRender = <View style={mediaStyles} >
                             <View style={styles.upload}>
+                                <View style={styles.uploadLinkTextTopWrapper}>
+                                    <Text style={[styles.uploadLinkTextTop, styles.uploadLinkText]} onClick={() => this.setExpanded()}>Minimize</Text>
+                                </View>
+                                <Text style={styles.uploadLinkText}>Task: {this.props.data.vulnerability}</Text>
                                 <Pressable style={styles.uploadLink} >
-                                    <Text style={styles.uploadLinkText}>Task: {this.props.data.vulnerability}</Text>
                                     <Text style={styles.uploadLinkText} onPress={() => this.loadInBrowser(this.props.data.url)}>Link: {this.props.data.url}</Text>
                                 </Pressable>
                                 {upload}
                             </View>
-                        </Pressable>
+                        </View>
         } else {
             toRender =  <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
                             <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.data.vulnerability+'.png')}/>
-                            <Text style={styles.mediaTitle}>{this.props.data.vulnerability} {this.props.data.status==3? '(Timeout)': ''}</Text>
+                            <Text style={styles.mediaTitle}>{this.props.data.vulnerability} </Text>
                         </Pressable>
         }
         return(

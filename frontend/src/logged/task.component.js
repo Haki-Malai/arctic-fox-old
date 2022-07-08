@@ -66,7 +66,7 @@ export default class Task extends React.Component {
                 var task_data = this.state.tasks[i];
                 if (task_data.status === 0) {
                     noData = false;
-                    toRender.push(<Media enabled={true} data={task_data} lang={this.props.lang}></Media>);
+                    toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);
                 }
             }
             if (noData) {
@@ -78,7 +78,7 @@ export default class Task extends React.Component {
                 var task_data = this.state.tasks[i];
                 if (task_data.status === 1) {
                     noData = false;
-                    toRender.push(<Media enabled={true} data={task_data} lang={this.props.lang}></Media>);
+                    toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);
                 }
             }
             if (noData) {
@@ -90,7 +90,7 @@ export default class Task extends React.Component {
                 var task_data = this.state.tasks[i];
                 if (task_data.status === 2) {
                     noData = false;
-                    toRender.push(<Media enabled={true} data={task_data} lang={this.props.lang}></Media>);
+                    toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);
                 }
             }
             if (noData) {
@@ -100,7 +100,6 @@ export default class Task extends React.Component {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];
-                console.log(task_data)
                 if (task_data.status === 3) {
                     noData = false;
                     toRender.push(<Media key={i} mkey={i} enabled={true} data={task_data} lang={this.props.lang} url={this.props.url}></Media>);

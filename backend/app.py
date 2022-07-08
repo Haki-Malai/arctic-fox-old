@@ -4,6 +4,7 @@ import re
 import random
 import string
 import os
+import base64
 from pathlib import Path
 from datetime import datetime
 from flask import Flask, session, request, render_template, redirect, url_for
@@ -193,33 +194,25 @@ def task():
         user_id = request.json['user_id']
         if database.assign_task(user_id, task_id):
             return SUCCESS
-        else:
-            return json.dumps({'error': 'error'})
-    elif function == 'update':
-        id = request.json['id']
-        database.update_task(id, 1)
-        return SUCCESS
+    return json.dumps({'error': 'error'})
 
-@app.route('/proof', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def proof():
     if request.method == 'POST':
         image = request.files['image']
-        if image:
-            purpose = request.form['purpose']
-            if purpose == 'avatar':
-                id = request.form['id']
-                image_name = secure_filename(image.filename)
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + str(id) + image.filename))
-                if database.set_user_avatar(id, image_name):
-                    return SUCCESS
-            if purpose == 'task':
-                user_id = request.form['user_id']
-                task_id = request.form['task_id']
-                image_name = secure_filename(image.filename)
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + str(id) + image.filename))
-                if database.set_task_proof(user_id, admin_id, image_name):
-                    return SUCCESS
-    return ERROR
+        if request.form.get('user_id'):
+            user_id = request.form['user_id']
+            image_name = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/user' + user_id + image.filename))
+            if database.set_user_avatar(user_id, image_name):
+                return SUCCESS
+        elif request.form['task_id']:
+            task_id = request.form['task_id']
+            image_name = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/task' + task_id + image.filename))
+            if database.set_task_proof(task_id, image_name):
+                return SUCCESS
+    return json.dumps({'error': 'error'})
 
 # =============================GET-REQUESTS=============================
 @app.route('/feed', methods=['GET'])
@@ -309,7 +302,7 @@ def admin_home():
 @app.route('/admin/home/addtasks', methods=['GET', 'POST'])
 def add_tasks():
     if request.method == "POST":
-        vulnerability = request.args.get('vulnerability')
+        vulnerability = request.form['vulnerability']
         days = request.form['days']
         url = request.form['url']
         notes = request.form['notes']

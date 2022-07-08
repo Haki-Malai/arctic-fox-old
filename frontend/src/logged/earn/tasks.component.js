@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, Image, Pressable, View } from 'react-native';
+import Media from './media.component';
 import styles from '../../../style';
 
 export default class Tasks extends React.Component {
@@ -12,7 +13,6 @@ export default class Tasks extends React.Component {
     }
 
     getTask(id) {
-		// Authorization from saved cookie
         const requestOptions = {
             method: 'POST',
             headers: { 
@@ -67,7 +67,7 @@ export default class Tasks extends React.Component {
                 }
             })
             .catch(e => {
-                alert(e);
+                console.log(e);
             });
     }
 
@@ -83,7 +83,7 @@ export default class Tasks extends React.Component {
             toRender.push(
                 <Pressable key={i} style={i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} onPress={() => this.getTask(task_data.id)} >
                     <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.title+'.png')}/>
-                    <Text style={styles.mediaTitle}>Find vulnerability  +{this.props.plus}</Text>
+                    <Text style={styles.mediaTitle}>#{task_data.id} Find vulnerability  +{this.props.plus}</Text>
                 </Pressable>
             );
         }

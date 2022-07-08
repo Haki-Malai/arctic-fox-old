@@ -69,9 +69,6 @@ def login():
         username = request.json['username'].lower()
         password = request.json['password']
         remember = request.json['remember']
-    except Exception as e:
-        return success(False)
-
         user_id = database.credentials_valid(username, password)
         if user_id:
             access_token = create_access_token(identity=user_id)
@@ -83,6 +80,8 @@ def login():
                     break
             response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
             return response
+    except Exception as e:
+        return success(False)
     return INVALID_CREDENTIALS
 
 @app.route('/signup', methods=['POST'])

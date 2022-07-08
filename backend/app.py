@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
 JWT_SECRET_KEY = "please-remember-to-change-me"
 UPLOAD_FOLDER = str(Path(__file__).resolve().parent) + '/static/uploads/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app)
@@ -36,12 +36,6 @@ feed_stack = []
 start_time = datetime.now()
 wait = random.randint(1, 59)
 
-# Responses
-INVALID_CREDENTIALS = json.dumps({'error': 'invalid_credentials'})
-SIGNUP_ERROR = json.dumps({'error': 'signup_error'})
-SUCCESS = json.dumps({'success': True})
-ERROR = json.dumps({'success': False})
-
 # =============================POST-REQUESTS=============================
 
 @app.route("/", methods=["POST"])
@@ -50,12 +44,11 @@ def welcome():
         Automatical login if access_token provided is in the 'tokens' list.
         Returns a json containing valueable data of the user.
     """
-    # Handle data parsing errors
     try:
         access_token = request.json['access_token']
     except Exception as e:
         print(str(e))
-        return ERROR
+        return success(False)
     if access_token in tokens:
         while True:
             user_data = ''
@@ -72,13 +65,12 @@ def login():
         Receives json with 3 parameters: username, password and remember.
         Returns created session token and the user's data or the notification of invalid credentials.
     """
-    # Handle data parsing errors
     try:
         username = request.json['username'].lower()
         password = request.json['password']
         remember = request.json['remember']
     except Exception as e:
-        return ERROR
+        return success(False)
 
     if database.credentials_valid(username, password):
         id = database.get_user_id(username)
@@ -99,42 +91,28 @@ def signup():
         Receives json with 4 parameters: username, password, email and invitor's code.
         Returns either login token and user's data or failure response
     """
-    # Handle data parsing errors
     try:
         username = request.json['username'].lower()
         password = request.json['password']
         email = request.json['email']
-        # If it's empty then it's NOBODY
-        try:
-            invitedFrom = request.json['invitorCode']
-        except:
-            invitedFrom = 'NOBODY'
-    except Exception as e:
-        return ERROR
-
-    # Check for availability, if fields are ok etc then create the new user entry in the database
-    email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if username == '' or password == '' or email == '':
-        return json.dumps({'error': 'empty_fields'})
-    if database.username_exists(username) or len(username) < 6 or len(username) > 25:
-        return json.dumps({'error': 'username_unavailable'})
-    elif database.email_exists(email) or not re.search(email_regex, email):
-        return json.dumps({'error': 'email_unavailable'})
-    elif len(password) < 8 or len(password) > 25:
-        return json.dumps({'error': 'password_error'})
-    else:
+        invitedFrom = request.json['invitorCode']
         while True:
-            new_id = database.add_user(username, password, email, invitedFrom)
-            if new_id:
-                access_token = create_access_token(identity=new_id)
-                user_data = database.get_user_data(new_id)
+            # db_response will be int (user's id) or an error message
+            db_response = database.add_user(username, password, email, invitedFrom)
+            if isinstance(db_response, int):
+                access_token = create_access_token(identity=db_response)
+                user_data = database.get_user_data(db_response)
+            else:
+                return json.dumps({'error': db_response})
+            # Save access_token and user data
             if user_data != None and access_token != None: 
                 tokens.append(access_token)
-                users.append(new_id)
+                users.append(db_response)
                 break
         response = {'access_token': access_token, 'user_data': json.dumps(user_data, default=str)}
         return response
-    return SIGNUP_ERROR
+    except Exception as e:
+        return success(False)
 
 @app.route('/password', methods=['POST'])
 def password():
@@ -142,42 +120,37 @@ def password():
         Received json with username, old password and new password
         If old credentials are validated then the password changes to the new one
     """
-    # Handle data parsing errors
     try:
         username = request.json['username'].lower()
         password = request.json['password']
         new = request.json['new']
+        if database.credentials_valid(username, password):
+            return success(database.change_user_password(username, new))
     except Exception as e:
         print(str(e))
-        return json.dumps({'error': 'Error while receiving data.', 'data': e})
-    if database.credentials_valid(username, password):
-        if len(new) >= 8 and len(new) <= 25:
-            database.change_user_password(username, new)
-            return SUCCESS
-        return PASSWORD_ERROR
-    return INVALID_CREDENTIALS
+        return success(False)
 
 @app.route('/logout', methods=['POST'])
 def logout():
     """
         Logs out the user by deleting the access_token from server's memory
     """
-    # Handle data parsing errors
     try:
         access_token = request.json['access_token']
+        for index, token in enumerate(tokens):
+            if access_token == token:
+                tokens.remove(index)
+                users.remove(index)
+        return success(True)
     except Exception as e:
         print(str(e))
-        return json.dumps({'error': 'Caution; the token didn\'t get deleted from the server\'s memory and it can still be used!', 'data': e})
-    for index, token in enumerate(tokens):
-        if access_token == token:
-            tokens.remove(index)
-            users.remove(index)
-    return SUCCESS
+        return success(False)
 
 @app.route('/tasks', methods=['POST'])
 def task():
     """
         Receives the function's name
+        Does task based on function name
         Returns success or failure status
     """
     function = request.json['function']
@@ -193,26 +166,36 @@ def task():
         task_id = request.json['task_id']
         user_id = request.json['user_id']
         if database.assign_task(user_id, task_id):
-            return SUCCESS
+            return success(True)
     return json.dumps({'error': 'error'})
 
 @app.route('/upload', methods=['POST'])
 def proof():
-    if request.method == 'POST':
-        image = request.files['image']
-        if request.form.get('user_id'):
-            user_id = request.form['user_id']
-            image_name = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/user' + user_id + image.filename))
-            if database.set_user_avatar(user_id, image_name):
-                return SUCCESS
-        elif request.form['task_id']:
-            task_id = request.form['task_id']
-            image_name = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/task' + task_id + image.filename))
-            if database.set_task_proof(task_id, image_name):
-                return SUCCESS
-    return json.dumps({'error': 'error'})
+    """
+        Received data as form-data
+        Expected file is image type
+        Saves file for whatever purpose
+        Returns success or failure status
+    """
+    try:
+        if request.method == 'POST':
+            image = request.files['image']
+            if image and allowed_file(image.filename):
+                if request.form.get('user_id'):
+                    user_id = request.form['user_id']
+                    image_name = secure_filename(image.filename)
+                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/user' + user_id + image.filename))
+                    if database.set_user_avatar(user_id, image_name):
+                        return success(True)
+                elif request.form.get('task_id'):
+                    task_id = request.form['task_id']
+                    image_name = secure_filename(image.filename)
+                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/task' + task_id + image.filename))
+                    if database.set_task_proof(task_id, image_name):
+                        return success(True)
+    except Exception as e:
+        print(str(e))
+    return success(False)
 
 # =============================GET-REQUESTS=============================
 @app.route('/feed', methods=['GET'])
@@ -242,12 +225,15 @@ def feed():
 
 @app.route('/guide', methods=['GET'])
 def guide():
+    """
+        Returns guide text for guide.json file
+    """
     try:
         file = open('assets/guide.json')
         guide = json.load(file)
         return json.dumps(guide)
     except:
-        return ERROR
+        return success(False)
 
 # =============================ADMIN-PAGE=========================
 app.secret_key = 'SUPER SECRET KEY'
@@ -339,4 +325,13 @@ def pay_users():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+                          'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
+# ==========================HELPER-FUNCTIONS=======================
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def success(bool):
+    return json.dumps({'success': bool})

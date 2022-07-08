@@ -136,15 +136,32 @@ class Admin(db.Model):
 
 # =========================USER==============================================
 def add_user(username, password, email, invitedFrom='NOBODY'):
-    user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
-    db.session.add(user)
-    db.session.commit()
+    # Check for availability
+    email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if username == '' or password == '' or email == '':
+        return 'empty_fields'
+    elif User.query.filter_by(username=username).first():
+        return 'username_unavailable'
+    elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
+        return 'email_unavailable'
+    try:
+        user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        print(str(e))
+        return str(e)
     return user.id
 
 def change_user_password(username, password):
-    user = User.query.filter_by(username=username).first()
-    user.password = generate_password_hash(password)
-    db.session.commit()
+    try:
+        user = User.query.filter_by(username=username).first()
+        user.password = generate_password_hash(password)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
 
 def get_user_data(id):
     return User.query.filter_by(id=id).first().get_data()
@@ -157,12 +174,6 @@ def credentials_valid(username, password):
     if user:
         return user.validate_password(password)
     return False
-
-def username_exists(username):
-    return User.query.filter_by(username=username).first()
-
-def email_exists(email):
-    return User.query.filter_by(email=email).first()
 
 def create_random_code():
     chars=string.ascii_uppercase + string.digits

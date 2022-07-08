@@ -68,7 +68,7 @@ def login():
         username = request.json['username'].lower()
         password = request.json['password']
         remember = request.json['remember']
-        user_id = database.credentials_valid(username, password)
+        user_id = database.user_credentials_valid(username, password)
         if user_id:
             access_token = create_access_token(identity=user_id)
             while True:
@@ -79,7 +79,6 @@ def login():
                     break
             response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
             return response
-        return INVALID_CREDENTIALS
     except Exception as e:
         print(str(e))
     return success(False)
@@ -239,96 +238,135 @@ def guide():
         return success(False)
 
 # =============================ADMIN-PAGE=========================
-app.secret_key = 'SUPER SECRET KEY'
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 admins = []
 admin_tokens = []
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/admin', methods=['GET'])
 def admin():
+    """
+        Renders the template
+    """
     return render_template('admin.html')
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
-        if database.admin_credentials_valid(username, password):
-            access_token = create_access_token(identity=username)
-            admin_tokens.append(access_token)
-            admins.append(database.get_admin_id(username))
-            session['access_token'] = access_token
-            return redirect(url_for('.admin_home', access_token=access_token))
+    """
+        Receives username and password as form-data
+        Redirects to home or renders login page
+    """
+    try:
+        if request.method == "POST":
+            username = request.form['username']
+            password = request.form['password']
+            admin_id = database.admin_credentials_valid(username, password)
+            if isinstance(admin_id, int):
+                access_token = create_access_token(identity=admin_id)
+                admin_tokens.append(access_token)
+                admins.append(admin_id)
+                return redirect(url_for('.admin_home', access_token=access_token))
+    except Exception as e:
+        print(str(e))
     return render_template('login.html')
 
 @app.route('/admin/register', methods=['GET', 'POST'])
 def admin_register():
-    if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        secret_password = request.form['secret_password']
-        if secret_password == 'TOPSECRETPASSWORD':
-            if database.add_admin(username, password, email):
-                access_token = create_access_token(identity=username)
-                admin_tokens.append(access_token)
-                admins.append(database.get_admin_id(username))
-                session['access_token'] = access_token
-                return redirect(url_for('.admin_home', access_token=access_token))
-            else:
-                return render_template('error.html')
+    """
+        Receives username, password, email and secret_password as form-data
+        Redirects to home or renders login page
+    """
+    try:
+        if request.method == "POST":
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            secret_password = request.form['secret_password']
+            if secret_password == 'TOPSECRETPASSWORD':
+                admin_id = database.add_admin(username, password, email)
+                if isinstance(admin_id, int):
+                    access_token = create_access_token(identity=admin_id)
+                    admin_tokens.append(access_token)
+                    admins.append(admin_id)
+                    return redirect(url_for('.admin_home', access_token=access_token))
+    except Exception as e:
+        print(str(e))
     return render_template('register.html')
 
 @app.route('/admin/home', methods=['GET', 'POST'])
 def admin_home():
-    access_token = request.args.get('access_token')
-    if request.method == "POST":
-        req = request.form['redirect']
+    """
+        Receives access_token
+        If valid, renders home.html else redirects to login page
+    """
+    try:
+        access_token = request.args.get('access_token')
         if access_token in admin_tokens:
-            return redirect(url_for('.'+req, access_token=access_token))
-    return render_template('home.html')
+            if request.method == "POST":
+                req = request.form['redirect']
+                return redirect(url_for('.'+req, access_token=access_token))
+            return render_template('home.html')
+    except Exception as e:
+        print(str(e))
+    return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/addtasks', methods=['GET', 'POST'])
 def add_tasks():
-    if request.method == "POST":
-        vulnerability = request.form['vulnerability']
-        days = request.form['days']
-        url = request.form['url']
-        notes = request.form['notes']
+    """
+        Receives access_token, vulnerability type, days, url and notes as form-data
+        Creates the task
+        If no access_token, redirects to login
+    """
+    try:
         access_token = request.args.get('access_token')
-        for index, token in enumerate(admin_tokens):
-            if token == access_token:
-                database.create_task(admins[index], vulnerability, url, days, notes)
-    return render_template('addtasks.html')
+        if access_token in admin_tokens:
+            if request.method == "POST":
+                    vulnerability = request.form['vulnerability']
+                    days = request.form['days']
+                    url = request.form['url']
+                    notes = request.form['notes']
+                    for index, token in enumerate(admin_tokens):
+                        if token == access_token:
+                            return render_template('addtasks.html', success=database.create_task(admins[index], vulnerability, url, days, notes))
+            return render_template('addtasks.html')
+    except Exception as e:
+        print(str(e))
+    return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/approvetasks', methods=['GET', 'POST'])
 def approve_tasks():
-    access_token = request.args.get('access_token')
-    if access_token in admin_tokens:
-        if request.method == 'POST':
-            id = request.form['id']
-            if request.form['submit'] == 'Approve':
-                database.update_task(id, 2)
-            elif request.form['submit'] == 'Disapprove':
-                database.update_task(id, 3)
+    """
+        Receives access_token, vulnerability type, days, url and notes as form-data
+        Creates the task
+        If no access_token, redirects to login
+    """
+    try:
+        access_token = request.args.get('access_token')
+        if access_token in admin_tokens:
+            if request.method == 'POST':
+                task_id = request.form['task_id']
+                if request.form['submit'] == 'Approve':
+                    database.update_task(task_id, 2)
+                elif request.form['submit'] == 'Disapprove':
+                    database.update_task(task_id, 3)
 
-        for index, token in enumerate(admin_tokens):
-            if token == access_token:
-                tasks = database.get_admins_pending_tasks(admins[index])
-                return render_template('approvetasks.html', tasks=tasks)
-    else:
-        return redirect(url_for('.admin_login'))
+            for index, token in enumerate(admin_tokens):
+                if token == access_token:
+                    tasks = database.get_admin_tasks(admins[index], 1)
+                    return render_template('approvetasks.html', tasks=tasks)
+    except Exception as e:
+        print(str(e))
+    return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/payusers', methods=['GET', 'POST'])
 def pay_users():
     if request.method == "POST":
         return 'TODO'
     return render_template('payusers.html')
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                          'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # ==========================HELPER-FUNCTIONS=======================

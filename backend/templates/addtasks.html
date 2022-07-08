@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Create a task</h1>
+    {% if success %}
+        <h4>Success!</h4>
+    {% endif %}
     <form action="" method="POST">
         <br>
         <select id="vulnerability" name="vulnerability" required>

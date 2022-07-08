@@ -166,12 +166,15 @@ def change_user_password(username, password):
 def get_user_data(id):
     return User.query.filter_by(id=id).first().get_data()
 
-def credentials_valid(username, password):
-    user = User.query.filter_by(username=username).first()
-    if user:
-        if user.validate_password(password):
-            return user.id 
-    return False
+def user_credentials_valid(username, password):
+    try:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            if user.validate_password(password):
+                return user.id 
+    except Exception as e:
+        print(str(e))
+        return False
 
 def create_random_code():
     chars=string.ascii_uppercase + string.digits
@@ -191,19 +194,24 @@ def set_user_avatar(id, image):
 
 # ========================ADMIN-METHODS=========================================
 def add_admin(username, password, email):
-    admin = Admin(username=username, password=password, email=email)
-    db.session.add(admin)
-    db.session.commit()
-    return True
-
-def admin_credentials_valid(username, password):
-    admin = Admin.query.filter_by(username=username).first()
-    if admin:
-        return admin.validate_password(password)
+    try:
+        admin = Admin(username=username, password=password, email=email)
+        db.session.add(admin)
+        db.session.commit()
+        return admin.id
+    except Exception as e:
+        print(str(e))
     return False
 
-def get_admin_id(username):
-    return Admin.query.filter_by(username=username).first().id
+def admin_credentials_valid(username, password):
+    try:
+        admin = Admin.query.filter_by(username=username).first()
+        if admin:
+            if admin.validate_password(password):
+                return admin.id
+    except Exception as e:
+        print(str(e))
+    return False
 
 # ========================TASKS=================================================
 def assign_task(user_id, task_id):
@@ -227,10 +235,14 @@ def assign_task(user_id, task_id):
     return False
 
 def create_task(admin_id, vulnerability, url, days, notes):
-    task = Task(admin_id=admin_id, vulnerability=vulnerability, days=days, url=url, notes=notes)
-    db.session.add(task)
-    db.session.commit()
-    return task.id
+    try:
+        task = Task(admin_id=admin_id, vulnerability=vulnerability, days=days, url=url, notes=notes)
+        db.session.add(task)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(str(e))
+    return False
 
 def get_user_tasks(user_id):
     # Return tasks from last 24h
@@ -246,9 +258,9 @@ def get_available_tasks(vulnerability):
         tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
     return tasks
 
-def get_admins_pending_tasks(admin_id):
+def get_admin_tasks(admin_id, status):
     tasks = []
-    for task in Task.query.filter_by(admin_id=admin_id, status=1).all():
+    for task in Task.query.filter_by(admin_id=admin_id, status=status).all():
         tasks.append(task.get_data())
     return tasks
 

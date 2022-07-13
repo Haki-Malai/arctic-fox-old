@@ -91,6 +91,7 @@ class Task(db.Model):
     status = db.Column(db.Integer, default=0)
     proof = db.Column(db.String(248), default='')
     created = db.Column(db.DateTime)
+    assigned = db.Column(db.DateTime)
     days = db.Column(db.Integer)
     url = db.Column(db.String(64))
     notes = db.Column(db.String(1024))
@@ -116,6 +117,7 @@ class Task(db.Model):
             'vulnerability': self.vulnerability,
             'status': self.status,
             'created': self.created,
+            'assigned': self.assigned,
             'days': self.days,
             'url': self.url,
             'submited': self.submited,
@@ -316,21 +318,21 @@ def assign_task(user_id, task_id):
     try:
         # Check if user is privileged to another task
         user = User.query.filter_by(id=user_id).first()
-        if user:
-            yesterday = datetime.now() - timedelta(days = 1)
-            today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
-            if (user.level == 1 and today_done >= 3) or \
+        yesterday = datetime.now() - timedelta(days = 1)
+        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
+        if (user.level == 1 and today_done >= 3) or \
                 (user.level == 2 and today_done >= 5) or \
                 (user.level == 3 and today_done >= 8) or \
                 (user.level == 4 and today_done >= 15) or \
                 (user.level == 5 and today_done >= 22) or \
                 (user.level == 6 and today_done >= 60):
-                return False
-            else:
-                task = Task.query.filter_by(id=task_id).first()
-                task.user_id = user_id
-                db.session.commit()
-                return True
+            return False
+        else:
+            task = Task.query.filter_by(id=task_id).first()
+            task.user_id = user_id
+            task.assigned = datetime.now()
+            db.session.commit()
+            return True
     except Exception as e:
         print(str(e))
     return False
@@ -348,8 +350,7 @@ def create_task(admin_id, vulnerability, url, days, notes):
 def get_user_tasks(user_id):
     # Return tasks from last 24h
     tasks = []
-    yesterday = datetime.now() - timedelta(days = 1)
-    for task in Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all():
+    for task in Task.query.filter(Task.user_id == user_id).all():
         tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
     return tasks
 

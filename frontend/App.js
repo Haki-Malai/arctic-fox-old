@@ -22,7 +22,7 @@ export default class App extends React.Component {
 			avatar: '',
 			remember: false,
 			data: require('./data.json'),
-			level: [[0.5, 3, 0], [0.8, 5, 100], [1.5, 8, 300], [1.7, 15, 600], [2, 22, 1000], [2.3, 60, 3000]]
+			level: [[5, 3, 0], [8, 5, 100], [15, 8, 200], [17, 15, 300], [20, 22, 400], [23, 60, 500]]
 		}
 		this.setPage = this.setPage.bind(this);
 		this.setToken = this.setToken.bind(this);

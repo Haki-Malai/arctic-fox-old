@@ -319,7 +319,7 @@ def assign_task(user_id, task_id):
         # Check if user is privileged to another task
         user = User.query.filter_by(id=user_id).first()
         yesterday = datetime.now() - timedelta(days = 1)
-        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
+        today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
         if (user.level == 1 and today_done >= 3) or \
                 (user.level == 2 and today_done >= 5) or \
                 (user.level == 3 and today_done >= 8) or \
@@ -387,12 +387,11 @@ def update_task(id, status):
 
 def set_task_proof(task_id, image):
     try:
-        task = Task.query.filter_by(id=task_id, status=0)
-        if task:
-            task.proof = image
-            update_task(task_id, 1)
-            db.session.commit()
-            return True
+        task = Task.query.filter_by(id=task_id).first()
+        task.proof = image
+        db.session.commit()
+        update_task(task_id, 1)
+        return True
     except Exception as e:
         print(str(e))
     return False

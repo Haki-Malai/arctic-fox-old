@@ -223,7 +223,8 @@ def proof():
                 elif request.form.get('task_id'):
                     task_id = request.form['task_id']
                     image_name = secure_filename(image.filename)
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/task' + task_id + image.filename))
+                    image_name = 'task' + task_id + image_name
+                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
                     if database.set_task_proof(task_id, image_name):
                         return success(True)
     except Exception as e:

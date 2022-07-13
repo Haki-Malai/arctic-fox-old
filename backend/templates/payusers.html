@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>PAY USERS, COMING SOON</h1>
+    <h1>PAY USERS</h1>
+    {% if not pending_payments %}
+        <h5>There are not any pending payments</h5>
+    {% endif %}
+    {% for payment in pending_payments %}
+        <form method="POST">
+            <input type="hidden" name="pay_id" value="{{ payment.id }}">
+            <input type="hidden" name="admin_id" value="{{ admin_id }}">
+            <label for="tx_id">Amount: {{ payment.amount }}</label>
+            <br>
+            <input type="text" name="tx_id" placeholder="TX_ID" required>
+            <br>
+            <input type="submit">
+        </form>
+    {% endfor %}
+    <br>
     <button onClick="goHome()">Go back</button>
 {% endblock %}

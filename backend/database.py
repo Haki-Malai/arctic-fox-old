@@ -143,19 +143,23 @@ class Admin(db.Model):
     def validate_password(self, password):
         return check_password_hash(self.password, password)
 
-class BTC_Transaction(db.Model):
-    __tablename__ = "btc_transaction"
+class Payment(db.Model):
+    __tablename__ = "payment"
 
     id = db.Column(db.Integer, primary_key=True)
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     amount = db.Column(db.Float(64))
-    tx_id = db.Column(db.Float(64))
+    tx_id = db.Column(db.String(64))
     paid = db.Column(db.Boolean, default=False)
+    requested = db.Column(db.DateTime)
+    pay_date = db.Column(db.DateTime)
+    
 
     def __init__(self, user_id, amount):
         self.user_id = user_id
         self.amount = amount
+        self.requested = datetime.now()
 
     def __repr__(self):
         return '<Task %r>' % self.id
@@ -262,7 +266,7 @@ def set_user_address(id, password, address):
 def request_payment(id):
     try:
         user = User.query.filter_by(id=id).first()
-        payment = BTC_Transaction(user_id=user.id, amount=user.balance)
+        payment = Payment(user_id=user.id, amount=user.balance)
         user.init_balance()
         db.session.add(payment)
         db.session.commit()
@@ -274,7 +278,7 @@ def request_payment(id):
 def get_user_pay_requests(id):
     try:
         payments = []
-        for payment in BTC_Transaction.query.filter_by(user_id=id, paid=False).all():
+        for payment in Payment.query.filter_by(user_id=id, paid=False).all():
             payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
         return payments
     except Exception as e:
@@ -284,7 +288,7 @@ def get_user_pay_requests(id):
 def get_user_payments(id):
     try:
         payments = []
-        for payment in BTC_Transaction.query.filter_by(user_id=id, paid=True).all():
+        for payment in Payment.query.filter_by(user_id=id, paid=True).all():
             payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
         return payments
     except Exception as e:
@@ -389,6 +393,29 @@ def set_task_proof(task_id, image):
         task.proof = image
         db.session.commit()
         update_task(task_id, 1)
+        return True
+    except Exception as e:
+        print(str(e))
+    return False
+
+# ==========================PAYMENTS================================
+def get_pending_payments():
+    try:
+        pending_payments = []
+        for payment in Payment.query.filter_by(paid=False).all():
+            pending_payments.append(payment.get_data())
+        return pending_payments
+    except Exception as e:
+        print(str(e))
+    return False
+
+def update_payment(admin_id, pay_id, tx_id):
+    try:
+        payment = Payment.query.filter_by(id=pay_id).first()
+        payment.admin_id = admin_id
+        payment.tx_id = tx_id
+        payment.paid = True
+        db.session.commit()
         return True
     except Exception as e:
         print(str(e))

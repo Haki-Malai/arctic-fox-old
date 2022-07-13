@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
 import styles from '../../../style';
 
-export default class Transaction extends React.Component {
+export default class Payment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -36,7 +36,7 @@ export default class Transaction extends React.Component {
                 })
 			}
 
-			fetch(this.props.url+'transactions', requestOptions)
+			fetch(this.props.url+'payments', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
@@ -71,7 +71,7 @@ export default class Transaction extends React.Component {
                 })
 			}
 
-			fetch(this.props.url+'transactions', requestOptions)
+			fetch(this.props.url+'payments', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
@@ -102,7 +102,7 @@ export default class Transaction extends React.Component {
                 })
 			}
 
-			fetch(this.props.url+'transactions', requestOptions)
+			fetch(this.props.url+'payment', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.payments) {
@@ -133,7 +133,7 @@ export default class Transaction extends React.Component {
                 })
 			}
 
-			fetch(this.props.url+'transactions', requestOptions)
+			fetch(this.props.url+'payments', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.requests) {

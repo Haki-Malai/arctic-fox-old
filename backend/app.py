@@ -167,8 +167,8 @@ def task():
         print(str(e))
     return success(False)
 
-@app.route('/transactions', methods=['POST'])
-def transaction():
+@app.route('/payments', methods=['POST'])
+def payments():
     """
     """
     try:
@@ -396,9 +396,25 @@ def approve_tasks():
 
 @app.route('/admin/home/payusers', methods=['GET', 'POST'])
 def pay_users():
-    if request.method == "POST":
-        return 'TODO'
-    return render_template('payusers.html')
+    """
+        Receives access_token, payment request details as form-data
+        Updates to paid with new tx_id
+    """
+    try:
+        access_token = request.args.get('access_token')
+        if access_token in admin_tokens:
+            if request.method == 'POST':
+                pay_id = request.form['pay_id']
+                tx_id = request.form['tx_id']
+                admin_id = request.form['admin_id']
+                database.update_payment(admin_id, pay_id, tx_id)
+            for index, token in enumerate(admin_tokens):
+                if token == access_token:
+                    pending_payments = database.get_pending_payments()
+                    return render_template('payusers.html', pending_payments=pending_payments, admin_id=admins[index])
+    except Exception as e:
+        print(str(e))
+    return redirect(url_for('.admin_login'))
 
 
 # ==========================HELPER-FUNCTIONS=======================

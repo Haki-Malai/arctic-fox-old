@@ -1,6 +1,5 @@
 import database
 import json
-import re
 import random
 import string
 import os
@@ -46,14 +45,10 @@ def welcome():
     """
     try:
         access_token = request.json['access_token']
-        if access_token in tokens:
-            while True:
-                user_data = ''
-                for index, token in enumerate(tokens):
-                    if token == access_token:
-                        user_data = database.get_user_data(users[index])
-                        user_avatar = database.get_user_avatar(users[index], app.config['UPLOAD_FOLDER'])
-                if user_data: break
+        user_id = get_id_from_token(access_token)
+        if user_id:
+            user_data = database.get_user_data(user_id)
+            user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
             return json.dumps({'user_data': user_data, 'avatar': user_avatar}, indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
@@ -94,7 +89,7 @@ def signup():
         username = request.json['username'].lower()
         password = request.json['password']
         email = request.json['email']
-        invitedFrom = request.json['invitorCode']
+        invitedFrom = request.json['invitationCode']
         while True:
             # db_response will be int (user's id) or an error message
             db_response = database.add_user(username, password, email, invitedFrom)
@@ -171,6 +166,40 @@ def task():
     except Exception as e:
         print(str(e))
     return success(False)
+
+@app.route('/transactions', methods=['POST'])
+def transaction():
+    """
+    """
+    try:
+        function = request.json['function']
+        access_token = request.json['access_token']
+        user_id = get_id_from_token(access_token)
+        if function == 'change':
+            password = request.json['password']
+            address = request.json['address']
+            if database.set_user_address(user_id, password, address):
+                return success(True)
+
+        elif function == 'request':
+            if database.request_payment(user_id):
+                return success(True)
+
+        elif function == 'get_requests':
+            pay_requests = database.get_user_pay_requests(user_id)
+            if pay_requests:
+                return json.dumps({'requests': pay_requests}, indent=4, default=str, sort_keys=True)
+
+        elif function == 'get_payments':
+            payments = database.get_user_payments(user_id)
+            if payments:
+                return json.dumps({'payments': payments}, indent=4, default=str, sort_keys=True)
+
+    except Exception as e:
+        print(str(e))
+    return success(False)
+
+
 
 @app.route('/upload', methods=['POST'])
 def proof():
@@ -378,3 +407,13 @@ def allowed_file(filename):
 
 def success(bool):
     return json.dumps({'success': bool})
+
+def get_id_from_token(access_token):
+    if access_token in tokens:
+        while True:
+            for index, token in enumerate(tokens):
+                if token == access_token:
+                    user_id = users[index]
+            if user_id:
+                return user_id
+    return False

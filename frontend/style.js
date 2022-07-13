@@ -379,6 +379,36 @@ export default StyleSheet.create({
 	guideParagraph: {
 		marginVertical: '.3em'
 	},
+	paymentContainer: {
+		alignItems: 'center',
+		marginBottom: '1em',
+	},
+	paymentMiniContainer: {
+		alignItems: 'center',
+		margin: '1em',
+	},
+	paymentInput: {
+		fontSize: '.8em',
+		textAlign: 'center',
+		borderBottomWidth: '.05em',
+		borderBottomColor: 'grey',
+		marginVertical: '.2em'
+	},
+	paymentPressable: {
+		borderWidth: '.05em',
+		borderRadius: '.5em',
+		padding: '.2em',
+		borderColor: 'grey' 
+	},
+	paymentPressableMini: {
+		borderBottomWidth: '.05em',
+		padding: '.2em',
+		borderBottomColor: 'grey' 
+	},
+	paymentPressableText: {
+		fontSize: '.8em',
+		color: BLUE,
+	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~EARN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	earnTitle: {
 		backgroundColor: MORE_FADED_BLUE,

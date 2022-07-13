@@ -2,14 +2,15 @@ import React from "react";
 import { View, Text, Image, Pressable } from 'react-native';
 import Password from './password.component';
 import Support from './support.component';
-import Guide from './guide.component'
+import Guide from './guide.component';
+import Transaction from './transaction.component';
 import styles from '../../../style';
 
 export default class Options extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            option: 'none'
+            option: 'transaction'
         }
     }
     render() {
@@ -19,7 +20,9 @@ export default class Options extends React.Component {
         }else if (this.state.option === 'guide') {
             toExpand = <Guide url={this.props.url} lang={this.props.lang}></Guide>
         } else if (this.state.option === 'password') {
-            toExpand = <Password url={this.props.url} lang={this.props.lang} username={this.props.username}></Password>
+            toExpand = <Password url={this.props.url} lang={this.props.lang} username={this.props.userData.username}></Password>
+        } else if (this.state.option === 'transaction') {
+            toExpand = <Transaction url={this.props.url} lang={this.props.lang} userData={this.props.userData} refreshUserData={this.props.refreshUserData}></Transaction>
         }
         return(
             <View style={styles.accountOptions}>
@@ -33,6 +36,11 @@ export default class Options extends React.Component {
                     <Text style={styles.accountOptionPressableText}>{this.props.lang==='en'? 'User guidance': 'Οδηγίες χρήσης'}</Text>
                 </Pressable>
                 {this.state.option==='guide'? toExpand: null}
+                <Pressable style={styles.accountOption} onPress={() => this.state.option!='transaction'? this.setState({option: 'transaction'}): this.setState({option: 'none'})} >
+                    <Image style={styles.accountOptionPressableIcon} source={require('../../../assets/account/bitcoin.png')}/>
+                    <Text style={styles.accountOptionPressableText}>{this.props.lang==='en'? 'Transaction Options': 'Επιλογές Πληρωμής'}</Text>
+                </Pressable>
+                {this.state.option==='transaction'? toExpand: null}
                 <Pressable style={styles.accountOption} onPress={() => this.state.option!='password'? this.setState({option: 'password'}): this.setState({option: 'none'})} >
                     <Image style={styles.accountOptionPressableIcon} source={require('../../../assets/account/lock.png')}/>
                     <Text style={styles.accountOptionPressableText}>{this.props.lang==='en'? 'Change password': 'Αλλαγή κωδικού'}</Text>

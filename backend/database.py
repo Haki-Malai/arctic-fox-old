@@ -2,6 +2,7 @@ import string
 import random
 import json
 import os
+import re
 import base64
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,13 +18,14 @@ class User(db.Model):
     password = db.Column(db.String(512))
     email = db.Column(db.String(50), unique=True)
     avatar = db.Column(db.String(224), default='default.jpeg')
+    bitcoin_address = db.Column(db.String(40), default='none')
     confirmedEmail = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date)
     level = db.Column(db.Integer, default=1)
     lastActive = db.Column(db.DateTime)
     invitationCode = db.Column(db.String(10), unique=True)
-    invitationCommision = db.Column(db.Float(10), default=0)
     invitedFrom = db.Column(db.String(10), default='NOBODY')
+    invitationCommision = db.Column(db.Float(10), default=0)
     taskProfit = db.Column(db.Float(10), default=0)
     balance = db.Column(db.Float, default=0)
 
@@ -39,12 +41,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def init_balance(self):
+        self.balance = 0
+        self.invitationCommision = 0
+        self.taskProfit = 0
+
     def get_data(self):
         return {
             'id': self.id,
             'username': self.username,
             'email': self.email,
             'confirmedEmail': self.confirmedEmail,
+            'bitcoin_address': self.bitcoin_address,
             'created': self.created,
             'level': self.level,
             'lastActive': self.lastActive,
@@ -99,9 +107,6 @@ class Task(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
-    def assign(id):
-        self.user_id = id
-
     def get_data(self):
         return {
             'id': self.id,
@@ -120,7 +125,7 @@ class Task(db.Model):
 class Admin(db.Model):
     __talblename__ = "admin"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(25))
@@ -135,6 +140,34 @@ class Admin(db.Model):
     
     def validate_password(self, password):
         return check_password_hash(self.password, password)
+
+class BTC_Transaction(db.Model):
+    __tablename__ = "btc_transaction"
+
+    id = db.Column(db.Integer, primary_key=True)
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    amount = db.Column(db.Float(64))
+    tx_id = db.Column(db.Float(64))
+    paid = db.Column(db.Boolean, default=False)
+
+    def __init__(self, user_id, amount):
+        self.user_id = user_id
+        self.amount = amount
+
+    def __repr__(self):
+        return '<Task %r>' % self.id
+
+    def get_data(self):
+        return {
+            'id': self.id,
+            'admin_id': self.admin_id,
+            'user_id': self.user_id,
+            'amount': self.amount,
+            'tx_id': self.tx_id,
+            'paid': self.paid
+        }
+
 
 # =========================USER==============================================
 def add_user(username, password, email, invitedFrom='NOBODY'):
@@ -179,9 +212,8 @@ def get_user_data(id):
 def user_credentials_valid(username, password):
     try:
         user = User.query.filter_by(username=username).first()
-        if user:
-            if user.validate_password(password):
-                return user.id 
+        if user.validate_password(password):
+            return user.id 
     except Exception as e:
         print(str(e))
     return False
@@ -214,6 +246,50 @@ def get_user_avatar(id, path):
         return encoded_img.decode('utf-8')
     except Exception as e:
         print(str(e))
+    
+def set_user_address(id, password, address):
+    try:
+        user = User.query.filter_by(id=id).first()
+        if user.validate_password(password):
+            user.bitcoin_address = address
+            db.session.commit()
+            return True
+    except Exception as e:
+        print(str(e))
+    return False
+
+def request_payment(id):
+    try:
+        user = User.query.filter_by(id=id).first()
+        payment = BTC_Transaction(user_id=user.id, amount=user.balance)
+        user.init_balance()
+        db.session.add(payment)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(str(e))
+    return False
+
+def get_user_pay_requests(id):
+    try:
+        payments = []
+        for payment in BTC_Transaction.query.filter_by(user_id=id, paid=False).all():
+            payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
+        return payments
+    except Exception as e:
+        print(str(e))
+    return False
+
+def get_user_payments(id):
+    try:
+        payments = []
+        for payment in BTC_Transaction.query.filter_by(user_id=id, paid=True).all():
+            payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
+        return payments
+    except Exception as e:
+        print(str(e))
+    return False
+
 # ========================ADMIN-METHODS=========================================
 def add_admin(username, password, email):
     try:

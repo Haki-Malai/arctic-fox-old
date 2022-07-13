@@ -45,7 +45,7 @@ export default class Account extends React.Component {
                                 <Text style={styles.accountTableItem}>{this.props.userData.balance.toFixed(2)}
                                     <Text style={styles.accountTableItemLabel}>{this.props.lang==='en'? 'Balance': 'Υπόλοιπο'}</Text>
                                 </Text>
-                                <Text style={styles.accountTableItem}>{this.props.userData.balance.toFixed(2)}
+                                <Text style={styles.accountTableItem}>{this.props.userData.taskProfit.toFixed(2)}
                                     <Text style={styles.accountTableItemLabel}>{this.props.lang==='en'? 'Task Profit': 'Κέρδη εργασιών'}</Text>
                                 </Text>
                                 <Text style={styles.accountTableItem}>{this.props.userData.invitationCommision.toFixed(2)}
@@ -75,7 +75,7 @@ export default class Account extends React.Component {
                                 </Text>
                             </View>
                         </View>
-                        <Options url={this.props.url} username={this.props.userData.username} lang={this.props.lang} logout={() => this.props.logout()}></Options>
+                        <Options refreshUserData={this.props.refreshUserData} url={this.props.url} userData={this.props.userData} lang={this.props.lang} logout={() => this.props.logout()}></Options>
                     </View>
                 </ScrollView>
                 <Navigator lang={this.props.lang} setPage={this.props.setPage} page={3}/>

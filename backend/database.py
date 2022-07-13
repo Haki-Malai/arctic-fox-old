@@ -61,7 +61,7 @@ class User(db.Model):
             'invitationCommision': self.invitationCommision,
             'balance': self.balance,
             'taskProfit': self.taskProfit,
-            'tasks': []#get_user_tasks(self.username)
+            'tasks': get_user_tasks(self.id)
         }
     
     def validate_password(self, password):
@@ -169,7 +169,6 @@ class BTC_Transaction(db.Model):
             'tx_id': self.tx_id,
             'paid': self.paid
         }
-
 
 # =========================USER==============================================
 def add_user(username, password, email, invitedFrom='NOBODY'):
@@ -319,7 +318,7 @@ def assign_task(user_id, task_id):
         # Check if user is privileged to another task
         user = User.query.filter_by(id=user_id).first()
         yesterday = datetime.now() - timedelta(days = 1)
-        today_done = 0#len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
+        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
         if (user.level == 1 and today_done >= 3) or \
                 (user.level == 2 and today_done >= 5) or \
                 (user.level == 3 and today_done >= 8) or \
@@ -348,9 +347,8 @@ def create_task(admin_id, vulnerability, url, days, notes):
     return False
 
 def get_user_tasks(user_id):
-    # Return tasks from last 24h
     tasks = []
-    for task in Task.query.filter(Task.user_id == user_id).all():
+    for task in Task.query.filter_by(user_id = user_id).all():
         tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
     return tasks
 

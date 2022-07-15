@@ -18,7 +18,7 @@ expo start --web
 ```
 ```
 # proxy for communications between apps
-lcp --proxyUrl http://localhost:5000`
+lcp --proxyUrl http://localhost:5000
 ```
 
 # TO-DO

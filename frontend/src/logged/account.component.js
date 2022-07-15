@@ -1,10 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Text, Image, Pressable } from 'react-native';
 import Navigator from './navigator.component';
-import Password from './account/password.component';
-import Support from './account/support.component';
-import Guide from './account/guide.component';
-import Buttons from './account/buttons.component';
 import Lang from '../lang.component';
 import Options from './account/options.component';
 import styles from '../../style';

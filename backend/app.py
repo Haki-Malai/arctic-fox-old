@@ -6,7 +6,7 @@ import os
 import base64
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, session, request, render_template, redirect, url_for, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.utils import secure_filename

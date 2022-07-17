@@ -42,7 +42,7 @@ export default class Login extends React.Component {
                         this.props.setToken(data.access_token);
                         this.props.setUserData(data.user_data);
                         this.props.setPage('home');
-                    } else if (data.error) {
+                    } else if (data.success === false) {
                         alert(this.props.lang=='en'? 'Invalid username/password compination': 'Λανθασμένος συνδιασμός όνομα χρήστη και κωδικού');
                         this.setState({loading: false});
                     }

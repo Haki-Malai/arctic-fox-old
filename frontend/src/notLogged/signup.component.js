@@ -40,7 +40,7 @@ export default class Signup extends React.Component {
                     this.props.setUserData({userData: data.user_data});
                     this.props.setPage({page: 'home'});
                     location.reload();
-                } else if (data.error) {
+                } else if (data.success === false) {
                     // TODO validate input!
                     alert('Something went wrong, please try again');
                     console.log(data.error)

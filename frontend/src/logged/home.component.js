@@ -22,6 +22,7 @@ export default class Home extends React.Component {
         const requestOptions = {
             method: 'GET',
             headers: { 
+                'Authorization': 'Bearer ' + this.state.accessToken,
                 'Content-Type': 'application/json',
                 'Accept': '*/*'
             },

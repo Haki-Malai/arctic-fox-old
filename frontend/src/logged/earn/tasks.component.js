@@ -16,6 +16,7 @@ export default class Tasks extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: { 
+                'Authorization': 'Bearer ' + this.state.accessToken,
                 'Content-Type': 'application/json',
                 'Accept': '*/*'
             },
@@ -47,6 +48,7 @@ export default class Tasks extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: { 
+                'Authorization': 'Bearer ' + this.state.accessToken,
                 'Content-Type': 'application/json',
                 'Accept': '*/*'
             },

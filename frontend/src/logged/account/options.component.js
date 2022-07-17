@@ -20,7 +20,7 @@ export default class Options extends React.Component {
         }else if (this.state.option === 'guide') {
             toExpand = <Guide url={this.props.url} lang={this.props.lang}></Guide>
         } else if (this.state.option === 'password') {
-            toExpand = <Password url={this.props.url} lang={this.props.lang} username={this.props.userData.username}></Password>
+            toExpand = <Password url={this.props.url} lang={this.props.lang}></Password>
         } else if (this.state.option === 'transaction') {
             toExpand = <Transaction url={this.props.url} lang={this.props.lang} userData={this.props.userData} refreshUserData={this.props.refreshUserData}></Transaction>
         }

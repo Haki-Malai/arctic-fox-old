@@ -24,12 +24,13 @@ export default class Task extends React.Component {
 		if (this.props.userData) {
 			const requestOptions = {
 				method: 'POST',
-				headers: { 
-					'Content-Type': 'application/json',
-					'Accept': '*/*'
-				},
+                headers: { 
+                    'Authorization': 'Bearer ' + this.state.accessToken,
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                },
 				mode: 'cors',
-				body: JSON.stringify({id: this.props.userData.id, function: 'assigned'})
+				body: JSON.stringify({function: 'assigned'})
 			}
 
 			fetch(this.props.url+'tasks', requestOptions)

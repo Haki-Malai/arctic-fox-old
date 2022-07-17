@@ -4,6 +4,7 @@ import random
 import string
 import os
 import base64
+from secrets import token_hex
 from pathlib import Path
 from datetime import datetime
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory
@@ -12,7 +13,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.utils import secure_filename
 
 SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
-JWT_SECRET_KEY = "please-remember-to-change-me"
+JWT_SECRET_KEY = token_hex(16)
 UPLOAD_FOLDER = str(Path(__file__).resolve().parent) + '/static/uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)

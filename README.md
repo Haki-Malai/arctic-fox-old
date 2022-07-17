@@ -7,18 +7,13 @@ Application created with the intention to be exploitable and security testing
 # Runs the API (backend)
 cd arctic-fox/backend
 pip3 install -r requirements.txt 
-flask run
-```
+flask run --host=0.0.0.0
 
-```
 # Runs the front-end react server
+# New terminal
 cd frontend
 npm install
 expo start --web
-```
-```
-# proxy for communications between apps
-lcp --proxyUrl http://localhost:5000
 ```
 
 # TO-DO

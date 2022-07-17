@@ -7,50 +7,40 @@ import base64
 from secrets import token_hex
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
-JWT_SECRET_KEY = token_hex(16)
-UPLOAD_FOLDER = str(Path(__file__).resolve().parent) + '/static/uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app)
-app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
-app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["JWT_SECRET_KEY"] = token_hex(16)
+app.config["JWT_TOKEN_LOCATION"] = ["headers", "query_string"]
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = str(Path(__file__).resolve().parent) + '/static/uploads/'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 database.db.init_app(app)
 
 with app.app_context():
     database.db.create_all()
 
-# Used to hold sessions
-tokens = []
-users = []
-# For the feed, for now it's faked with randomness
-feed_stack = []
-start_time = datetime.now()
-wait = random.randint(1, 59)
-
 # =============================POST-REQUESTS=============================
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["GET"])
+@jwt_required()
 def welcome():
     """
-        Automatical login if access_token provided is in the 'tokens' list.
-        Returns a json containing valueable data of the user.
+        Automatical login with access_token provided and jwt_required decorator
+        Returns a json containing valueable data of the user
     """
     try:
-        access_token = request.json['access_token']
-        user_id = get_id_from_token(access_token)
-        if user_id:
-            user_data = database.get_user_data(user_id)
-            user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
-            return json.dumps({'user_data': user_data, 'avatar': user_avatar}, indent=4, sort_keys=True, default=str)
+        user_id = get_jwt_identity()
+        user_data = database.get_user_json(user_id)
+        user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
+        return json.dumps({'user_data': user_data, 'avatar': user_avatar}, indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
     return success(False)
@@ -58,23 +48,20 @@ def welcome():
 @app.route('/login', methods=['POST'])
 def login():
     """
-        Receives json with 3 parameters: username, password and remember.
-        Returns created session token and the user's data or the notification of invalid credentials.
+        Receives json with 3 parameters: username, password and remember
+        Returns created session token and the user's data or the notification of invalid credentials
     """
     try:
         username = request.json['username'].lower()
         password = request.json['password']
         remember = request.json['remember']
-        user_id = database.user_credentials_valid(username, password)
+        user_id = database.user_credentials_valid(password, username=username)
         if user_id:
             access_token = create_access_token(identity=user_id)
-            while True:
-                user_data = database.get_user_data(user_id)
-                if user_data != None and access_token != None: 
-                    tokens.append(access_token)
-                    users.append(user_id)
-                    break
-            response = json.dumps({'access_token': access_token, 'user_data': json.dumps(user_data, default=str) })
+            response = json.dumps({
+                'access_token': access_token, 
+                'user_data': database.get_user_json(user_id)
+            })
             return response
     except Exception as e:
         print(str(e))
@@ -83,7 +70,7 @@ def login():
 @app.route('/signup', methods=['POST'])
 def signup():
     """
-        Receives json with 4 parameters: username, password, email and invitor's code.
+        Receives json with 4 parameters: username, password, email and invitor's code
         Returns either login token and user's data or failure response
     """
     try:
@@ -91,58 +78,36 @@ def signup():
         password = request.json['password']
         email = request.json['email']
         invitedFrom = request.json['invitationCode']
-        while True:
-            # db_response will be int (user's id) or an error message
-            db_response = database.add_user(username, password, email, invitedFrom)
-            if isinstance(db_response, int):
-                access_token = create_access_token(identity=db_response)
-                user_data = database.get_user_data(db_response)
-            else:
-                return json.dumps({'error': db_response})
-            # Save access_token and user data
-            if user_data != None and access_token != None: 
-                tokens.append(access_token)
-                users.append(db_response)
-                break
-        response = {'access_token': access_token, 'user_data': json.dumps(user_data, default=str)}
+        # db_response will be int (user's id) or an error message
+        db_response = database.add_user(username, password, email, invitedFrom)
+        if isinstance(db_response, int):
+            access_token = create_access_token(identity=db_response)
+            user_data = database.get_user_json(db_response)
+        response = {'access_token': access_token, 'user_data': user_data }
         return response
     except Exception as e:
         print(str(e))
     return success(False)
 
 @app.route('/password', methods=['POST'])
+@jwt_required()
 def password():
     """
-        Received json with username, old password and new password
+        Received json with jwt_token, username, old password and new password
         If old credentials are validated then the password changes to the new one
     """
     try:
-        username = request.json['username'].lower()
+        user_id = get_jwt_identity()
         password = request.json['password']
         new = request.json['new']
-        if database.credentials_valid(username, password):
-            return success(database.change_user_password(username, new))
-    except Exception as e:
-        print(str(e))
-    return success(False)
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    """
-        Logs out the user by deleting the access_token from server's memory
-    """
-    try:
-        access_token = request.json['access_token']
-        for index, token in enumerate(tokens):
-            if access_token == token:
-                tokens.remove(index)
-                users.remove(index)
-        return success(True)
+        if database.credentials_valid(password, id=user_id):
+            return success(database.change_user_password(user_id, new))
     except Exception as e:
         print(str(e))
     return success(False)
 
 @app.route('/tasks', methods=['POST'])
+@jwt_required()
 def task():
     """
         Receives the function's name
@@ -150,18 +115,17 @@ def task():
         Returns success or failure status
     """
     try:
+        user_id = get_jwt_identity()
         function = request.json['function']
         if function == 'available':
             vulnerability = request.json['vulnerability']
             tasks = database.get_available_tasks(vulnerability)
             return json.dumps({'tasks': tasks})
         elif function == 'assigned':
-            id = request.json['id']
-            tasks = database.get_user_tasks(id)
+            tasks = database.get_user_tasks(user_id)
             return json.dumps({'tasks': tasks})
         elif function == 'assign':
             task_id = request.json['task_id']
-            user_id = request.json['user_id']
             if database.assign_task(user_id, task_id):
                 return success(True)
     except Exception as e:
@@ -169,13 +133,13 @@ def task():
     return success(False)
 
 @app.route('/payments', methods=['POST'])
+@jwt_required()
 def payments():
     """
     """
     try:
+        user_id = get_jwt_identity()
         function = request.json['function']
-        access_token = request.json['access_token']
-        user_id = get_id_from_token(access_token)
         if function == 'change':
             password = request.json['password']
             address = request.json['address']
@@ -203,6 +167,7 @@ def payments():
 
 
 @app.route('/upload', methods=['POST'])
+@jwt_required()
 def proof():
     """
         Received data as form-data
@@ -211,29 +176,33 @@ def proof():
         Returns success or failure status
     """
     try:
-        if request.method == 'POST':
-            image = request.files['image']
-            if image and allowed_file(image.filename):
-                if request.form.get('user_id'):
-                    user_id = request.form['user_id']
-                    image_name = secure_filename(image.filename)
-                    image_name = 'user' + user_id + image_name
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
-                    if database.set_user_avatar(user_id, image_name):
-                        return success(True)
-                elif request.form.get('task_id'):
-                    task_id = request.form['task_id']
-                    image_name = secure_filename(image.filename)
-                    image_name = 'task' + task_id + image_name
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
-                    if database.set_task_proof(task_id, image_name):
-                        return success(True)
+        user_id = get_jwt_identity()
+        image = request.files['image']
+        if image and allowed_file(image.filename):
+            if request.form.get('user_id'):
+                image_name = secure_filename(image.filename)
+                image_name = 'user' + user_id + image_name
+                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
+                if database.set_user_avatar(user_id, image_name):
+                    return success(True)
+            elif request.form.get('task_id'):
+                task_id = request.form['task_id']
+                image_name = secure_filename(image.filename)
+                image_name = 'task' + task_id + image_name
+                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
+                if database.set_task_proof(task_id, user_id, image_name):
+                    return success(True)
     except Exception as e:
         print(str(e))
     return success(False)
 
 # =============================GET-REQUESTS=============================
+# For the feed, for now it's faked with randomness
+feed_stack = []
+start_time = datetime.now()
+wait = random.randint(1, 59)
 @app.route('/feed', methods=['GET']) #TODO CHANGE THIS!!!
+@jwt_required()
 def feed():
     """
         Returns the recents update from which users have upgraded level and more (currently faked with randomness)
@@ -259,6 +228,7 @@ def feed():
     return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
 
 @app.route('/guide', methods=['GET'])
+@jwt_required()
 def guide():
     """
         Returns guide text for guide.json file
@@ -271,10 +241,6 @@ def guide():
         return success(False)
 
 # =============================ADMIN-PAGE=========================
-app.config['TEMPLATES_AUTO_RELOAD'] = True
-admins = []
-admin_tokens = []
-
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
@@ -300,9 +266,7 @@ def admin_login():
             admin_id = database.admin_credentials_valid(username, password)
             if isinstance(admin_id, int):
                 access_token = create_access_token(identity=admin_id)
-                admin_tokens.append(access_token)
-                admins.append(admin_id)
-                return redirect(url_for('.admin_home', access_token=access_token))
+                return redirect(url_for('.admin_home', jwt=access_token))
     except Exception as e:
         print(str(e))
     return render_template('login.html')
@@ -323,31 +287,29 @@ def admin_register():
                 admin_id = database.add_admin(username, password, email)
                 if isinstance(admin_id, int):
                     access_token = create_access_token(identity=admin_id)
-                    admin_tokens.append(access_token)
-                    admins.append(admin_id)
-                    return redirect(url_for('.admin_home', access_token=access_token))
+                    return redirect(url_for('.admin_home', jwt=access_token))
     except Exception as e:
         print(str(e))
     return render_template('register.html')
 
 @app.route('/admin/home', methods=['GET', 'POST'])
+@jwt_required()
 def admin_home():
     """
         Receives access_token
         If valid, renders home.html else redirects to login page
     """
     try:
-        access_token = request.args.get('access_token')
-        if access_token in admin_tokens:
-            if request.method == "POST":
-                req = request.form['redirect']
-                return redirect(url_for('.'+req, access_token=access_token))
-            return render_template('home.html')
+        if request.method == 'POST':
+            to_redirect = '.' + request.form['redirect']
+            return redirect(url_for(to_redirect, jwt=request.args.get('jwt')))
+        return render_template('home.html')
     except Exception as e:
         print(str(e))
     return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/addtasks', methods=['GET', 'POST'])
+@jwt_required()
 def add_tasks():
     """
         Receives access_token, vulnerability type, days, url and notes as form-data
@@ -355,22 +317,20 @@ def add_tasks():
         If no access_token, redirects to login
     """
     try:
-        access_token = request.args.get('access_token')
-        if access_token in admin_tokens:
-            if request.method == "POST":
-                    vulnerability = request.form['vulnerability']
-                    days = request.form['days']
-                    url = request.form['url']
-                    notes = request.form['notes']
-                    for index, token in enumerate(admin_tokens):
-                        if token == access_token:
-                            return render_template('addtasks.html', success=database.create_task(admins[index], vulnerability, url, days, notes))
-            return render_template('addtasks.html')
+        admin_id = get_jwt_identity()
+        if request.method == "POST":
+                vulnerability = request.form['vulnerability']
+                days = request.form['days']
+                url = request.form['url']
+                notes = request.form['notes']
+                return render_template('addtasks.html', success=database.create_task(admin_id, vulnerability, url, days, notes), jwt=request.args.get('jwt'))
+        return render_template('addtasks.html', jwt=request.args.get('jwt'))
     except Exception as e:
         print(str(e))
     return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/approvetasks', methods=['GET', 'POST'])
+@jwt_required()
 def approve_tasks():
     """
         Receives access_token, vulnerability type, days, url and notes as form-data
@@ -378,41 +338,35 @@ def approve_tasks():
         If no access_token, redirects to login
     """
     try:
-        access_token = request.args.get('access_token')
-        if access_token in admin_tokens:
-            if request.method == 'POST':
-                task_id = request.form['task_id']
-                if request.form['submit'] == 'Approve':
-                    database.update_task(task_id, 2)
-                elif request.form['submit'] == 'Disapprove':
-                    database.update_task(task_id, 3)
+        admin_id = get_jwt_identity()
+        if request.method == 'POST':
+            task_id = request.form['task_id']
+            if request.form['submit'] == 'Approve':
+                database.update_task(task_id, 2)
+            elif request.form['submit'] == 'Disapprove':
+                database.update_task(task_id, 3)
 
-            for index, token in enumerate(admin_tokens):
-                if token == access_token:
-                    tasks = database.get_admin_tasks(admins[index], 1)
-                    return render_template('approvetasks.html', tasks=tasks)
+        tasks = database.get_admin_tasks(admin_id, 1)
+        return render_template('approvetasks.html', tasks=tasks, jwt=request.args.get('jwt'))
     except Exception as e:
         print(str(e))
     return redirect(url_for('.admin_login'))
 
 @app.route('/admin/home/payusers', methods=['GET', 'POST'])
+@jwt_required()
 def pay_users():
     """
         Receives access_token, payment request details as form-data
         Updates to paid with new tx_id
     """
     try:
-        access_token = request.args.get('access_token')
-        if access_token in admin_tokens:
-            if request.method == 'POST':
-                pay_id = request.form['pay_id']
-                tx_id = request.form['tx_id']
-                admin_id = request.form['admin_id']
-                database.update_payment(admin_id, pay_id, tx_id)
-            for index, token in enumerate(admin_tokens):
-                if token == access_token:
-                    pending_payments = database.get_pending_payments()
-                    return render_template('payusers.html', pending_payments=pending_payments, admin_id=admins[index])
+        admin_id = get_jwt_identity()
+        if request.method == 'POST':
+            pay_id = request.form['pay_id']
+            tx_id = request.form['tx_id']
+            database.update_payment(admin_id, pay_id, tx_id)
+        pending_payments = database.get_pending_payments()
+        return render_template('payusers.html', pending_payments=pending_payments, admin_id=admin_id, jwt=request.args.get('jwt'))
     except Exception as e:
         print(str(e))
     return redirect(url_for('.admin_login'))
@@ -425,13 +379,3 @@ def allowed_file(filename):
 
 def success(bool):
     return json.dumps({'success': bool})
-
-def get_id_from_token(access_token):
-    if access_token in tokens:
-        while True:
-            for index, token in enumerate(tokens):
-                if token == access_token:
-                    user_id = users[index]
-            if user_id:
-                return user_id
-    return False

@@ -19,10 +19,13 @@ export default class Password extends React.Component {
                 this.setState({loading: true});
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json'},
+                    headers: { 
+                        'Authorization': 'Bearer ' + this.state.accessToken,
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*'
+                    },
                     mode: 'cors',
                     body: JSON.stringify({
-                        username: this.props.username,
                         password: this.state.current,
                         new: this.state.new
                     })

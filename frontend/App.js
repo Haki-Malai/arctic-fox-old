@@ -64,13 +64,13 @@ export default class App extends React.Component {
 		// Authorization from saved cookie
 		if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'POST',
+				method: 'GET',
 				headers: { 
+					'Authorization': 'Bearer ' + this.state.accessToken,
 					'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({access_token: this.state.accessToken})
 			}
 
 			fetch(this.state.data.url, requestOptions)
@@ -81,6 +81,7 @@ export default class App extends React.Component {
 						this.setState({page: 'home'});
 						this.setUserAvatar(data.avatar);
 					} else {
+						console.log(data);
 						this.setState({page: 'welcome'});
 					}
 				})
@@ -94,13 +95,13 @@ export default class App extends React.Component {
 		// Authorization from saved cookie
 		if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'POST',
+				method: 'GET',
 				headers: { 
+					'Authorization': 'Bearer ' + this.state.accessToken,
 					'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({access_token: this.state.accessToken})
 			}
 
 			fetch(this.state.data.url, requestOptions)
@@ -109,6 +110,7 @@ export default class App extends React.Component {
 					if (data.user_data) {
 						this.setState({userData: data.user_data});
 					} else {
+						console.log(data);
 						this.setState({page: 'welcome'});
 					}
 				})

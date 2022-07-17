@@ -12,7 +12,11 @@ export default class Support extends React.Component {
     componentDidMount() {
         const requestOptions = {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json'},
+            headers: { 
+                'Authorization': 'Bearer ' + this.state.accessToken,
+                'Content-Type': 'application/json',
+                'Accept': '*/*'
+            },
             mode: 'cors',
         }
         fetch(this.props.url+'guide', requestOptions)

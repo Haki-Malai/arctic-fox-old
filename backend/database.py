@@ -197,9 +197,9 @@ def add_user(username, password, email, invitedFrom='NOBODY'):
         print(str(e))
         return str(e)
 
-def change_user_password(username, password):
+def change_user_password(id, password):
     try:
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(id=id).first()
         user.password = generate_password_hash(password)
         db.session.commit()
         return True
@@ -207,16 +207,19 @@ def change_user_password(username, password):
         print(str(e))
         return False
 
-def get_user_data(id):
+def get_user_json(id):
     try:
-        return User.query.filter_by(id=id).first().get_data()
+        return json.dumps(User.query.filter_by(id=id).first().get_data(), indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
     return False
 
-def user_credentials_valid(username, password):
+def user_credentials_valid(password, **kwargs):
     try:
-        user = User.query.filter_by(username=username).first()
+        if kwargs['username']:
+            user = User.query.filter_by(username=kwargs['username']).first()
+        elif kwargs['id']:
+            user = User.query.filter_by(id=kwargs['id']).first()
         if user.validate_password(password):
             return user.id 
     except Exception as e:
@@ -387,9 +390,9 @@ def update_task(id, status):
         print(str(e))
     return False
 
-def set_task_proof(task_id, image):
+def set_task_proof(task_id, user_id, image):
     try:
-        task = Task.query.filter_by(id=task_id).first()
+        task = Task.query.filter_by(id=task_id, user_id=user_id).first()
         task.proof = image
         db.session.commit()
         update_task(task_id, 1)

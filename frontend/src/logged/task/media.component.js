@@ -33,6 +33,10 @@ export default class Media extends React.Component {
             formData.append('task_id', this.props.data.id);
             const requestOptions = {
                 method: 'POST',
+                headers: { 
+                    'Authorization': 'Bearer ' + this.state.accessToken,
+                    'Accept': '*/*'
+                },
 				mode: 'cors',
 				body: formData
             }

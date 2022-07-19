@@ -1,6 +1,8 @@
 # arctic-fox
 Application created with the intention to be exploitable and security testing
 
+## [Try it out!](https://arcticfox.herokuapp.com/)
+
 # Run the application on a docker container
 
 ```

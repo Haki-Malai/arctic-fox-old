@@ -18,6 +18,4 @@ COPY --from=web-build /web-build ./static/web-build
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5000
-
 CMD ["gunicorn", "-b", ":5000","-w", "10", "app:app"]

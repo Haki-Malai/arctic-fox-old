@@ -1,12 +1,11 @@
 import database
-import json
 import random
 import string
 import os
 import base64
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, make_response
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
@@ -44,7 +43,7 @@ def welcome():
         user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
         return jsonify(
             userData=user_data, 
-            avatar= user_avatar,
+            avatar=user_avatar,
             status=200
         )
     except Exception as e:
@@ -67,11 +66,10 @@ def login():
         user_id = database.user_credentials_valid(password, username=username)
         if user_id:
             access_token = create_access_token(identity=user_id)
-            response = json.dumps({
-                'access_token': access_token, 
-                'user_data': database.get_user_json(user_id)
-            })
-            return response
+            return jsonify(
+                access_token= access_token, 
+                user_data= database.get_user_json(user_id)
+            )
     except Exception as e:
         print(str(e))
     return success(False)
@@ -93,7 +91,10 @@ def signup():
             access_token = create_access_token(identity=db_response)
             user_data = database.get_user_json(db_response)
         response = {'access_token': access_token, 'user_data': user_data }
-        return response
+        return jsonify(
+            access_token= access_token,
+            user_data= user_data 
+        )
     except Exception as e:
         print(str(e))
     return success(False)
@@ -129,10 +130,10 @@ def task():
         if function == 'available':
             vulnerability = request.json['vulnerability']
             tasks = database.get_available_tasks(vulnerability)
-            return json.dumps({'tasks': tasks})
+            return jsonify(tasks=tasks)
         elif function == 'assigned':
             tasks = database.get_user_tasks(user_id)
-            return json.dumps({'tasks': tasks})
+            return jsonify(tasks=tasks)
         elif function == 'assign':
             task_id = request.json['task_id']
             if database.assign_task(user_id, task_id):
@@ -162,12 +163,12 @@ def payments():
         elif function == 'get_requests':
             pay_requests = database.get_user_pay_requests(user_id)
             if pay_requests:
-                return json.dumps({'requests': pay_requests}, indent=4, default=str, sort_keys=True)
+                return jsonify(requests=pay_requests)
 
         elif function == 'get_payments':
             payments = database.get_user_payments(user_id)
             if payments:
-                return json.dumps({'payments': payments}, indent=4, default=str, sort_keys=True)
+                return jsonify(payments=payments)
 
     except Exception as e:
         print(str(e))
@@ -222,7 +223,7 @@ def feed():
             username = random.choice(string.ascii_letters) + random.randint(7, 14)*"*" + random.choice(string.ascii_letters)
             upgraded_to = random.randint(2, 6)
             feed_stack.append([username, upgraded_to])
-        return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
+        return jsonify(feed=feed_stack)
     elif (start_time - datetime.now()).total_seconds() >= wait:
         stack.pop()
         start_time = datetime.now()
@@ -232,8 +233,8 @@ def feed():
         upgraded_to = random.randint(2, 6)
         feed_stack.append([username, upgraded_to])
         stack.append()
-        return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
-    return json.dumps({'feed': feed_stack}, indent=4, sort_keys=True, default=str)
+        return jsonify(feed=feed_stack)
+    return jsonify(feed=feed_stack)
 
 @app.route('/guide', methods=['GET'])
 @jwt_required()
@@ -244,7 +245,7 @@ def guide():
     try:
         file = open('assets/guide.json')
         guide = json.load(file)
-        return json.dumps(guide)
+        return jsonify(guide)
     except:
         return success(False)
 
@@ -386,4 +387,4 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def success(bool):
-    return json.dumps({'success': bool})
+    return jsonify(success= bool)

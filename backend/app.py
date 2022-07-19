@@ -12,7 +12,7 @@ from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app = Flask(__name__, static_folder='../frontend/web-build', static_url_path='/')
+app = Flask(__name__, static_folder='static/web-build', static_url_path='/')
 jwt = JWTManager(app)
 CORS(app)
 app.config["JWT_SECRET_KEY"] = 'random key secret must change'

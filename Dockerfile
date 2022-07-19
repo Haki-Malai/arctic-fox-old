@@ -1,7 +1,7 @@
 # Build the expo web app
 FROM patwoz/expo-cli:latest as web-build
 
-LABEL mainteiner="Haki-Malai" email="hakimalaj@outlook.com"
+LABEL maintainer="Haki-Malai" email="hakimalaj@outlook.com"
 
 COPY frontend .
 

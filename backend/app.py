@@ -387,3 +387,7 @@ def allowed_file(filename):
 
 def success(bool):
     return json.dumps({'success': bool})
+
+# Main driver function
+port = int(os.environ.get("PORT", 5000))
+app.run(host='0.0.0.0', port=port)

@@ -13,7 +13,7 @@ from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app)
-app.config["JWT_SECRET_KEY"] = token_hex(16)
+app.config["JWT_SECRET_KEY"] = 'random key secret must change'
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "query_string"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -25,8 +25,11 @@ with app.app_context():
     database.db.create_all()
 
 # =============================POST-REQUESTS=============================
+@app.route("/")
+def index():
+    return app.send_static_file('index.html')
 
-@app.route("/", methods=["GET"])
+@app.route("/user", methods=["GET"])
 @jwt_required()
 def welcome():
     """
@@ -37,10 +40,17 @@ def welcome():
         user_id = get_jwt_identity()
         user_data = database.get_user_json(user_id)
         user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
-        return json.dumps({'user_data': user_data, 'avatar': user_avatar}, indent=4, sort_keys=True, default=str)
+        return jsonify(
+            userData=user_data, 
+            avatar= user_avatar,
+            status=200
+        )
     except Exception as e:
         print(str(e))
-    return success(False)
+    return jsonify(
+            success(False),
+            status=400
+        )
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -51,7 +61,7 @@ def login():
     try:
         username = request.json['username'].lower()
         password = request.json['password']
-        remember = request.json['remember']
+        #remember = request.json['remember']
         user_id = database.user_credentials_valid(password, username=username)
         if user_id:
             access_token = create_access_token(identity=user_id)
@@ -191,16 +201,15 @@ def proof():
 
 # =============================GET-REQUESTS=============================
 # For the feed, for now it's faked with randomness
-feed_stack = []
-start_time = datetime.now()
-wait = random.randint(1, 59)
 @app.route('/feed', methods=['GET']) #TODO CHANGE THIS!!!
 @jwt_required()
 def feed():
     """
         Returns the recents update from which users have upgraded level and more (currently faked with randomness)
     """
-    global start_time, wait
+    feed_stack = []
+    start_time = datetime.now()
+    wait = random.randint(1, 59)
     if len(feed_stack) == 0:
         for i in range(0, 6):
             # Create random username and level

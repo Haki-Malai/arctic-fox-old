@@ -6,7 +6,8 @@ export default class Support extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: []
+            text: [],
+			accessToken: localStorage.getItem('token'),
         }
     }
     componentDidMount() {

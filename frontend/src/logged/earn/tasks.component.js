@@ -8,6 +8,7 @@ export default class Tasks extends React.Component {
         super(props);
         this.state = {
             tasks: [],
+			accessToken: localStorage.getItem('token'),
         }
         this.getTask = this.getTask.bind(this);
     }
@@ -65,6 +66,7 @@ export default class Tasks extends React.Component {
                 if (data.tasks) {
                     this.setState({tasks: data.tasks});
                 } else {
+                    console.log(data.tasks)
                     alert('Failed to load available tasks!');
                 }
             })

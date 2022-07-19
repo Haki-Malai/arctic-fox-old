@@ -14,6 +14,7 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			url: '',
 			lang: 'en',
 			fontsLoaded: false,
 			page: 'welcome',
@@ -73,20 +74,21 @@ export default class App extends React.Component {
 				mode: 'cors',
 			}
 
-			fetch(this.state.data.url, requestOptions)
+			fetch(this.state.url + 'user', requestOptions)
 				.then(response => response.json())
 				.then(data => {
-					if (data.user_data) {
-						this.setState({userData: data.user_data});
+					if (data.status === 200) {
+						this.setState({userData: JSON.parse(data.userData)});
 						this.setState({page: 'home'});
 						this.setUserAvatar(data.avatar);
-					} else {
-						console.log(data);
-						this.setState({page: 'welcome'});
+					} else if (data.status === 400) {
+						console.log(data.status);
+						this.setState({page: 'login'});
 					}
 				})
 				.catch(e => {
 					console.log(e);
+					console.log(e.lineNumber);
 				});
 		}
 	}
@@ -104,18 +106,20 @@ export default class App extends React.Component {
 				mode: 'cors',
 			}
 
-			fetch(this.state.data.url, requestOptions)
+			fetch(this.state.url + 'user', requestOptions)
 				.then(response => response.json())
 				.then(data => {
-					if (data.user_data) {
-						this.setState({userData: data.user_data});
-					} else {
-						console.log(data);
+					if (data.status === 200) {
+						this.setState({userData: JSON.parse(data.userData)});
+						this.setUserAvatar(data.avatar);
+					} else if (data.status === 400) {
+						console.log(data.status);
 						this.setState({page: 'welcome'});
 					}
 				})
 				.catch(e => {
 					console.log(e);
+					console.log(e.lineNumber);
 				});
 		}
 	}
@@ -130,7 +134,7 @@ export default class App extends React.Component {
 			mode: 'cors',
 			body: JSON.stringify({access_token: this.state.accessToken})
 		}
-		fetch(this.state.data.url+'logout', requestOptions)
+		fetch(this.state.url+'logout', requestOptions)
 
 		localStorage.setItem('token', null);
 		localStorage.setItem('userdata', null);
@@ -174,7 +178,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'login') {
 			toRender = <Login 
-				url={this.state.data.url}
+				url={this.state.url}
 				setRemember={this.setRemember}
 				remember={this.state.remember}
 				setLang={this.setLang}
@@ -187,7 +191,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'signup') {
 			toRender = <Signup 
-				url={this.state.data.url}
+				url={this.state.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
@@ -198,7 +202,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'home') {
 			toRender = <Home 
-				url={this.state.data.url}
+				url={this.state.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
@@ -210,7 +214,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'earn') {
 			toRender = <Earn 
-				url={this.state.data.url}
+				url={this.state.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
@@ -224,7 +228,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'task') {
 			toRender = <Task 
-				url={this.state.data.url}
+				url={this.state.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
@@ -238,7 +242,7 @@ export default class App extends React.Component {
 			/>
 		} else if (this.state.page === 'account') {
 			toRender = <Account 
-				url={this.state.data.url}
+				url={this.state.url}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 

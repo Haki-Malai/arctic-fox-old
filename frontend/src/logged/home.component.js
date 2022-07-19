@@ -10,6 +10,7 @@ export default class Home extends React.Component {
         this.state = {
             username: '',
             loading: false,
+			accessToken: localStorage.getItem('token'),
             feed: []
         }
         this.setMedia = this.setMedia.bind(this);
@@ -23,7 +24,6 @@ export default class Home extends React.Component {
             method: 'GET',
             headers: { 
                 'Authorization': 'Bearer ' + this.state.accessToken,
-                'Content-Type': 'application/json',
                 'Accept': '*/*'
             },
             mode: 'cors',
@@ -38,6 +38,7 @@ export default class Home extends React.Component {
             })
             .catch(e => {
                 console.log(e);
+                console.log(e.lineNumber);
             });
         setTimeout( () => this.getFeedData(), 30000);
     }

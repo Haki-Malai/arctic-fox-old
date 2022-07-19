@@ -10,7 +10,7 @@ export default class Options extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            option: 'transaction'
+            option: 'none'
         }
     }
     render() {

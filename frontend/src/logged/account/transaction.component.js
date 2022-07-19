@@ -179,7 +179,7 @@ export default class Payment extends React.Component {
         }
         return(
             <View style={styles.paymentContainer}>
-                <Text > {this.props.lang=='en'? 'Current Address': 'Τωρινή διεύθυνση'}:</Text>
+                <Text > {this.props.lang=='en'? 'Current BTC Address': 'Τωρινή BTC διεύθυνση'}:</Text>
                 <Text >{this.props.userData.bitcoin_address}</Text>
 
                 <View style={styles.paymentContainer}>

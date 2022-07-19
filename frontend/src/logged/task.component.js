@@ -12,7 +12,8 @@ export default class Task extends React.Component {
             username: '',
             loading: false,
             page: 'process',
-            tasks: ''
+            tasks: '',
+			accessToken: localStorage.getItem('token'),
         }
         this.setPage = this.setPage.bind(this);
     }

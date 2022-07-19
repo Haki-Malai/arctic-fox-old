@@ -1,5 +1,4 @@
 {
-    "url" : "http://192.168.42.90:5000/",
     "owaspList" : [
         "Broken Access Control",
         "Cryptographic Failures",

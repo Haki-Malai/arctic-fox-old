@@ -13,7 +13,7 @@ export default class Earn extends React.Component {
         super(props);
         this.state = {
             page: this.props.userData.level,
-            media: 'none'
+            media: 'none',
         }
         this.setPage = this.setPage.bind(this);
         this.setMedia = this.setMedia.bind(this);

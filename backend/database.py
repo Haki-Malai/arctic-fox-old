@@ -397,9 +397,9 @@ def update_task(id, status):
         print(str(e))
     return False
 
-def set_task_proof(id, user_id, image):
+def set_task_proof(id, image):
     try:
-        task = Task.query.filter_by(id=id, user_id=user_id).first()
+        task = Task.query.filter_by(id=id).first()
         task.proof = image
         db.session.commit()
         update_task(id, 1)

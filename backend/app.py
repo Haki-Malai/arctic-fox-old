@@ -2,10 +2,11 @@ import database
 import random
 import string
 import os
+import json
 from secrets import token_hex
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 
@@ -20,8 +21,32 @@ app.config['UPLOAD_FOLDER'] = str(Path(__file__).resolve().parent) + '/static/up
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 database.db.init_app(app)
 
+# Creates all database tables if they do not exist
 with app.app_context():
-    database.db.create_all()
+    try:
+        database.db.create_all()
+        # Creates an user and an admin if they do not exist
+        if not database.User.query.filter_by(username='useruser').first():
+            user = database.User(username="useruser", password="12345678", email="user@user.com", invitation_code="1234567890", invited_from="NOBODY")
+            database.db.session.add(user)
+            database.db.session.commit()
+        if not database.Admin.query.filter_by(username='useruser').first():
+            admin = database.Admin(username="useruser", password="12345678", email="user@user.com")
+            database.db.session.add(admin)
+            database.db.session.commit()
+        task = database.Task(admin_id=1, vulnerability="Broken Access Control", days=12, url='http://google.com', notes='empty')
+        task.status = 1
+        task.user_id = 1
+        task.proof = 'dismiss.png'
+        database.db.session.add(task)
+        database.db.session.commit()
+    except Exception as e:
+        print(str(e))
+
+# ==========================HELPER-FUNCTIONS=======================
+
+def success(bool):
+    return jsonify(success=bool, status=200 if bool else 400)
 
 # =============================POST-REQUESTS=============================
 @app.route("/")
@@ -38,7 +63,7 @@ def welcome():
     try:
         user_id = get_jwt_identity()
         user_data = database.get_user_json(user_id)
-        user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
+        user_avatar = database.get_user_avatar(user_id)
         return jsonify(
             userData=user_data, 
             avatar=user_avatar,
@@ -46,10 +71,7 @@ def welcome():
         )
     except Exception as e:
         print(str(e))
-    return jsonify(
-            success(False),
-            status=400
-        )
+    return success(False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -88,11 +110,11 @@ def signup():
         if isinstance(db_response, int):
             access_token = create_access_token(identity=db_response)
             user_data = database.get_user_json(db_response)
-        response = {'access_token': access_token, 'user_data': user_data }
-        return jsonify(
-            access_token= access_token,
-            user_data= user_data 
-        )
+            return jsonify(
+                access_token=access_token,
+                user_data=user_data,
+                status=200 
+            )
     except Exception as e:
         print(str(e))
     return success(False)
@@ -176,7 +198,7 @@ def payments():
 
 @app.route('/upload', methods=['POST'])
 @jwt_required()
-def proof():
+def upload():
     """
         Received data as form-data
         Expected file is image type
@@ -219,14 +241,14 @@ def feed():
             feed_stack.append([username, upgraded_to])
         return jsonify(feed=feed_stack)
     elif (start_time - datetime.now()).total_seconds() >= wait:
-        stack.pop()
+        feed_stack.pop()
         start_time = datetime.now()
         wait = random.randint(1, 19)
         # Create new feed
         username = random.choice(string.ascii_letters) + random.randint(7, 19)*"*" + random.choice(string.ascii_letters)
         upgraded_to = random.randint(2, 6)
         feed_stack.append([username, upgraded_to])
-        stack.append()
+        feed_stack.append()
         return jsonify(feed=feed_stack)
     return jsonify(feed=feed_stack)
 

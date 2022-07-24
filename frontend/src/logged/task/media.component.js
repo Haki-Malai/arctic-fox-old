@@ -7,7 +7,8 @@ export default class Media extends React.Component {
         super(props);
         this.state = {
             expanded: false,
-            file: ''
+            file: '',
+			accessToken: localStorage.getItem('token'),
         }
         this.setExpanded = this.setExpanded.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
@@ -27,7 +28,7 @@ export default class Media extends React.Component {
     }
 
     uploadImage() {
-        if (this.state.file) {
+        if (this.state.file && this.state.accessToken) {
             var formData = new FormData();
             formData.append('image', this.state.file);
             formData.append('task_id', this.props.data.id);
@@ -41,7 +42,7 @@ export default class Media extends React.Component {
 				body: formData
             }
 
-            fetch(this.props.url+'upload', requestOptions)
+            fetch(this.props.url+'upload_task_proof', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

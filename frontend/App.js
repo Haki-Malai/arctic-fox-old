@@ -83,7 +83,7 @@ export default class App extends React.Component {
 						this.setUserAvatar(data.avatar);
 					} else if (data.status === 400) {
 						console.log(data.status);
-						this.setState({page: 'login'});
+						this.setState({page: 'welcome'});
 					}
 				})
 				.catch(e => {

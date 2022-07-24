@@ -3,8 +3,6 @@ import { View, Image, Pressable, Text, TextInput, ActivityIndicator } from 'reac
 import Lang from '../lang.component';
 import styles from '../../style';
 
-var data = require('../../data.json');
-
 export default class Signup extends React.Component {
     constructor(props) {
         super(props);
@@ -36,14 +34,12 @@ export default class Signup extends React.Component {
             .then(response => response.json())
             .then(data => {
                 if (data.access_token) {
-                    this.props.setToken(data.access_token);
-                    this.props.setUserData({userData: data.user_data});
-                    this.props.setPage({page: 'home'});
+                    localStorage.setItem('token', data.access_token);
                     location.reload();
                 } else if (data.success === false) {
                     // TODO validate input!
                     alert('Something went wrong, please try again');
-                    console.log(data.error)
+                    console.log(data.error);
                     this.setState({loading: false});
                 }
             })

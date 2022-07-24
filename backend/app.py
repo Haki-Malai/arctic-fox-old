@@ -182,32 +182,46 @@ def payments():
 
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload_task_proof', methods=['POST'])
 @jwt_required()
-def upload():
+def upload_task_proof():
     """
         Received data as form-data
         Expected file is image type
-        Saves file for whatever purpose
+        Saves image in uploads/task folder
+        Returns success or failure status
+    """
+    try:
+        image = request.files['image']
+        if image and allowed_file(image.filename):
+            task_id = request.form['task_id']
+            image_name = secure_filename(image.filename)
+            image_name = 'task' + task_id + image_name
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
+            if database.set_task_proof(task_id, image_name):
+                return success(True)
+    except Exception as e:
+        print(str(e))
+    return success(False)
+
+@app.route('/upload_avatar', methods=['POST'])
+@jwt_required()
+def upload_avatar():
+    """
+        Received data as form-data
+        Expected file is image type
+        Saves file in uploads/avatars folder
         Returns success or failure status
     """
     try:
         user_id = get_jwt_identity()
         image = request.files['image']
         if image and allowed_file(image.filename):
-            if request.form.get('user_id'):
-                image_name = secure_filename(image.filename)
-                image_name = 'user' + str(user_id) + image_name
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
-                if database.set_user_avatar(user_id, image_name):
-                    return success(True)
-            elif request.form.get('task_id'):
-                task_id = request.form['task_id']
-                image_name = secure_filename(image.filename)
-                image_name = 'task' + task_id + image_name
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
-                if database.set_task_proof(task_id, user_id, image_name):
-                    return success(True)
+            image_name = secure_filename(image.filename)
+            image_name = 'user' + str(user_id) + image_name
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
+            if database.set_user_avatar(user_id, image_name):
+                return success(True)
     except Exception as e:
         print(str(e))
     return success(False)

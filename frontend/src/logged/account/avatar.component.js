@@ -9,18 +9,10 @@ export default class Avatar extends React.Component {
             hover: false,
 			accessToken: localStorage.getItem('token'),
         }
-        this.loadImage = this.loadImage.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
     }
 
-    setExpanded() {
-        this.setState({expanded: !this.state.expanded});
-    }
-
-    loadInBrowser(url) {
-        Linking.openURL(url).catch(err => alert("Couldn't load page", err));
-    }
-
-    loadImage() {
+    uploadImage() {
         const file = document.querySelector('input[type="file"]').files[0];
         if (file && this.state.accessToken) {
             var formData = new FormData();
@@ -71,7 +63,7 @@ export default class Avatar extends React.Component {
                         <input 
                             id="upload"
                             type="file"
-                            onChange={this.loadImage}
+                            onChange={() => this.uploadImage()}
                             accept="image/*"
                             style={{ opacity: 0, width: '10em', height: '10em', cursor: 'pointer' }}
                             onMouseEnter={ () => this.setState({ hover: true})}

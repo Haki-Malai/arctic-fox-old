@@ -20,8 +20,17 @@ app.config['UPLOAD_FOLDER'] = str(Path(__file__).resolve().parent) + '/static/up
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 database.db.init_app(app)
 
+# Creates all database tables if they do not exist
 with app.app_context():
     database.db.create_all()
+
+# ==========================HELPER-FUNCTIONS=======================
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def success(bool):
+    return jsonify(success=bool, status=200 if bool else 400)
 
 # =============================POST-REQUESTS=============================
 @app.route("/")
@@ -38,7 +47,7 @@ def welcome():
     try:
         user_id = get_jwt_identity()
         user_data = database.get_user_json(user_id)
-        user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
+        user_avatar = database.get_user_avatar(user_id)
         return jsonify(
             userData=user_data, 
             avatar=user_avatar,
@@ -46,10 +55,7 @@ def welcome():
         )
     except Exception as e:
         print(str(e))
-    return jsonify(
-            success(False),
-            status=400
-        )
+    return success(False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -88,11 +94,11 @@ def signup():
         if isinstance(db_response, int):
             access_token = create_access_token(identity=db_response)
             user_data = database.get_user_json(db_response)
-        response = {'access_token': access_token, 'user_data': user_data }
-        return jsonify(
-            access_token= access_token,
-            user_data= user_data 
-        )
+            return jsonify(
+                access_token=access_token,
+                user_data=user_data,
+                status=200 
+            )
     except Exception as e:
         print(str(e))
     return success(False)
@@ -176,7 +182,7 @@ def payments():
 
 @app.route('/upload', methods=['POST'])
 @jwt_required()
-def proof():
+def upload():
     """
         Received data as form-data
         Expected file is image type

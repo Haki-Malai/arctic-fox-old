@@ -22,8 +22,17 @@ app.config['UPLOAD_FOLDER'] = str(Path(__file__).resolve().parent) + '/static/up
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 database.db.init_app(app)
 
+# Creates all database tables if they do not exist
 with app.app_context():
     database.db.create_all()
+
+# ==========================HELPER-FUNCTIONS=======================
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def success(bool):
+    return jsonify(success=bool, status=200 if bool else 400)
 
 # =============================POST-REQUESTS=============================
 @app.route("/")
@@ -40,7 +49,7 @@ def welcome():
     try:
         user_id = get_jwt_identity()
         user_data = database.get_user_json(user_id)
-        user_avatar = database.get_user_avatar(user_id, app.config['UPLOAD_FOLDER'])
+        user_avatar = database.get_user_avatar(user_id)
         return jsonify(
             userData=user_data, 
             avatar=user_avatar,
@@ -48,10 +57,7 @@ def welcome():
         )
     except Exception as e:
         print(str(e))
-    return jsonify(
-            success(False),
-            status=400
-        )
+    return success(False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -90,11 +96,11 @@ def signup():
         if isinstance(db_response, int):
             access_token = create_access_token(identity=db_response)
             user_data = database.get_user_json(db_response)
-        response = {'access_token': access_token, 'user_data': user_data }
-        return jsonify(
-            access_token= access_token,
-            user_data= user_data 
-        )
+            return jsonify(
+                access_token=access_token,
+                user_data=user_data,
+                status=200 
+            )
     except Exception as e:
         print(str(e))
     return success(False)
@@ -178,7 +184,7 @@ def payments():
 
 @app.route('/upload', methods=['POST'])
 @jwt_required()
-def proof():
+def upload():
     """
         Received data as form-data
         Expected file is image type
@@ -188,19 +194,15 @@ def proof():
     try:
         user_id = get_jwt_identity()
         image = request.files['image']
-        if image and allowed_file(image.filename):
+        if image:
             if request.form.get('user_id'):
-                image_name = secure_filename(image.filename)
-                image_name = 'user' + user_id + image_name
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
-                if database.set_user_avatar(user_id, image_name):
+                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image.filename))
+                if database.set_user_avatar(user_id, image.filename):
                     return success(True)
             elif request.form.get('task_id'):
                 task_id = request.form['task_id']
-                image_name = secure_filename(image.filename)
-                image_name = 'task' + task_id + image_name
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
-                if database.set_task_proof(task_id, user_id, image_name):
+                image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image.filename))
+                if database.set_task_proof(task_id, user_id, image.filename):
                     return success(True)
     except Exception as e:
         print(str(e))
@@ -381,10 +383,3 @@ def pay_users():
     return redirect(url_for('.admin_login'))
 
 
-# ==========================HELPER-FUNCTIONS=======================
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def success(bool):
-    return jsonify(success= bool)

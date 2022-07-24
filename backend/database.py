@@ -4,6 +4,7 @@ import json
 import os
 import re
 import base64
+from flask import current_app as app
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -240,16 +241,19 @@ def create_random_code():
 
 def set_user_avatar(id, image):
     user = User.query.filter_by(id=id).first()
-    if user:#TODO REMOVE OLD AVATAR
+    if user:
+        # Remove old image if not default
+        if user.avatar != 'default.jpeg':
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/', user.avatar))
         user.avatar = image
         db.session.commit()
         return True
     return False
 
-def get_user_avatar(id, path):
+def get_user_avatar(id):
     try:
         user = User.query.filter_by(id=id).first()
-        with open(os.path.join(path+'avatars/'+user.avatar), 'rb') as image:
+        with open(os.path.join(app.config['UPLOAD_FOLDER']+'avatars/'+user.avatar), 'rb') as image:
             encoded_img = base64.b64encode(image.read())
         return encoded_img.decode('utf-8')
     except Exception as e:
@@ -382,20 +386,23 @@ def delete_task(id):
 
 def update_task(id, status):
     try:
-        Task.query.filter_by(id=id).first().status = status
-        Task.query.filter_by(id=id).first().submited = datetime.now()
+        task = Task.query.filter_by(id=id).first()
+        task.status = status
+        task.submited = datetime.now()
+        if task.proof and status == 3:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/', task.proof))
         db.session.commit()
         return True
     except Exception as e:
         print(str(e))
     return False
 
-def set_task_proof(task_id, user_id, image):
+def set_task_proof(id, user_id, image):
     try:
-        task = Task.query.filter_by(id=task_id, user_id=user_id).first()
+        task = Task.query.filter_by(id=id, user_id=user_id).first()
         task.proof = image
         db.session.commit()
-        update_task(task_id, 1)
+        update_task(id, 1)
         return True
     except Exception as e:
         print(str(e))

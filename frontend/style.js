@@ -242,15 +242,39 @@ export default StyleSheet.create({
 		width: ScreenWidth,
 		padding: '1em',
 		alignItems: 'center',
-		fontSize: '0.8em'
+		fontSize: '1em'
 	},
-	accountPic: {
-		height: '5em',
-		width: '5em',
+	avatarContainer: {
+		alignSelf: 'center',
+	},
+	avatar: {
+		height: '10em',
+		width: '10em',
 		borderRadius: '100%',
 		borderStyle: 'solid',
 		borderColor: BLUE,
 		borderWidth: '.2em'
+	},
+	avatarHover: {
+		height: '10em',
+		width: '10em',
+		borderRadius: '100%',
+		borderStyle: 'solid',
+		borderColor: BLUE,
+		borderWidth: '.2em',
+		opacity: 0.7,
+	},
+	avatarUploadContainer: {
+		position: 'absolute',
+		alignSelf: 'center',
+	},
+	avatarUpload: {
+		marginTop: '3em',
+		color: WHITE,
+		height: '4em',
+		width: '4em',
+		position: 'absolute',
+		alignSelf: 'center',
 	},
 	accountUsername: {
 		fontSize: '1.5em',
@@ -555,4 +579,7 @@ export default StyleSheet.create({
 		marginVertical: '.5em',
 		width: ScreenWidth/1.2
 	},
+	hidden: {
+		display: 'none'
+	}
 });

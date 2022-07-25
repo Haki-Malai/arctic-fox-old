@@ -34,8 +34,8 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password)
-        self.created = created=datetime.now()
-        self.lastActive = created=datetime.now()
+        self.created = datetime.now()
+        self.lastActive = datetime.now()
         self.invitationCode = invitationCode
         self.invitedFrom = invitedFrom
 
@@ -64,7 +64,7 @@ class User(db.Model):
             'taskProfit': self.taskProfit,
             'tasks': get_user_tasks(self.id)
         }
-    
+
     def validate_password(self, password):
         return check_password_hash(self.password, password)
 
@@ -198,9 +198,9 @@ def add_user(username, password, email, invitedFrom='NOBODY'):
         print(str(e))
         return str(e)
 
-def change_user_password(id, password):
+def change_user_password(user_id, password):
     try:
-        user = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=user_id).first()
         user.password = generate_password_hash(password)
         db.session.commit()
         return True
@@ -208,9 +208,9 @@ def change_user_password(id, password):
         print(str(e))
         return False
 
-def get_user_json(id):
+def get_user_json(user_id):
     try:
-        return json.dumps(User.query.filter_by(id=id).first().get_data(), indent=4, sort_keys=True, default=str)
+        return json.dumps(User.query.filter_by(id=user_id).first().get_data(), indent=4, sort_keys=True, default=str)
     except Exception as e:
         print(str(e))
     return False
@@ -239,8 +239,8 @@ def create_random_code():
         print(str(e))
     return False
 
-def set_user_avatar(id, image_name):
-    user = User.query.filter_by(id=id).first()
+def set_user_avatar(user_id, image_name):
+    user = User.query.filter_by(id=user_id).first()
     if user:
         # Remove old image if not default
         if user.avatar != 'default.jpeg' and user.avatar != image_name:
@@ -259,9 +259,9 @@ def get_user_avatar(id):
     except Exception as e:
         print(str(e))
     
-def set_user_address(id, password, address):
+def set_user_address(user_id, password, address):
     try:
-        user = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=user_id).first()
         if user.validate_password(password):
             user.bitcoin_address = address
             db.session.commit()
@@ -270,9 +270,9 @@ def set_user_address(id, password, address):
         print(str(e))
     return False
 
-def request_payment(id):
+def request_payment(user_id):
     try:
-        user = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=user_id).first()
         payment = Payment(user_id=user.id, amount=user.balance)
         user.init_balance()
         db.session.add(payment)
@@ -282,20 +282,20 @@ def request_payment(id):
         print(str(e))
     return False
 
-def get_payment_requests(id):
+def get_payment_requests(user_id):
     try:
         payments = []
-        for payment in Payment.query.filter_by(user_id=id, paid=False).all():
+        for payment in Payment.query.filter_by(user_id=user_id, paid=False).all():
             payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
         return payments
     except Exception as e:
         print(str(e))
     return False
 
-def get_user_payments(id):
+def get_user_payments(user_id):
     try:
         payments = []
-        for payment in Payment.query.filter_by(user_id=id, paid=True).all():
+        for payment in Payment.query.filter_by(user_id=user_id, paid=True).all():
             payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
         return payments
     except Exception as e:
@@ -375,18 +375,18 @@ def get_admin_tasks(admin_id, status):
         tasks.append(task.get_data())
     return tasks
 
-def delete_task(id):
+def delete_task(task_id):
     try:
-        Task.query.filter_by(id=id).delete()
+        Task.query.filter_by(id=task_id).delete()
         db.session.commit()
         return True
     except Exception as e:
         print(str(e))
     return False
 
-def update_task(id, status):
+def update_task(task_id, status):
     try:
-        task = Task.query.filter_by(id=id).first()
+        task = Task.query.filter_by(id=task_id).first()
         task.status = status
         task.submited = datetime.now()
         if task.proof and status == 3:
@@ -397,12 +397,12 @@ def update_task(id, status):
         print(str(e))
     return False
 
-def set_task_proof(id, image):
+def set_task_proof(task_id, image):
     try:
-        task = Task.query.filter_by(id=id).first()
+        task = Task.query.filter_by(id=task_id).first()
         task.proof = image
         db.session.commit()
-        update_task(id, 1)
+        update_task(task_id, 1)
         return True
     except Exception as e:
         print(str(e))

@@ -2,7 +2,6 @@ import database
 import random
 import string
 import os
-import base64
 import json
 from pathlib import Path
 from datetime import datetime, timedelta

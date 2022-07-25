@@ -32,7 +32,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def success(bool):
+def success_response(bool):
     return make_response(jsonify(success=bool), 200 if bool else 400)
 
 # =============================POST-REQUESTS=============================
@@ -59,7 +59,7 @@ def welcome():
         )
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -82,7 +82,7 @@ def login():
             )
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -107,7 +107,7 @@ def signup():
             )
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/password', methods=['POST'])
 @jwt_required()
@@ -121,10 +121,10 @@ def password():
         password = request.json['password']
         new = request.json['new']
         if database.user_credentials_valid(password, id=user_id):
-            return success(database.change_user_password(user_id, new))
+            return success_response(database.change_user_password(user_id, new))
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/available_tasks', methods=['POST'])
 @jwt_required()
@@ -142,7 +142,7 @@ def available_tasks():
             #return jsonify(tasks=tasks)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/user_tasks', methods=['GET'])
 @jwt_required()
@@ -156,7 +156,7 @@ def user_tasks():
         return jsonify(tasks=database.get_user_tasks(user_id))
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/assign_on_task', methods=['POST'])
 @jwt_required()
@@ -169,10 +169,10 @@ def assign_on_task():
         user_id = get_jwt_identity()
         task_id = request.json['task_id']
         if database.assign_task(user_id, task_id):
-            return success(True)
+            return success_response(True)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/change_address', methods=['POST'])
 @jwt_required()
@@ -185,10 +185,10 @@ def change_address():
         user_id = get_jwt_identity()
         password = request.json['password']
         address = request.json['address']
-        return success(database.set_user_address(user_id, password, address))
+        return success_response(database.set_user_address(user_id, password, address))
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/request_payment', methods=['GET'])
 @jwt_required()
@@ -199,10 +199,10 @@ def request_payment():
     try:
         user_id = get_jwt_identity()
         if database.request_payment(user_id):
-            return success(True)
+            return success_response(True)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/payment_requests', methods=['GET']) 
 @jwt_required()
@@ -216,7 +216,7 @@ def payment_requests():
         return jsonify(requests=requests)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/payment_history', methods=['GET'])
 @jwt_required()
@@ -230,7 +230,7 @@ def payment_history():
         return jsonify(payments=payments)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
     
 @app.route('/upload_task_proof', methods=['POST'])
 @jwt_required()
@@ -249,10 +249,10 @@ def upload_task_proof():
             image_name = 'task' + task_id + image_name
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/' + image_name))
             if database.set_task_proof(task_id, image_name):
-                return success(True)
+                return success_response(True)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 @app.route('/upload_avatar', methods=['POST'])
 @jwt_required()
@@ -261,7 +261,7 @@ def upload_avatar():
         Received data as form-data
         Expected file is image type
         Saves file in uploads/avatars folder
-        Returns success or failure status
+        Returns success response
     """
     try:
         user_id = get_jwt_identity()
@@ -274,10 +274,10 @@ def upload_avatar():
                 # Saving the payload output
                 with open("output.txt", "a+") as text_file:
                     text_file.write(f"Image name: {image_name}\n")
-                return success(True)
+                return success_response(True)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 # =============================GET-REQUESTS=============================
 # For the feed, for now it's faked with randomness
@@ -321,7 +321,7 @@ def guide():
         return jsonify(guide)
     except Exception as e:
         print(str(e))
-    return success(False)
+    return success_response(False)
 
 # =============================ADMIN-PAGE=========================
 @app.route('/favicon.ico')

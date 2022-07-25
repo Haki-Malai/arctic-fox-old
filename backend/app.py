@@ -124,28 +124,50 @@ def password():
         print(str(e))
     return success(False)
 
-@app.route('/tasks', methods=['POST'])
+@app.route('/available_tasks', methods=['POST'])
 @jwt_required()
-def task():
+def available_tasks():
     """
-        Receives the function's name
-        Does task based on function name
-        Returns success or failure status
+        Receives the jwt token and vulnerability type
+        Returns the available tasks based on vulnerability type
     """
     try:
         user_id = get_jwt_identity()
-        function = request.json['function']
-        if function == 'available':
-            vulnerability = request.json['vulnerability']
-            tasks = database.get_available_tasks(vulnerability)
-            return jsonify(tasks=tasks)
-        elif function == 'assigned':
-            tasks = database.get_user_tasks(user_id)
-            return jsonify(tasks=tasks)
-        elif function == 'assign':
-            task_id = request.json['task_id']
-            if database.assign_task(user_id, task_id):
-                return success(True)
+        vulnerability = request.json['vulnerability']
+        return jsonify(tasks=database.get_available_tasks(vulnerability))
+        #elif function == 'assigned':
+            #tasks = database.get_user_tasks(user_id)
+            #return jsonify(tasks=tasks)
+    except Exception as e:
+        print(str(e))
+    return success(False)
+
+@app.route('/user_tasks', methods=['GET'])
+@jwt_required()
+def user_tasks():
+    """
+        Receives the jwt token
+        Returns json with all the tasks assigned to the user
+    """
+    try:
+        user_id = get_jwt_identity()
+        return jsonify(tasks=database.get_user_tasks(user_id))
+    except Exception as e:
+        print(str(e))
+    return success(False)
+
+@app.route('/assign_on_task', methods=['POST'])
+@jwt_required()
+def assign_on_task():
+    """
+        Receives the jwt token and task id
+        Returns proper response
+    """
+    try:
+        user_id = get_jwt_identity()
+        task_id = request.json['task_id']
+        if database.assign_task(user_id, task_id):
+            return success(True)
     except Exception as e:
         print(str(e))
     return success(False)

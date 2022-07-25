@@ -24,17 +24,15 @@ export default class Task extends React.Component {
 		// Retrieve tasks from server
 		if (this.props.userData) {
 			const requestOptions = {
-				method: 'POST',
+				method: 'GET',
                 headers: { 
                     'Authorization': 'Bearer ' + this.state.accessToken,
-                    'Content-Type': 'application/json',
                     'Accept': '*/*'
                 },
 				mode: 'cors',
-				body: JSON.stringify({function: 'assigned'})
 			}
 
-			fetch(this.props.url+'tasks', requestOptions)
+			fetch(this.props.url+'user_tasks', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.tasks) {

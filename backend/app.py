@@ -134,12 +134,8 @@ def available_tasks():
         Returns the available tasks based on vulnerability type
     """
     try:
-        user_id = get_jwt_identity()
         vulnerability = request.json['vulnerability']
         return jsonify(tasks=database.get_available_tasks(vulnerability))
-        #elif function == 'assigned':
-            #tasks = database.get_user_tasks(user_id)
-            #return jsonify(tasks=tasks)
     except Exception as e:
         print(str(e))
     return success_response(False)
@@ -299,14 +295,13 @@ def feed():
             feed_stack.append([username, upgraded_to])
         return jsonify(feed=feed_stack)
     elif (start_time - datetime.now()).total_seconds() >= wait:
-        stack.pop()
+        feed_stack.pop()
         start_time = datetime.now()
         wait = random.randint(1, 19)
         # Create new feed
         username = random.choice(string.ascii_letters) + random.randint(7, 19)*"*" + random.choice(string.ascii_letters)
         upgraded_to = random.randint(2, 6)
         feed_stack.append([username, upgraded_to])
-        stack.append()
         return jsonify(feed=feed_stack)
     return jsonify(feed=feed_stack)
 

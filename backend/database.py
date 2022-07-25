@@ -84,7 +84,7 @@ class User(db.Model):
 
 class Task(db.Model):
     __tablename__ = "task"
-    
+
     id = db.Column(db.Integer, primary_key=True)
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
@@ -222,7 +222,7 @@ def user_credentials_valid(password, **kwargs):
         except:
             user = User.query.filter_by(id=kwargs['id']).first()
         if user.validate_password(password):
-            return user.id 
+            return user.id
     except Exception as e:
         print(str(e))
     return False
@@ -250,9 +250,9 @@ def set_user_avatar(user_id, image_name):
         return True
     return False
 
-def get_user_avatar(id):
+def get_user_avatar(user_id):
     try:
-        user = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=user_id).first()
         with open(os.path.join(app.config['UPLOAD_FOLDER']+'avatars/'+user.avatar), 'rb') as image:
             encoded_img = base64.b64encode(image.read())
         return encoded_img.decode('utf-8')

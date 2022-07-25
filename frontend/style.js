@@ -1,12 +1,12 @@
-import { StyleSheet, Dimensions } from "react-native";
+import{ StyleSheet, Dimensions } from "react-native";
 
 // Set"s width and height of the component
 let ScreenHeight = Dimensions.get("window").height;
 let ScreenWidth = Dimensions.get("window").width;
-let PressableWidth = ScreenWidth
-if (ScreenHeight < ScreenWidth) {
-        PressableWidth = ScreenWidth/2
-        ScreenWidth = ScreenWidth/2
+let PressableWidth = ScreenWidth;
+if (ScreenHeight < ScreenWidth){
+	PressableWidth = ScreenWidth/2
+	ScreenWidth = ScreenWidth/2
 }
 
 const BLACK = "#242526";
@@ -17,15 +17,15 @@ const MORE_FADED_BLUE = "#8BB3B4";
 const EVEN_MORE_FADED_BLUE = "#B0D2CF";
 const SUPER_FADED_BLUE = "#CEE9EA";
 const WHITE = SUPER_FADED_BLUE;
-const navHeight = ScreenHeight/20;
-const navIconDimensions = ScreenWidth/20;
-const logoDimensions = ScreenHeight/5
+const navHeight = ScreenHeight / 20;
+const navIconDimensions = ScreenWidth / 20;
+const logoDimensions = ScreenHeight / 5;
 
 export default StyleSheet.create({
-    menuContainer: {
+    menuContainer:{
         marginTop: "1em",
     },
-    container: {
+    container:{
         fontFamily: "Roboto",
         flex: 1,
         flexDirection: "column",
@@ -36,63 +36,63 @@ export default StyleSheet.create({
         paddingBottom: navIconDimensions
     },
 
-    lang: {
+    lang:{
         flexDirection: "row",
     },
 
-    langIcon: {
+    langIcon:{
         margin: "1em",
         width: "2em",
         height: "2em"
     },
 
-    text: {
+    text:{
         lineHeight: "1.5em",
         fontSize: "1.125rem",
         textAlign: "center"
     },
 
-    link: {
+    link:{
         fontSize: "1em",
         marginVertical: ".4em",
         color: "#1B95E0"
     },
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~WELCOME~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    welcomeLogo: {
+    welcomeLogo:{
         minWidth: logoDimensions,
         minHeight: logoDimensions,
         resizeMode: "contain"
     },
     
-    welcomeTitle: {
+    welcomeTitle:{
         fontWeight: "bold",
         fontSize: "2em",
         marginVertical: ".5em",
         textAlign: "center"
     },
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~LOGIN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    loginCheckbox: {
+    loginCheckbox:{
         flexDirection: "row"
     },
 
-    loginCheckboxLabel: {
+    loginCheckboxLabel:{
         marginLeft: "1em",
     },
 
-    signupLogo: {
+    signupLogo:{
         minWidth: "4em",
         minHeight: "4em",
         resizeMode: "contain"
     },
 
-    signupTitle: {
+    signupTitle:{
         fontWeight: "bold",
         fontSize: ".5rem",
         marginVertical: ".3em",
         textAlign: "center"
     },
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MENU~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    menuPressable: {
+    menuPressable:{
         fontWeight: "bold",
         backgroundColor: BLUE,
         minWidth: PressableWidth,
@@ -102,7 +102,7 @@ export default StyleSheet.create({
         justifyContent: "center"
     },
 
-    textPressable: {
+    textPressable:{
         lineHeight: "1.5em",
         fontSize: "1.3rem",
         fontStyle: "bold",
@@ -110,7 +110,7 @@ export default StyleSheet.create({
         marginVertical: "1em"
     },
 
-    menuInput: {
+    menuInput:{
         textAlign: "center",
         minWidth: ScreenWidth,
         borderRadius: "1em",
@@ -119,12 +119,12 @@ export default StyleSheet.create({
         paddingVertical: ".7em",
     },
 
-    menuLoading: {
+    menuLoading:{
         position: "absolute",
         left: "48%"
     },
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~NAVIGATOR~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	navigator: {
+	navigator:{
 		flex: 1,
 		flexDirection: "row",
 		zIndex: 1,
@@ -135,7 +135,7 @@ export default StyleSheet.create({
 		minHeight: navHeight,
 		backgroundColor: BLUE
 	},
-	navPressable: {
+	navPressable:{
 		zIndex: 2,
 		alignItems: "center",
 		maxWidth: navIconDimensions,
@@ -143,7 +143,7 @@ export default StyleSheet.create({
 		marginHorizontal: navIconDimensions*1.4,
 		marginVertical: navIconDimensions/2,
 	},
-	navPressableFaded: {
+	navPressableFaded:{
 		zIndex: 2,
 		alignItems: "center",
 		maxWidth: navIconDimensions,
@@ -152,17 +152,17 @@ export default StyleSheet.create({
 		marginVertical: navIconDimensions/2,
 		opacity: 0.5
 	},
-	navPressableIcon: {
+	navPressableIcon:{
 		minWidth: navIconDimensions,
 		minHeight: navIconDimensions
 	},
-	navPressableText: {
+	navPressableText:{
 		fontSize: navIconDimensions/2.5,
 		fontWeight: "bold"
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MEDIA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	media: {
+	media:{
 		flexDirection: "row",
 		width: ScreenWidth/1.1,
 		padding: ".4em",
@@ -170,46 +170,46 @@ export default StyleSheet.create({
 		borderRadius: ".4em",
 		alignItems: "center",
 	},
-	mediaIcon: {
+	mediaIcon:{
 		height: "2em",
 		width: "2em",
 		tintColor: WHITE,
 		marginLeft: ".2em",
 	},
-	mediaTitle: {
+	mediaTitle:{
 		marginLeft: ".5em",
 		color: WHITE,
 		fontWeight: "bold",
 		fontSize: "1em"
 	},
-	mediaNoData: {
+	mediaNoData:{
 		justifyContent: "center"
 	},
-	mediaA: {
+	mediaA:{
 		backgroundColor: FADED_BLACK,
 	},
-	mediaB: {
+	mediaB:{
 		backgroundColor: BLUE,
 	},
-	mediaDisabled: {
+	mediaDisabled:{
 		backgroundColor: "grey"
 	},
-	mediaBack: {
+	mediaBack:{
 		justifyContent: "center",
 		backgroundColor: FADED_BLUE,
 		color: BLACK,
 		fontSize: "1.2em",
 		cursor: "pointer"
 	},
-	homeMedia: {
+	homeMedia:{
 		textAlign: "center",
 	},
-	homeMediaText: {
+	homeMediaText:{
 		borderBottomWidth: ".1em",
 		borderColor: BLUE
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FEED~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	feed: {
+	feed:{
 		flexGrow: "column",
 		flexDirection: "row",
 		padding: ".2em",
@@ -218,7 +218,7 @@ export default StyleSheet.create({
 		borderBottomColor: "grey",
 		borderBottomWidth: ".1em"
 	},
-	feedPic: {
+	feedPic:{
 		borderRadius: "10em",
 		width: "3em",
 		height: "3em",
@@ -226,16 +226,16 @@ export default StyleSheet.create({
 		marginVertical: ".5em",
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ACCOUNT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	accountScroll: {
+	accountScroll:{
 		alignItems: "center",
 		minHeight: ScreenHeight,
 	},
-	account: {
+	account:{
 		backgroundColor: WHITE,
 		alignItems: "center",
 		paddingBottom: navIconDimensions*2,
 	},
-	accountDetailsWrapper: {
+	accountDetailsWrapper:{
 		backgroundColor: FADED_BLUE,
 		borderBottomLeftRadius: "7em",
 		borderBottomRightRadius: "7em",
@@ -244,10 +244,10 @@ export default StyleSheet.create({
 		alignItems: "center",
 		fontSize: "1em"
 	},
-	avatarContainer: {
+	avatarContainer:{
 		alignSelf: "center",
 	},
-	avatar: {
+	avatar:{
 		height: "10em",
 		width: "10em",
 		borderRadius: "100%",
@@ -255,7 +255,7 @@ export default StyleSheet.create({
 		borderColor: BLUE,
 		borderWidth: ".2em"
 	},
-	avatarHover: {
+	avatarHover:{
 		height: "10em",
 		width: "10em",
 		borderRadius: "100%",
@@ -264,11 +264,11 @@ export default StyleSheet.create({
 		borderWidth: ".2em",
 		opacity: 0.7,
 	},
-	avatarUploadContainer: {
+	avatarUploadContainer:{
 		position: "absolute",
 		alignSelf: "center",
 	},
-	avatarUpload: {
+	avatarUpload:{
 		marginTop: "3em",
 		color: WHITE,
 		height: "4em",
@@ -276,18 +276,18 @@ export default StyleSheet.create({
 		position: "absolute",
 		alignSelf: "center",
 	},
-	accountUsername: {
+	accountUsername:{
 		fontSize: "1.5em",
 		fontWeight: "bold",
 		margin: ".4em",
 		textAlign: "center"
 	},
-	accountDetail: {
+	accountDetail:{
 		fontSize: ".8em",
 		fontWeight: "bold",
 		padding: ".2em",
 	},
-	accountPressable: {
+	accountPressable:{
 		backgroundColor: "black",
 		borderRadius: "1em",
 		color: BLUE,
@@ -295,7 +295,7 @@ export default StyleSheet.create({
 		paddingVertical: ".1em",
 		paddingHorizontal: ".4em"
 	},
-	accountTables: {
+	accountTables:{
 		shadowColor: "#000",
 		shadowOpacity: 0.48,
 		shadowRadius: 11.95,
@@ -305,41 +305,41 @@ export default StyleSheet.create({
 		backgroundColor: MORE_FADED_BLUE,
 		borderRadius: "1em"
 	},
-	accountTable: {
+	accountTable:{
 		flexDirection: "row",
 		margin: "1em",
 		borderStyle: "solid",
 		borderColor: "grey",
 	},
-	accountTableItem: {
+	accountTableItem:{
 		width: ScreenWidth/4,
 		fontSize: "1.5em",
 		textAlign: "center",
 	},
-	accountTableItemLabel: {
+	accountTableItemLabel:{
 		display: "block",
 		fontSize: "0.5em",
 		color: "grey",
 	},
-	accountButtons: {
+	accountButtons:{
 		flexDirection: "row",
 		width: ScreenWidth
 	},
-	accountButton: {
+	accountButton:{
 		textAlign: "center",
 		width: ScreenWidth/5,
 		alignItems: "center",
 		marginVertical: ".5em",
 	},
-	accountPressableIcon: {
+	accountPressableIcon:{
 		width: "3em",
 		height: "3em",
 	},
-	accountPressableText: {
+	accountPressableText:{
 		fontSize: ".7em",
 		textAlign: "center"
 	},
-	accountOption: {
+	accountOption:{
 		padding: ".3em",
 		width: ScreenWidth/1.1,
 		borderStyle: "solid",
@@ -348,16 +348,16 @@ export default StyleSheet.create({
 		marginBottom: ".4em",
 		alignItems: "center"
 	},
-	accountOptionPressableText: {
+	accountOptionPressableText:{
 		flexDirection: "row",
 		fontSize: "1em"
 	},
-	accountOptionPressableIcon: {
+	accountOptionPressableIcon:{
 		width: "1em",
 		height: "1em",
 		marginRight: "1em"
 	},
-	accountLogout: {
+	accountLogout:{
 		fontSize: "1.3em",
 		color: BLUE,
 		marginVertical: ".5em",
@@ -368,73 +368,73 @@ export default StyleSheet.create({
 		borderWidth: ".01em"
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~OPTIONS-ACCOUNT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	optionContainer: {
+	optionContainer:{
 		alignSelf: "center",
 		alignItems: "center",
 		maxWidth: ScreenWidth/1.2,
 		textAlign: "center"
 	},
-	optionInput: {
+	optionInput:{
 		fontSize: "1.2em",
 		textAlign: "center",
 		borderBottomWidth: ".1em",
 		borderBottomColor: "grey",
 		marginVertical: ".4em"
 	},
-	optionPressable: {
+	optionPressable:{
 		borderWidth: ".1em",
 		borderRadius: "1em",
 		padding: ".4em",
 		borderColor: "grey" 
 	},
-	optionPressableText: {
+	optionPressableText:{
 		fontSize: "1.2em",
 		color: BLUE,
 	},
-	support: {
+	support:{
 		borderBottomWidth: ".1em",
 		borderBottomColor: "grey",
 		margin: ".5em"
 	},
-	guideTitle: {
+	guideTitle:{
 		fontSize: "1.3em",
 		fontWeight: "bold"
 	},
-	guideParagraph: {
+	guideParagraph:{
 		marginVertical: ".3em"
 	},
-	paymentContainer: {
+	paymentContainer:{
 		alignItems: "center",
 		marginBottom: "1em",
 	},
-	paymentMiniContainer: {
+	paymentMiniContainer:{
 		alignItems: "center",
 		margin: "1em",
 	},
-	paymentInput: {
+	paymentInput:{
 		fontSize: ".8em",
 		textAlign: "center",
 		borderBottomWidth: ".05em",
 		borderBottomColor: "grey",
 		marginVertical: ".2em"
 	},
-	paymentPressable: {
+	paymentPressable:{
 		borderWidth: ".05em",
 		borderRadius: ".5em",
 		padding: ".2em",
 		borderColor: "grey" 
 	},
-	paymentPressableMini: {
+	paymentPressableMini:{
 		borderBottomWidth: ".05em",
 		padding: ".2em",
 		borderBottomColor: "grey" 
 	},
-	paymentPressableText: {
+	paymentPressableText:{
 		fontSize: ".8em",
 		color: BLUE,
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~EARN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	earnTitle: {
+	earnTitle:{
 		backgroundColor: MORE_FADED_BLUE,
 		height: navHeight,
 		width: ScreenWidth,
@@ -442,47 +442,47 @@ export default StyleSheet.create({
 		paddingTop: ".2em",
 		fontSize: "1.2em"
 	},
-	earnTop: {
+	earnTop:{
 		backgroundColor: BLUE,
 		width: ScreenWidth,
 		alignItems: "center"
 	},
-	earnTextBig: {
+	earnTextBig:{
 		fontSize: "1em"
 	},
-	earnTextIcon: {
+	earnTextIcon:{
 		width: "1.7em",
 		height: "1.7em",
 		marginVertical: ".3em"
 	},
-	earnText: {
+	earnText:{
 		fontSize: ".8em",
 		marginBottom: ".3em"
 	},
-	earnNavigator: {
+	earnNavigator:{
 		flexDirection: "row",
 		zIndex: 1,
 		width: ScreenWidth,
 		backgroundColor: FADED_BLUE,
 		paddingTop: ".5em",
 	},
-	earnNavPressable: {
+	earnNavPressable:{
 		width: ScreenWidth/6,
 		textAlign: "center",
 		padding: ".1em"
 	},
-	earnNavPressablePressed: {
+	earnNavPressablePressed:{
 		width: ScreenWidth/6,
 		textAlign: "center",
 		padding: ".1em",
 		borderBottomColor: "red",
 		borderBottomWidth: ".2em",
 	},
-	earnNavPressableText: {
+	earnNavPressableText:{
 		fontSize: ".7em"
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~LEVEL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	level: {
+	level:{
 		width: ScreenWidth/1.1,
 		padding: ".5em",
 		paddingRight: ".7em",
@@ -496,43 +496,43 @@ export default StyleSheet.create({
 		shadowRadius: 6,
 		justifyContent: "space-between",
 	},
-	levelIconAndText: {
+	levelIconAndText:{
 		flexDirection: "row"
 	},
-	levelIcon: {
+	levelIcon:{
 		width: "2.5em",
 		height: "2.5em"
 	},
-	levelTextContainer: {
+	levelTextContainer:{
 		flexDirection: "column"
 	},
-	levelTextSmall: {
+	levelTextSmall:{
 		fontSize: ".6em",
 	},
-	levelRight: {
+	levelRight:{
 		alignSelf: "flex-end",
 	},
-	levelPressable: {
+	levelPressable:{
 		backgroundColor: BLUE,
 		paddingVertical: ".2em",
 		paddingHorizontal: ".4em",
 		borderRadius: ".4em"
 	},
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~TASK~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	taskNavigator: {
+	taskNavigator:{
 		flexDirection: "row",
 		zIndex: 1,
 		width: ScreenWidth,
 		backgroundColor: BLUE,
 		paddingTop: ".5em",
 	},
-	taskNavPressable: {
+	taskNavPressable:{
 		marginTop: "1em",
 		width: ScreenWidth/4,
 		textAlign: "center",
 		padding: ".2em"
 	},
-	taskNavPressablePressed: {
+	taskNavPressablePressed:{
 		marginTop: "1em",
 		width: ScreenWidth/4,
 		textAlign: "center",
@@ -540,13 +540,13 @@ export default StyleSheet.create({
 		borderBottomColor: "red",
 		borderBottomWidth: ".2em",
 	},
-	taskNavPressableText: {
+	taskNavPressableText:{
 		fontSize: "1em"
 	},
-	expandedMedia: {
+	expandedMedia:{
 		height: "auto",
 	},
-	upload: {
+	upload:{
 		paddingVertical: ".4em",
 		flexDirection: "column",
 		flexGrow: "column",
@@ -554,32 +554,32 @@ export default StyleSheet.create({
 		alignSelf: "flex-start",
 		padding: ".6em"
 	},
-	uploadLink: {
+	uploadLink:{
 	},
-	uploadLinkText: {
+	uploadLinkText:{
 		color: "white",
 		marginVertical: ".2em",
 		fontSize: "1.2em"
 	},
-	uploadLinkTextTop: {
+	uploadLinkTextTop:{
 		alignSelf: "center",
 		cursor: "pointer"
 	},
-	uploadLinkTextTopWrapper: {
+	uploadLinkTextTopWrapper:{
 		width: ScreenWidth/1.2,
 		alignText: "center",
 	},
-	uploadInput: {
+	uploadInput:{
 		fontSize: "1.2em"
 	},
-	uploadButton: {
+	uploadButton:{
 		backgroundColor: BLUE,
 		borderRadius: "1em",
 		textAlign: "center",
 		marginVertical: ".5em",
 		width: ScreenWidth/1.2
 	},
-	hidden: {
+	hidden:{
 		display: "none"
 	}
 });

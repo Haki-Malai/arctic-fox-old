@@ -239,13 +239,13 @@ def create_random_code():
         print(str(e))
     return False
 
-def set_user_avatar(id, image):
+def set_user_avatar(id, image_name):
     user = User.query.filter_by(id=id).first()
     if user:
         # Remove old image if not default
-        if user.avatar != 'default.jpeg':
+        if user.avatar != 'default.jpeg' and user.avatar != image_name:
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/', user.avatar))
-        user.avatar = image
+        user.avatar = image_name
         db.session.commit()
         return True
     return False

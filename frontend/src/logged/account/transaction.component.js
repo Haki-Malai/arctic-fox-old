@@ -24,19 +24,17 @@ export default class Payment extends React.Component {
 			const requestOptions = {
 				method: 'POST',
 				headers: { 
-					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + this.state.accessToken,
 					'Accept': '*/*'
 				},
 				mode: 'cors',
 				body: JSON.stringify({
-                    username: this.props.userData.username,
                     password: this.state.password,
                     address: this.state.new_address,
-                    function: 'change'
                 })
 			}
 
-			fetch(this.props.url+'payments', requestOptions)
+			fetch(this.props.url+'change_address', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
@@ -59,19 +57,15 @@ export default class Payment extends React.Component {
             alert('Low balance!');
         } else if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'POST',
-				headers: { 
-					'Content-Type': 'application/json',
+				method: 'GET',
+				headers: {
+					'Authorization': 'Bearer ' + this.state.accessToken,
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({
-                    access_token: this.state.accessToken,
-                    function: 'request'
-                })
 			}
 
-			fetch(this.props.url+'payments', requestOptions)
+			fetch(this.props.url+'request_payment', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
@@ -90,19 +84,15 @@ export default class Payment extends React.Component {
     expandPayment() {
         if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'POST',
+				method: 'GET',
 				headers: { 
 					'Authorization': 'Bearer ' + this.state.accessToken,
-					'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({
-                    function: 'get_payments'
-                })
 			}
 
-			fetch(this.props.url+'payment', requestOptions)
+			fetch(this.props.url+'payment_history', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.payments) {
@@ -121,20 +111,16 @@ export default class Payment extends React.Component {
     expandRequests() {
         if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'POST',
+				method: 'GET',
 				headers: { 
 					'Authorization': 'Bearer ' + this.state.accessToken,
 					'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',
-				body: JSON.stringify({
-                    access_token: this.state.accessToken,
-                    function: 'get_requests'
-                })
 			}
 
-			fetch(this.props.url+'payments', requestOptions)
+			fetch(this.props.url+'payment_requests', requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.requests) {

@@ -32,8 +32,8 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def success_response(bool):
-    return make_response(jsonify(success=bool), 200 if bool else 400)
+def success_response(is_successful):
+    return make_response(jsonify(success=is_successful), 200 if is_successful else 400)
 
 # =============================POST-REQUESTS=============================
 @app.route("/")
@@ -53,7 +53,7 @@ def welcome():
         user_avatar = database.get_user_avatar(user_id)
         return make_response(
             jsonify(
-                userData=user_data, 
+                userData=user_data,
                 avatar=user_avatar,
             ), 200
         )
@@ -76,7 +76,7 @@ def login():
             access_token = create_access_token(identity=user_id)
             return make_response(
                 jsonify(
-                    access_token= access_token, 
+                    access_token= access_token,
                     user_data= database.get_user_json(user_id),
                 ), 200
             )
@@ -103,7 +103,7 @@ def signup():
             return jsonify(
                 access_token=access_token,
                 user_data=user_data,
-                status=200 
+                status=200
             )
     except Exception as e:
         print(str(e))
@@ -200,7 +200,7 @@ def request_payment():
         print(str(e))
     return success_response(False)
 
-@app.route('/payment_requests', methods=['GET']) 
+@app.route('/payment_requests', methods=['GET'])
 @jwt_required()
 def payment_requests():
     """
@@ -227,7 +227,7 @@ def payment_history():
     except Exception as e:
         print(str(e))
     return success_response(False)
-    
+
 @app.route('/upload_task_proof', methods=['POST'])
 @jwt_required()
 def upload_task_proof():
@@ -287,7 +287,7 @@ def feed():
     start_time = datetime.now()
     wait = random.randint(1, 59)
     if len(feed_stack) == 0:
-        for i in range(0, 6):
+        for _ in itertools.repeat(None, 6):
             # Create random username and level
             username = random.choice(string.ascii_letters) + random.randint(7, 14)*"*" + random.choice(string.ascii_letters)
             upgraded_to = random.randint(2, 6)

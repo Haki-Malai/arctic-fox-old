@@ -9,7 +9,8 @@ export default class Password extends React.Component {
             loading: false,
             current: '',
             new: '',
-            conf: ''
+            conf: '',
+			accessToken: localStorage.getItem('token'),
         }
         this.changePassword = this.changePassword.bind(this);
     }

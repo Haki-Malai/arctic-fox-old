@@ -217,9 +217,9 @@ def get_user_json(id):
 
 def user_credentials_valid(password, **kwargs):
     try:
-        if kwargs['username']:
+        try:
             user = User.query.filter_by(username=kwargs['username']).first()
-        elif kwargs['id']:
+        except:
             user = User.query.filter_by(id=kwargs['id']).first()
         if user.validate_password(password):
             return user.id 
@@ -282,7 +282,7 @@ def request_payment(id):
         print(str(e))
     return False
 
-def get_user_pay_requests(id):
+def get_payment_requests(id):
     try:
         payments = []
         for payment in Payment.query.filter_by(user_id=id, paid=False).all():

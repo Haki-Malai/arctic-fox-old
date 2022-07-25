@@ -8,17 +8,18 @@ export default class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
             loading: false,
 			accessToken: localStorage.getItem('token'),
-            feed: []
+            feed: [],
+            getFeedTimeout: null
         }
         this.setMedia = this.setMedia.bind(this);
-        this.getFeedData = this.getFeedData.bind(this);
     }
+
     setMedia() {
         this.props.setPage('earn');
     }
+
     getFeedData() {
         const requestOptions = {
             method: 'GET',
@@ -36,16 +37,22 @@ export default class Home extends React.Component {
                     this.setState({feed: data.feed});
                 }
             })
-            .catch(e => {
-                console.log(e);
-                console.log(e.lineNumber);
-            });
-        setTimeout( () => this.getFeedData(), 30000);
+        
+        // Refresh feed every 30 seconds and clears on unmount
+        this.setState({
+            getFeedTimeout: setTimeout(() => {this.getFeedData()}, 30000)
+        });
     }
+
     componentDidMount() {
         this.getFeedData();
 		this.props.refreshUserData();
     }
+
+    componentWillUnmount() {
+        clearTimeout(this.state.getFeedTimeout);
+    }
+
     render() {
         var feed=[];
         for (let i=0; i<this.state.feed.length; i++) {

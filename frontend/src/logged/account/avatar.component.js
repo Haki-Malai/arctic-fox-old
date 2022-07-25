@@ -16,8 +16,7 @@ export default class Avatar extends React.Component {
         const file = document.querySelector('input[type="file"]').files[0];
         if (file && this.state.accessToken) {
             var formData = new FormData();
-            formData.append('image', this.state.file);
-            formData.append('user_id', this.props.data.id);
+            formData.append('image', file);
             const requestOptions = {
                 method: 'POST',
                 headers: { 
@@ -33,6 +32,7 @@ export default class Avatar extends React.Component {
                 .then(data => {
                     if (data.success) {
                         alert('Image uploaded successfully!');
+                        location.reload();
                     } else {
                         alert('Something went wrong, please try again!');
                     }

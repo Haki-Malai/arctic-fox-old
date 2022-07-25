@@ -22,14 +22,12 @@ export default class Tasks extends React.Component {
                 'Accept': '*/*'
             },
             body: JSON.stringify({
-                function: 'assign',
-                user_id: this.props.userData.id,
                 task_id: id,
             }),
             mode: 'cors'
         }
 
-        fetch(this.props.url+'tasks', requestOptions)
+        fetch(this.props.url+'assign_on_task', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -54,13 +52,12 @@ export default class Tasks extends React.Component {
                 'Accept': '*/*'
             },
             body: JSON.stringify({
-                function: 'available',
                 vulnerability: this.props.title
             }),
             mode: 'cors'
         }
 
-        fetch(this.props.url+'tasks', requestOptions)
+        fetch(this.props.url+'available_tasks', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.tasks) {

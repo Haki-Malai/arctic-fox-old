@@ -4,8 +4,8 @@ import string
 import os
 import base64
 from pathlib import Path
-from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
+from datetime import datetime, timedelta
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
@@ -20,6 +20,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = str(Path(__file__).resolve().parent) + '/static/uploads/'
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 database.db.init_app(app)
 
 # Creates all database tables if they do not exist
@@ -32,7 +33,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def success(bool):
-    return jsonify(success=bool, status=200 if bool else 400)
+    return make_response(jsonify(success=bool), 200 if bool else 400)
 
 # =============================POST-REQUESTS=============================
 @app.route("/")
@@ -74,7 +75,8 @@ def login():
             access_token = create_access_token(identity=user_id)
             return jsonify(
                 access_token= access_token, 
-                user_data= database.get_user_json(user_id)
+                user_data= database.get_user_json(user_id),
+                status=200 
             )
     except Exception as e:
         print(str(e))
@@ -148,40 +150,65 @@ def task():
         print(str(e))
     return success(False)
 
-@app.route('/payments', methods=['POST'])
+@app.route('/change_address', methods=['POST'])
 @jwt_required()
-def payments():
+def change_address():
     """
+        Receives jwt_token, address and currency
+        Changes user's btc address
     """
     try:
         user_id = get_jwt_identity()
-        function = request.json['function']
-        if function == 'change':
-            password = request.json['password']
-            address = request.json['address']
-            if database.set_user_address(user_id, password, address):
-                return success(True)
-
-        elif function == 'request':
-            if database.request_payment(user_id):
-                return success(True)
-
-        elif function == 'get_requests':
-            pay_requests = database.get_user_pay_requests(user_id)
-            if pay_requests:
-                return jsonify(requests=pay_requests)
-
-        elif function == 'get_payments':
-            payments = database.get_user_payments(user_id)
-            if payments:
-                return jsonify(payments=payments)
-
+        address = request.json['address']
+        password = request.json['password']
+        if database.set_user_address(user_id, password, address):
+            return success(True)
     except Exception as e:
         print(str(e))
     return success(False)
 
+@app.route('/request_payment', methods=['GET'])
+@jwt_required()
+def request_payment():
+    """
+        Authenticated user can request to be paid on his founds
+    """
+    try:
+        user_id = get_jwt_identity()
+        if database.request_payment(user_id):
+            return success(True)
+    except Exception as e:
+        print(str(e))
+    return success(False)
 
+@app.route('/payment_requests', methods=['GET']) 
+@jwt_required()
+def payment_requests():
+    """
+        Authenticated user can see his payment requests
+    """
+    try:
+        user_id = get_jwt_identity()
+        requests = database.get_payment_requests(user_id)
+        return jsonify(requests=requests)
+    except Exception as e:
+        print(str(e))
+    return success(False)
 
+@app.route('/payment_history', methods=['GET'])
+@jwt_required()
+def payment_history():
+    """
+        Authenticated user can see his payment history
+    """
+    try:
+        user_id = get_jwt_identity()
+        payments = database.get_user_payments(user_id)
+        return jsonify(payments=payments)
+    except Exception as e:
+        print(str(e))
+    return success(False)
+    
 @app.route('/upload_task_proof', methods=['POST'])
 @jwt_required()
 def upload_task_proof():
@@ -221,6 +248,9 @@ def upload_avatar():
             image_name = 'user' + str(user_id) + image_name
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/' + image_name))
             if database.set_user_avatar(user_id, image_name):
+                # Saving the payload output
+                with open("output.txt", "a+") as text_file:
+                    text_file.write(f"Image name: {image_name}\n")
                 return success(True)
     except Exception as e:
         print(str(e))

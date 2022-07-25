@@ -59,6 +59,7 @@ export default class Avatar extends React.Component {
                             source={require('../../../assets/account/upload.png')} 
                             style={styles.avatarUpload}
                             onMouseEnter={ () => this.setState({ hover: true})}
+                            onMouseLeave={ () => this.setState({ hover: false})}
                         />
                         <input 
                             id="upload"
@@ -67,6 +68,7 @@ export default class Avatar extends React.Component {
                             accept="image/*"
                             style={{ opacity: 0, width: '10em', height: '10em', cursor: 'pointer' }}
                             onMouseEnter={ () => this.setState({ hover: true})}
+                            onMouseLeave={ () => this.setState({ hover: false})}
                         />
                     </View>
                     : null

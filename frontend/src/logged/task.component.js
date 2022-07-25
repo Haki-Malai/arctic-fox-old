@@ -1,19 +1,19 @@
-import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
-import Navigator from './navigator.component';
-import TaskNavigator from './task/taskNavigator.component';
-import Media from './task/media.component';
-import styles from '../../style';
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
+import Navigator from "./navigator.component";
+import TaskNavigator from "./task/taskNavigator.component";
+import Media from "./task/media.component";
+import styles from "../../style";
 
 export default class Task extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            username: "",
             loading: false,
-            page: 'process',
-            tasks: '',
-			accessToken: localStorage.getItem('token'),
+            page: "process",
+            tasks: "",
+			accessToken: localStorage.getItem("token"),
         }
         this.setPage = this.setPage.bind(this);
     }
@@ -24,15 +24,15 @@ export default class Task extends React.Component {
 		// Retrieve tasks from server
 		if (this.props.userData) {
 			const requestOptions = {
-				method: 'GET',
+				method: "GET",
                 headers: { 
-                    'Authorization': 'Bearer ' + this.state.accessToken,
-                    'Accept': '*/*'
+                    "Authorization": "Bearer " + this.state.accessToken,
+                    "Accept": "*/*"
                 },
-				mode: 'cors',
+				mode: "cors",
 			}
 
-			fetch(this.props.url+'user_tasks', requestOptions)
+			fetch(this.props.url+"user_tasks", requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.tasks) {
@@ -60,7 +60,7 @@ export default class Task extends React.Component {
     }
     render() {
         var toRender = [];
-        if (this.state.page==='process') {
+        if (this.state.page==="process") {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];
@@ -72,7 +72,7 @@ export default class Task extends React.Component {
             if (noData) {
                 toRender = <Text style={styles.noData}>No Data Available</Text>
             } 
-        } else if (this.state.page==='pending') {
+        } else if (this.state.page==="pending") {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];
@@ -84,7 +84,7 @@ export default class Task extends React.Component {
             if (noData) {
                 toRender = <Text style={styles.noData}>No Data Available</Text>
             } 
-        } else if (this.state.page==='approved') {
+        } else if (this.state.page==="approved") {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];
@@ -96,7 +96,7 @@ export default class Task extends React.Component {
             if (noData) {
                 toRender = <Text style={styles.noData}>No Data Available</Text>
             } 
-        } else if (this.state.page==='others') {
+        } else if (this.state.page==="others") {
             var noData = true;
             for (let i=0; i<this.state.tasks.length; i++) {
                 var task_data = this.state.tasks[i];

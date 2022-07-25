@@ -1,14 +1,14 @@
-import React from 'react';
-import { Pressable, Text, Image, View, Linking } from 'react-native';
-import styles from '../../../style';
+import React from "react";
+import { Pressable, Text, Image, View, Linking } from "react-native";
+import styles from "../../../style";
 
 export default class Media extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             expanded: false,
-            file: '',
-			accessToken: localStorage.getItem('token'),
+            file: "",
+			accessToken: localStorage.getItem("token"),
         }
         this.setExpanded = this.setExpanded.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
@@ -24,31 +24,31 @@ export default class Media extends React.Component {
     }
 
     loadImage() {
-        this.setState({file: document.querySelector('input[type="file"]').files[0]});
+        this.setState({file: document.querySelector("input[type='file']").files[0]});
     }
 
     uploadImage() {
         if (this.state.file && this.state.accessToken) {
             var formData = new FormData();
-            formData.append('image', this.state.file);
-            formData.append('task_id', this.props.data.id);
+            formData.append("image", this.state.file);
+            formData.append("task_id", this.props.data.id);
             const requestOptions = {
-                method: 'POST',
+                method: "POST",
                 headers: { 
-                    'Authorization': 'Bearer ' + this.state.accessToken,
-                    'Accept': '*/*'
+                    "Authorization": "Bearer " + this.state.accessToken,
+                    "Accept": "*/*"
                 },
-				mode: 'cors',
+				mode: "cors",
 				body: formData
             }
 
-            fetch(this.props.url+'upload_task_proof', requestOptions)
+            fetch(this.props.url+"upload_task_proof", requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Image uploaded successfully!');
+                        alert("Image uploaded successfully!");
                     } else {
-                        alert('Something went wrong, please try again!');
+                        alert("Something went wrong, please try again!");
                     }
                 })
                 .catch(e => {
@@ -60,7 +60,7 @@ export default class Media extends React.Component {
     render() {
         var toRender, mediaStyles = [styles.media], toDo;
         if (this.props.data.requirements === 1) {
-            toDo = 'like';
+            toDo = "like";
         }
 
         this.props.mkey & 1? mediaStyles.push(styles.mediaA): mediaStyles.push(styles.mediaB);
@@ -79,15 +79,15 @@ export default class Media extends React.Component {
         if (this.state.expanded === true){
             mediaStyles.push(styles.expandedMedia)
             var upload;
-            // If status isn't on process there is no need for the upload area
+            // If status isn"t on process there is no need for the upload area
             if (this.props.data.status == 0) {
                 upload = <View key={this.props.mkey}>
                                 <Text style={styles.uploadLinkText}>Upload proof</Text>
                                 <input
                                     id="file"
-                                    style={{ fontSize: '1.2em', marginTop: '.6em'}}
+                                    style={{ fontSize: "1.2em", marginTop: ".6em"}}
                                     type="file" 
-                                    accept='image/*'
+                                    accept="image/*"
                                     onChange={() => this.loadImage()}
                                 >
                                 </input>
@@ -110,7 +110,7 @@ export default class Media extends React.Component {
                         </View>
         } else {
             toRender =  <Pressable style={mediaStyles} onPress={() => this.setExpanded() }>
-                            <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.data.vulnerability+'.png')}/>
+                            <Image style={styles.mediaIcon} source={require("../../../assets/media/"+this.props.data.vulnerability+".png")}/>
                             <Text style={styles.mediaTitle}>{this.props.data.vulnerability} </Text>
                         </Pressable>
         }

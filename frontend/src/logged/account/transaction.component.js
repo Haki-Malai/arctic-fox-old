@@ -1,14 +1,14 @@
-import React from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
-import styles from '../../../style';
+import React from "react";
+import { View, Text, TextInput, Pressable, ActivityIndicator } from "react-native";
+import styles from "../../../style";
 
 export default class Payment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            new_address: '',
-            password: '',
-			accessToken: localStorage.getItem('token'),
+            new_address: "",
+            password: "",
+			accessToken: localStorage.getItem("token"),
             paymentExpanded: false,
             payments: [],
             requestsExpanded: false,
@@ -22,29 +22,29 @@ export default class Payment extends React.Component {
     changeAddress() {
         if (this.state.new_address) {
 			const requestOptions = {
-				method: 'POST',
+				method: "POST",
 				headers: { 
-					'Authorization': 'Bearer ' + this.state.accessToken,
-                    'Content-Type': 'application/json',
-					'Accept': '*/*'
+					"Authorization": "Bearer " + this.state.accessToken,
+                    "Content-Type": "application/json",
+					"Accept": "*/*"
 				},
-				mode: 'cors',
+				mode: "cors",
 				body: JSON.stringify({
                     password: this.state.password,
                     address: this.state.new_address
                 })
 			}
 
-			fetch(this.props.url+'change_address', requestOptions)
+			fetch(this.props.url+"change_address", requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
-						alert('Address changed!');
-                        this.setState({new_address: ''});
-                        this.setState({password: ''});
+						alert("Address changed!");
+                        this.setState({new_address: ""});
+                        this.setState({password: ""});
                         this.props.refreshUserData();
 					} else {
-						alert('Something went wrong!');
+						alert("Something went wrong!");
 					}
 				})
 				.catch(e => {
@@ -55,25 +55,25 @@ export default class Payment extends React.Component {
 
     requestPayment() {
         if (this.props.userData.balance == 0) {
-            alert('Low balance!');
+            alert("Low balance!");
         } else if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'GET',
+				method: "GET",
 				headers: {
-					'Authorization': 'Bearer ' + this.state.accessToken,
-					'Accept': '*/*'
+					"Authorization": "Bearer " + this.state.accessToken,
+					"Accept": "*/*"
 				},
-				mode: 'cors',
+				mode: "cors",
 			}
 
-			fetch(this.props.url+'request_payment', requestOptions)
+			fetch(this.props.url+"request_payment", requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {
-						alert('Request has been submitted!');
+						alert("Request has been submitted!");
                         this.props.refreshUserData();
 					} else {
-						alert('Something went wrong!');
+						alert("Something went wrong!");
 					}
 				})
 				.catch(e => {
@@ -85,22 +85,22 @@ export default class Payment extends React.Component {
     expandPayment() {
         if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'GET',
+				method: "GET",
 				headers: { 
-					'Authorization': 'Bearer ' + this.state.accessToken,
-					'Accept': '*/*'
+					"Authorization": "Bearer " + this.state.accessToken,
+					"Accept": "*/*"
 				},
-				mode: 'cors',
+				mode: "cors",
 			}
 
-			fetch(this.props.url+'payment_history', requestOptions)
+			fetch(this.props.url+"payment_history", requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.payments) {
                         this.setState({payments: data.payments});
                         this.setState({paymentExpanded: !this.state.paymentExpanded});
 					} else {
-						alert('Something went wrong!');
+						alert("Something went wrong!");
 					}
 				})
 				.catch(e => {
@@ -112,22 +112,22 @@ export default class Payment extends React.Component {
     expandRequests() {
         if (this.state.accessToken) {
 			const requestOptions = {
-				method: 'GET',
+				method: "GET",
 				headers: { 
-					'Authorization': 'Bearer ' + this.state.accessToken,
-					'Accept': '*/*'
+					"Authorization": "Bearer " + this.state.accessToken,
+					"Accept": "*/*"
 				},
-				mode: 'cors',
+				mode: "cors",
 			}
 
-			fetch(this.props.url+'payment_requests', requestOptions)
+			fetch(this.props.url+"payment_requests", requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					if (data.requests) {
                         this.setState({requests: data.requests});
                         this.setState({requestsExpanded: !this.state.requestsExpanded});
 					} else {
-						alert('Something went wrong!');
+						alert("Something went wrong!");
 					}
 				})
 				.catch(e => {
@@ -165,13 +165,13 @@ export default class Payment extends React.Component {
         }
         return(
             <View style={styles.paymentContainer}>
-                <Text > {this.props.lang=='en'? 'Current BTC Address': 'Τωρινή BTC διεύθυνση'}:</Text>
+                <Text > {this.props.lang=="en"? "Current BTC Address": "Τωρινή BTC διεύθυνση"}:</Text>
                 <Text >{this.props.userData.bitcoin_address}</Text>
 
                 <View style={styles.paymentContainer}>
                     <TextInput 
                         style={styles.paymentInput} 
-                        placeholder={this.props.lang=='en'? 'New Address': 'Νέα Διεύθυνση'}
+                        placeholder={this.props.lang=="en"? "New Address": "Νέα Διεύθυνση"}
                         value={this.state.new_address}
                         onChangeText={input => this.setState({new_address: input})}
                     >
@@ -179,33 +179,33 @@ export default class Payment extends React.Component {
                     <TextInput 
                         secureTextEntry={true}
                         style={styles.paymentInput} 
-                        placeholder={this.props.lang=='en'? 'Password': 'Κωδικός'}
+                        placeholder={this.props.lang=="en"? "Password": "Κωδικός"}
                         value={this.state.password}
                         onChangeText={input => this.setState({password: input})}
                     >
                     </TextInput>
                     <Pressable style={styles.paymentPressable} onPress={() => this.changeAddress()} >
-                        <Text style={styles.paymentPressableText}>{this.props.lang=='en'? 'Change Address': 'Αλλαγή Διεύθυνσης'}</Text>
+                        <Text style={styles.paymentPressableText}>{this.props.lang=="en"? "Change Address": "Αλλαγή Διεύθυνσης"}</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.paymentContainer}>
                     <Text >Balance: {this.props.userData.balance}€</Text>
                     <Pressable style={styles.paymentPressable} onPress={() => this.requestPayment()} >
-                        <Text style={styles.paymentPressableText}>{this.props.lang=='en'? 'Request for payment': 'Αίτημα για πληρωμή'}</Text>
+                        <Text style={styles.paymentPressableText}>{this.props.lang=="en"? "Request for payment": "Αίτημα για πληρωμή"}</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.paymentContainer}>
                     <Pressable style={styles.paymentPressableMini} onPress={() => this.expandPayment()} >
-                        <Text style={styles.paymentPressableText}>{this.props.lang=='en'? 'Payment history': 'Ιστορικό πληρωμών'}</Text>
+                        <Text style={styles.paymentPressableText}>{this.props.lang=="en"? "Payment history": "Ιστορικό πληρωμών"}</Text>
                     </Pressable>
                     {paymentHistory}
                 </View>
 
                 <View style={styles.paymentContainer}>
                     <Pressable style={styles.paymentPressableMini} onPress={() => this.expandRequests()} >
-                        <Text style={styles.paymentPressableText}>{this.props.lang=='en'? 'Unpaid requests': 'Μη πληρωμένες αιτήσεις'}</Text>
+                        <Text style={styles.paymentPressableText}>{this.props.lang=="en"? "Unpaid requests": "Μη πληρωμένες αιτήσεις"}</Text>
                     </Pressable>
                     {requestHistory}
                 </View>

@@ -3,6 +3,7 @@ import random
 import string
 import os
 import base64
+import json
 from pathlib import Path
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, make_response
@@ -51,10 +52,11 @@ def welcome():
         user_id = get_jwt_identity()
         user_data = database.get_user_json(user_id)
         user_avatar = database.get_user_avatar(user_id)
-        return jsonify(
-            userData=user_data, 
-            avatar=user_avatar,
-            status=200
+        return make_response(
+            jsonify(
+                userData=user_data, 
+                avatar=user_avatar,
+            ), 200
         )
     except Exception as e:
         print(str(e))
@@ -73,10 +75,11 @@ def login():
         user_id = database.user_credentials_valid(password, username=username)
         if user_id:
             access_token = create_access_token(identity=user_id)
-            return jsonify(
-                access_token= access_token, 
-                user_data= database.get_user_json(user_id),
-                status=200 
+            return make_response(
+                jsonify(
+                    access_token= access_token, 
+                    user_data= database.get_user_json(user_id),
+                ), 200
             )
     except Exception as e:
         print(str(e))
@@ -118,7 +121,7 @@ def password():
         user_id = get_jwt_identity()
         password = request.json['password']
         new = request.json['new']
-        if database.credentials_valid(password, id=user_id):
+        if database.user_credentials_valid(password, id=user_id):
             return success(database.change_user_password(user_id, new))
     except Exception as e:
         print(str(e))
@@ -181,10 +184,9 @@ def change_address():
     """
     try:
         user_id = get_jwt_identity()
-        address = request.json['address']
         password = request.json['password']
-        if database.set_user_address(user_id, password, address):
-            return success(True)
+        address = request.json['address']
+        return success(database.set_user_address(user_id, password, address))
     except Exception as e:
         print(str(e))
     return success(False)
@@ -318,8 +320,9 @@ def guide():
         file = open('assets/guide.json')
         guide = json.load(file)
         return jsonify(guide)
-    except:
-        return success(False)
+    except Exception as e:
+        print(str(e))
+    return success(False)
 
 # =============================ADMIN-PAGE=========================
 @app.route('/favicon.ico')

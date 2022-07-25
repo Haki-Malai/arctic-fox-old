@@ -13,6 +13,12 @@ export default class Options extends React.Component {
             option: 'none'
         }
     }
+
+	logout() {
+		localStorage.removeItem('token');
+		location.reload();
+	}
+
     render() {
         var toExpand;
         if (this.state.option === 'support') {
@@ -46,7 +52,7 @@ export default class Options extends React.Component {
                     <Text style={styles.accountOptionPressableText}>{this.props.lang==='en'? 'Change password': 'Αλλαγή κωδικού'}</Text>
                 </Pressable>
                 {this.state.option==='password'? toExpand: null}
-                <Pressable style={styles.accountLogout} onPress={() => this.props.logout()} >
+                <Pressable style={styles.accountLogout} onPress={() => this.logout()} >
                     <Text style={styles.accountOptionPressableText}>{this.props.lang==='en'? 'Log Out': 'Αποσύνδεση'}</Text>
                 </Pressable>
             </View>

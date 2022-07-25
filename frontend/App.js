@@ -14,7 +14,7 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			url: '/',
+			url: 'http://localhost:8010/proxy/',
 			lang: 'en',
 			fontsLoaded: false,
 			page: 'welcome',
@@ -26,18 +26,8 @@ export default class App extends React.Component {
 			level: [[5, 3, 0], [8, 5, 100], [15, 8, 200], [17, 15, 300], [20, 22, 400], [23, 60, 500]]
 		}
 		this.setPage = this.setPage.bind(this);
-		this.setToken = this.setToken.bind(this);
-		this.setUserData = this.setUserData.bind(this);
 		this.setLang = this.setLang.bind(this);
-		this.setRemember = this.setRemember.bind(this);
-		this.logout = this.logout.bind(this);
-		this.getAuthorized = this.getAuthorized.bind(this);
 		this.refreshUserData = this.refreshUserData.bind(this);
-		this.setUserAvatar = this.setUserAvatar.bind(this);
-	}
-
-	setRemember(bool) {
-		this.setState({remember: bool});
 	}
 
 	setLang(lang) {
@@ -46,19 +36,6 @@ export default class App extends React.Component {
 
 	setPage(page) {
 		this.setState({page: page});
-	} 
-
-	setToken(token) {
-		localStorage.setItem('token', token);
-		this.setState({accessToken: token});
-	} 
-
-	setUserData(data) {
-		this.setState({userData: data});
-	}
-
-	setUserAvatar(data) {
-		this.setState({avatar: "data:image/jpg;base64," + data});
 	}
 
 	getAuthorized() {
@@ -77,23 +54,19 @@ export default class App extends React.Component {
 			fetch(this.state.url + 'user', requestOptions)
 				.then(response => response.json())
 				.then(data => {
-					if (data.status === 200) {
+					if (data) {
 						this.setState({userData: JSON.parse(data.userData)});
+						this.setState({avatar: "data:image/jpg;base64," + data.avatar});
 						this.setState({page: 'home'});
-						this.setUserAvatar(data.avatar);
-					} else if (data.status === 400) {
-						console.log(data.status);
+					} else {
 						this.setState({page: 'welcome'});
 					}
 				})
-				.catch(e => {
-					console.log(e);
-					console.log(e.lineNumber);
-				});
 		}
 	}
 
 	refreshUserData() {
+		this._isMounted = true;
 		// Authorization from saved cookie
 		if (this.state.accessToken) {
 			const requestOptions = {
@@ -109,36 +82,16 @@ export default class App extends React.Component {
 			fetch(this.state.url + 'user', requestOptions)
 				.then(response => response.json())
 				.then(data => {
-					if (data.status === 200) {
-						this.setState({userData: JSON.parse(data.userData)});
-						this.setUserAvatar(data.avatar);
-					} else if (data.status === 400) {
-						console.log(data.status);
-						this.setState({page: 'welcome'});
+					if (this._isMounted){
+						if (data) {
+							this.setState({userData: JSON.parse(data.userData)});
+							this.setState({avatar: "data:image/jpg;base64," + data.avatar});
+						} else {
+							this.setState({page: 'welcome'});
+						}
 					}
 				})
-				.catch(e => {
-					console.log(e);
-					console.log(e.lineNumber);
-				});
 		}
-	}
-
-	logout() {
-		const requestOptions = {
-			method: 'POST',
-			headers: { 
-				'Content-Type': 'application/json',
-				'Accept': '*/*'
-			},
-			mode: 'cors',
-			body: JSON.stringify({access_token: this.state.accessToken})
-		}
-		fetch(this.state.url+'logout', requestOptions)
-
-		localStorage.setItem('token', null);
-		localStorage.setItem('userdata', null);
-		location.reload();
 	}
 
     async loadFonts() {
@@ -160,6 +113,10 @@ export default class App extends React.Component {
 		this.refreshUserData();
     }
 
+	componentWillUnmount() {
+  		this._isMounted = false;
+  	}
+
     render() {
 		// Warn user if font didn't load
 		if (!this.state.fontsLoaded) console.warn('Error, unable to load fonts');
@@ -171,21 +128,15 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 			/>
 		} else if (this.state.page === 'login') {
 			toRender = <Login 
 				url={this.state.url}
-				setRemember={this.setRemember}
-				remember={this.state.remember}
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 			/>
@@ -195,8 +146,6 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 			/>
@@ -206,8 +155,6 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				avatar={this.state.avatar}
@@ -218,8 +165,6 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				level={this.state.level}
@@ -232,8 +177,6 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				level={this.state.level}
@@ -246,12 +189,9 @@ export default class App extends React.Component {
 				setLang={this.setLang}
 				lang={this.state.lang}
 				setPage={this.setPage} 
-				setToken={this.setToken}
-				setUserData={this.setUserData}
 				refreshUserData={this.refreshUserData}
 				userData={this.state.userData}
 				level={this.state.level}
-				logout={this.logout}
 				avatar={this.state.avatar}
 			/>
 		}

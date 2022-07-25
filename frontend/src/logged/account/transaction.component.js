@@ -25,12 +25,13 @@ export default class Payment extends React.Component {
 				method: 'POST',
 				headers: { 
 					'Authorization': 'Bearer ' + this.state.accessToken,
+                    'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',
 				body: JSON.stringify({
                     password: this.state.password,
-                    address: this.state.new_address,
+                    address: this.state.new_address
                 })
 			}
 
@@ -114,7 +115,6 @@ export default class Payment extends React.Component {
 				method: 'GET',
 				headers: { 
 					'Authorization': 'Bearer ' + this.state.accessToken,
-					'Content-Type': 'application/json',
 					'Accept': '*/*'
 				},
 				mode: 'cors',

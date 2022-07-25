@@ -17,7 +17,6 @@ export default class Login extends React.Component {
     }
     commitLogin() {
         this.setState({loading: true});
-        // TODO add username and password validation!
         if (this.state.username == '' || this.state.password == '') {
             alert(this.props.lang=='en'? 'Please fill out the fields.': 'Παρακαλούμε συμπληρώστε τα πεδία');
         } else if (this.state.username.length > 25 || this.state.username.length < 8) {
@@ -27,27 +26,30 @@ export default class Login extends React.Component {
         } else {
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
+                headers: {
+					'Content-Type': 'application/json',
+					'Accept': '*/*'
+				},
                 mode: 'cors',
                 body: JSON.stringify({
                     username: this.state.username,
                     password: this.state.password,
-                    remember: this.props.remember
                 })
             }
             fetch(this.props.url+'login', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.access_token) {
-                        this.props.setToken(data.access_token);
-                        this.props.setUserData(data.user_data);
-                        this.props.setPage('home');
-                    } else if (data.success === false) {
+                        localStorage.setItem('token', data.access_token);
+                    } else {
                         alert(this.props.lang=='en'? 'Invalid username/password compination': 'Λανθασμένος συνδιασμός όνομα χρήστη και κωδικού');
                         this.setState({loading: false});
                     }
                 })
-                .catch(e => alert(e))
+                .catch(e => {
+                    this.setState({loading: false});
+                    alert(e);
+                })
         }
     }
     render() {

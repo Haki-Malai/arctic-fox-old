@@ -15,7 +15,6 @@ export default class Support extends React.Component {
             method: 'GET',
             headers: { 
                 'Authorization': 'Bearer ' + this.state.accessToken,
-                'Content-Type': 'application/json',
                 'Accept': '*/*'
             },
             mode: 'cors',
@@ -24,7 +23,6 @@ export default class Support extends React.Component {
             .then(response => response.json())
             .then(data => {
                 if (data.success === false) {
-                    this.setState({text: data});
                     alert(this.props.lang=='en'? 'There was an error.': 'Σφάλμα.')
                 } else {
                     data.paragraphs.forEach((element, index) => {

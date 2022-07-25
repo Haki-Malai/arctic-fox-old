@@ -1,40 +1,40 @@
-import React from 'react';
-import { Text, Image, Pressable, View } from 'react-native';
-import Media from './media.component';
-import styles from '../../../style';
+import React from "react";
+import { Text, Image, Pressable, View } from "react-native";
+import Media from "./media.component";
+import styles from "../../../style";
 
 export default class Tasks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             tasks: [],
-			accessToken: localStorage.getItem('token'),
+			accessToken: localStorage.getItem("token"),
         }
         this.getTask = this.getTask.bind(this);
     }
 
     getTask(id) {
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: { 
-                'Authorization': 'Bearer ' + this.state.accessToken,
-                'Content-Type': 'application/json',
-                'Accept': '*/*'
+                "Authorization": "Bearer " + this.state.accessToken,
+                "Content-Type": "application/json",
+                "Accept": "*/*"
             },
             body: JSON.stringify({
                 task_id: id,
             }),
-            mode: 'cors'
+            mode: "cors"
         }
 
-        fetch(this.props.url+'assign_on_task', requestOptions)
+        fetch(this.props.url+"assign_on_task", requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Assigned to task successfully!');
+                    alert("Assigned to task successfully!");
                     location.reload();
                 } else {
-                    alert('Cannot get assigned to another task!');
+                    alert("Cannot get assigned to another task!");
                 }
             })
             .catch(e => {
@@ -45,26 +45,26 @@ export default class Tasks extends React.Component {
     componentDidMount() {
         // Get available tasks based on vuln type
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: { 
-                'Authorization': 'Bearer ' + this.state.accessToken,
-                'Content-Type': 'application/json',
-                'Accept': '*/*'
+                "Authorization": "Bearer " + this.state.accessToken,
+                "Content-Type": "application/json",
+                "Accept": "*/*"
             },
             body: JSON.stringify({
                 vulnerability: this.props.title
             }),
-            mode: 'cors'
+            mode: "cors"
         }
 
-        fetch(this.props.url+'available_tasks', requestOptions)
+        fetch(this.props.url+"available_tasks", requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.tasks) {
                     this.setState({tasks: data.tasks});
                 } else {
                     console.log(data.tasks)
-                    alert('Failed to load available tasks!');
+                    alert("Failed to load available tasks!");
                 }
             })
             .catch(e => {
@@ -75,15 +75,15 @@ export default class Tasks extends React.Component {
     render() {
         var toRender = [];
         toRender.push(
-            <Pressable key={-1} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia('none')}>
-                <Text>{this.props.lang==='en'? 'Back': 'Επιστροφή'}</Text>
+            <Pressable key={-1} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia("none")}>
+                <Text>{this.props.lang==="en"? "Back": "Επιστροφή"}</Text>
             </Pressable>
         );
         for (let i=0; i<this.state.tasks.length; i++) {
             var task_data = JSON.parse(this.state.tasks[i]);
             toRender.push(
                 <Pressable key={i} style={i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} onPress={() => this.getTask(task_data.id)} >
-                    <Image style={styles.mediaIcon} source={require('../../../assets/media/'+this.props.title+'.png')}/>
+                    <Image style={styles.mediaIcon} source={require("../../../assets/media/"+this.props.title+".png")}/>
                     <Text style={styles.mediaTitle}>#{task_data.id} Find vulnerability  +{this.props.plus}</Text>
                 </Pressable>
             );
@@ -96,8 +96,8 @@ export default class Tasks extends React.Component {
             )
         }
         toRender.push(
-            <Pressable key={-2} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia('none')}>
-                <Text>{this.props.lang==='en'? 'Back': 'Επιστροφή'}</Text>
+            <Pressable key={-2} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia("none")}>
+                <Text>{this.props.lang==="en"? "Back": "Επιστροφή"}</Text>
             </Pressable>
         );
         return(

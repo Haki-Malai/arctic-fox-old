@@ -1,15 +1,15 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
-import Navigator from './navigator.component';
-import Media from './home/media.component';
-import styles from '../../style';
+import React from "react";
+import { View, Text, Image } from "react-native";
+import Navigator from "./navigator.component";
+import Media from "./home/media.component";
+import styles from "../../style";
 
 export default class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
-			accessToken: localStorage.getItem('token'),
+			accessToken: localStorage.getItem("token"),
             feed: [],
             getFeedTimeout: null
         }
@@ -17,20 +17,20 @@ export default class Home extends React.Component {
     }
 
     setMedia() {
-        this.props.setPage('earn');
+        this.props.setPage("earn");
     }
 
     getFeedData() {
         const requestOptions = {
-            method: 'GET',
+            method: "GET",
             headers: { 
-                'Authorization': 'Bearer ' + this.state.accessToken,
-                'Accept': '*/*'
+                "Authorization": "Bearer " + this.state.accessToken,
+                "Accept": "*/*"
             },
-            mode: 'cors',
+            mode: "cors",
         }
 
-        fetch(this.props.url+'feed', requestOptions)
+        fetch(this.props.url+"feed", requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.feed) {
@@ -67,7 +67,7 @@ export default class Home extends React.Component {
             <View style={styles.container}>
                 <View style={styles.homeMedia}>
                     <Text style={styles.homeMediaText}>Task list</Text>
-                    <Media setMedia={this.setMedia} enabled={true} style={[styles.media, styles.mediaB]} title={'Bounties'}></Media>
+                    <Media setMedia={this.setMedia} enabled={true} style={[styles.media, styles.mediaB]} title={"Bounties"}></Media>
                     <Text style={styles.homeMediaText}>User feed</Text>
                     {feed}
                 </View>

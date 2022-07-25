@@ -1,40 +1,40 @@
-import React from 'react';
-import { Pressable, Text, Image, View, Linking } from 'react-native';
-import styles from '../../../style';
+import React from "react";
+import { Pressable, Text, Image, View, Linking } from "react-native";
+import styles from "../../../style";
 
 export default class Avatar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             hover: false,
-			accessToken: localStorage.getItem('token'),
+			accessToken: localStorage.getItem("token"),
         }
         this.uploadImage = this.uploadImage.bind(this);
     }
 
     uploadImage() {
-        const file = document.querySelector('input[type="file"]').files[0];
+        const file = document.querySelector("input[type='file']").files[0];
         if (file && this.state.accessToken) {
             var formData = new FormData();
-            formData.append('image', file);
+            formData.append("image", file);
             const requestOptions = {
-                method: 'POST',
+                method: "POST",
                 headers: { 
-                    'Authorization': 'Bearer ' + this.state.accessToken,
-                    'Accept': '*/*'
+                    "Authorization": "Bearer " + this.state.accessToken,
+                    "Accept": "*/*"
                 },
-				mode: 'cors',
+				mode: "cors",
 				body: formData
             }
 
-            fetch(this.props.url+'upload_avatar', requestOptions)
+            fetch(this.props.url+"upload_avatar", requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Image uploaded successfully!');
+                        alert("Image uploaded successfully!");
                         location.reload();
                     } else {
-                        alert('Something went wrong, please try again!');
+                        alert("Something went wrong, please try again!");
                     }
                 })
                 .catch(e => {
@@ -56,7 +56,7 @@ export default class Avatar extends React.Component {
                 { this.state.hover? 
                     <View style={styles.avatarUploadContainer}>
                         <Image 
-                            source={require('../../../assets/account/upload.png')} 
+                            source={require("../../../assets/account/upload.png")} 
                             style={styles.avatarUpload}
                             onMouseEnter={ () => this.setState({ hover: true})}
                             onMouseLeave={ () => this.setState({ hover: false})}
@@ -66,7 +66,7 @@ export default class Avatar extends React.Component {
                             type="file"
                             onChange={() => this.uploadImage()}
                             accept="image/*"
-                            style={{ opacity: 0, width: '10em', height: '10em', cursor: 'pointer' }}
+                            style={{ opacity: 0, width: "10em", height: "10em", cursor: "pointer" }}
                             onMouseEnter={ () => this.setState({ hover: true})}
                             onMouseLeave={ () => this.setState({ hover: false})}
                         />

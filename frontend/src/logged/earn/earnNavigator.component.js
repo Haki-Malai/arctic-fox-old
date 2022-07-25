@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
-import style from '../../../style';
-import styles from '../../../style';
+import React from "react";
+import { View, Text, Pressable } from "react-native";
+import style from "../../../style";
+import styles from "../../../style";
 
 export default class EarnNavigator extends React.Component {
     constructor(props) {
@@ -34,7 +34,7 @@ export default class EarnNavigator extends React.Component {
         for (let i=0; i<this.props.level.length; i++) {
             pressables.push(
                 <Pressable key={i} style={this.state.style[i]} onPress={() => {this.props.setPage(i+1); this.changeStyle(i);}} >
-                    <Text style={styles.earnNavPressableText}>{this.props.lang=='en'? 'Level': 'Επίπεδο'} {i+1}</Text>
+                    <Text style={styles.earnNavPressableText}>{this.props.lang=="en"? "Level": "Επίπεδο"} {i+1}</Text>
 				</Pressable>
             )
         }

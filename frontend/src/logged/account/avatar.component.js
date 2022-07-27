@@ -7,8 +7,8 @@ export default class Avatar extends React.Component {
         super(props);
         this.state = {
             hover: false,
-			accessToken: localStorage.getItem("token"),
-        }
+            accessToken: localStorage.getItem("token"),
+        };
         this.uploadImage = this.uploadImage.bind(this);
     }
 
@@ -19,17 +19,17 @@ export default class Avatar extends React.Component {
             formData.append("image", file);
             const requestOptions = {
                 method: "POST",
-                headers: { 
-                    "Authorization": "Bearer " + this.state.accessToken,
-                    "Accept": "*/*"
+                headers: {
+                    Authorization: "Bearer " + this.state.accessToken,
+                    Accept: "*/*",
                 },
-				mode: "cors",
-				body: formData
-            }
+                mode: "cors",
+                body: formData,
+            };
 
-            fetch(this.props.url+"upload_avatar", requestOptions)
-                .then(response => response.json())
-                .then(data => {
+            fetch(this.props.url + "upload_avatar", requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
                     if (data.success) {
                         alert("Image uploaded successfully!");
                         location.reload();
@@ -37,42 +37,48 @@ export default class Avatar extends React.Component {
                         alert("Something went wrong, please try again!");
                     }
                 })
-                .catch(e => {
+                .catch((e) => {
                     console.log(e);
-            });
+                });
         }
     }
 
     render() {
-        return(
+        return (
             <View style={styles.avatarContainer}>
                 <Image
                     source={this.props.avatar}
-                    style={this.state.hover? styles.avatarHover: styles.avatar}
-                    blurRadius={this.state.hover? 1: 0}
-                    onMouseEnter={ () => this.setState({ hover: true})}
-                    onMouseLeave={ () => this.setState({ hover: false})}
+                    style={
+                        this.state.hover ? styles.avatarHover : styles.avatar
+                    }
+                    blurRadius={this.state.hover ? 1 : 0}
+                    onMouseEnter={() => this.setState({ hover: true })}
+                    onMouseLeave={() => this.setState({ hover: false })}
                 />
-                { this.state.hover? 
+                {this.state.hover ? (
                     <View style={styles.avatarUploadContainer}>
-                        <Image 
-                            source={require("../../../assets/account/upload.png")} 
+                        <Image
+                            source={require("../../../assets/account/upload.png")}
                             style={styles.avatarUpload}
-                            onMouseEnter={ () => this.setState({ hover: true})}
-                            onMouseLeave={ () => this.setState({ hover: false})}
+                            onMouseEnter={() => this.setState({ hover: true })}
+                            onMouseLeave={() => this.setState({ hover: false })}
                         />
-                        <input 
+                        <input
                             id="upload"
                             type="file"
                             onChange={() => this.uploadImage()}
                             accept="image/*"
-                            style={{ opacity: 0, width: "10em", height: "10em", cursor: "pointer" }}
-                            onMouseEnter={ () => this.setState({ hover: true})}
-                            onMouseLeave={ () => this.setState({ hover: false})}
+                            style={{
+                                opacity: 0,
+                                width: "10em",
+                                height: "10em",
+                                cursor: "pointer",
+                            }}
+                            onMouseEnter={() => this.setState({ hover: true })}
+                            onMouseLeave={() => this.setState({ hover: false })}
                         />
                     </View>
-                    : null
-                }
+                ) : null}
             </View>
         );
     }

@@ -8,28 +8,28 @@ export default class Tasks extends React.Component {
         super(props);
         this.state = {
             tasks: [],
-			accessToken: localStorage.getItem("token"),
-        }
+            accessToken: localStorage.getItem("token"),
+        };
         this.getTask = this.getTask.bind(this);
     }
 
     getTask(id) {
         const requestOptions = {
             method: "POST",
-            headers: { 
-                "Authorization": "Bearer " + this.state.accessToken,
+            headers: {
+                Authorization: "Bearer " + this.state.accessToken,
                 "Content-Type": "application/json",
-                "Accept": "*/*"
+                Accept: "*/*",
             },
             body: JSON.stringify({
                 task_id: id,
             }),
-            mode: "cors"
-        }
+            mode: "cors",
+        };
 
-        fetch(this.props.url+"assign_on_task", requestOptions)
-            .then(response => response.json())
-            .then(data => {
+        fetch(this.props.url + "assign_on_task", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.success) {
                     alert("Assigned to task successfully!");
                     location.reload();
@@ -37,7 +37,7 @@ export default class Tasks extends React.Component {
                     alert("Cannot get assigned to another task!");
                 }
             })
-            .catch(e => {
+            .catch((e) => {
                 console.log(e);
             });
     }
@@ -46,28 +46,28 @@ export default class Tasks extends React.Component {
         // Get available tasks based on vuln type
         const requestOptions = {
             method: "POST",
-            headers: { 
-                "Authorization": "Bearer " + this.state.accessToken,
+            headers: {
+                Authorization: "Bearer " + this.state.accessToken,
                 "Content-Type": "application/json",
-                "Accept": "*/*"
+                Accept: "*/*",
             },
             body: JSON.stringify({
-                vulnerability: this.props.title
+                vulnerability: this.props.title,
             }),
-            mode: "cors"
-        }
+            mode: "cors",
+        };
 
-        fetch(this.props.url+"available_tasks", requestOptions)
-            .then(response => response.json())
-            .then(data => {
+        fetch(this.props.url + "available_tasks", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.tasks) {
-                    this.setState({tasks: data.tasks});
+                    this.setState({ tasks: data.tasks });
                 } else {
-                    console.log(data.tasks)
+                    console.log(data.tasks);
                     alert("Failed to load available tasks!");
                 }
             })
-            .catch(e => {
+            .catch((e) => {
                 console.log(e);
             });
     }
@@ -75,35 +75,61 @@ export default class Tasks extends React.Component {
     render() {
         var toRender = [];
         toRender.push(
-            <Pressable key={-1} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia("none")}>
-                <Text>{this.props.lang==="en"? "Back": "Επιστροφή"}</Text>
+            <Pressable
+                key={-1}
+                style={[styles.media, styles.mediaBack]}
+                onPress={() => this.props.setMedia("none")}
+            >
+                <Text>{this.props.lang === "en" ? "Back" : "Επιστροφή"}</Text>
             </Pressable>
         );
-        for (let i=0; i<this.state.tasks.length; i++) {
+        for (let i = 0; i < this.state.tasks.length; i++) {
             var task_data = JSON.parse(this.state.tasks[i]);
             toRender.push(
-                <Pressable key={i} style={i & 1? [styles.media, styles.mediaA]: [styles.media, styles.mediaB]} onPress={() => this.getTask(task_data.id)} >
-                    <Image style={styles.mediaIcon} source={require("../../../assets/media/"+this.props.title+".png")}/>
-                    <Text style={styles.mediaTitle}>#{task_data.id} Find vulnerability  +{this.props.plus}</Text>
+                <Pressable
+                    key={i}
+                    style={
+                        i & 1
+                            ? [styles.media, styles.mediaA]
+                            : [styles.media, styles.mediaB]
+                    }
+                    onPress={() => this.getTask(task_data.id)}
+                >
+                    <Image
+                        style={styles.mediaIcon}
+                        source={require("../../../assets/media/" +
+                            this.props.title +
+                            ".png")}
+                    />
+                    <Text style={styles.mediaTitle}>
+                        #{task_data.id} Find vulnerability +{this.props.plus}
+                    </Text>
                 </Pressable>
             );
         }
         if (this.state.tasks.length == 0) {
             toRender.push(
-                <View key={-3} style={[styles.media, styles.mediaDisabled, styles.mediaNoData]} >
+                <View
+                    key={-3}
+                    style={[
+                        styles.media,
+                        styles.mediaDisabled,
+                        styles.mediaNoData,
+                    ]}
+                >
                     <Text style={styles.mediaTitle}>No tasks available</Text>
                 </View>
-            )
+            );
         }
         toRender.push(
-            <Pressable key={-2} style={[styles.media, styles.mediaBack]} onPress={() => this.props.setMedia("none")}>
-                <Text>{this.props.lang==="en"? "Back": "Επιστροφή"}</Text>
+            <Pressable
+                key={-2}
+                style={[styles.media, styles.mediaBack]}
+                onPress={() => this.props.setMedia("none")}
+            >
+                <Text>{this.props.lang === "en" ? "Back" : "Επιστροφή"}</Text>
             </Pressable>
         );
-        return(
-            <View>
-                {toRender}
-            </View>
-        );
+        return <View>{toRender}</View>;
     }
 }

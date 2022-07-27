@@ -1,5 +1,5 @@
 {
-    "owaspList" : [
+    "owaspList": [
         "Broken Access Control",
         "Cryptographic Failures",
         "Injection",

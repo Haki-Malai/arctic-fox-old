@@ -20,32 +20,32 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     avatar = db.Column(db.String(224), default='default.jpeg')
     bitcoin_address = db.Column(db.String(40), default='none')
-    confirmedEmail = db.Column(db.Boolean, default=False)
+    confirmed_email = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date)
     level = db.Column(db.Integer, default=1)
-    lastActive = db.Column(db.DateTime)
-    invitationCode = db.Column(db.String(10), unique=True)
-    invitedFrom = db.Column(db.String(10), default='NOBODY')
-    invitationCommision = db.Column(db.Float(10), default=0)
-    taskProfit = db.Column(db.Float(10), default=0)
+    last_active = db.Column(db.DateTime)
+    invitation_code = db.Column(db.String(10), unique=True)
+    invited_from = db.Column(db.String(10), default='NOBODY')
+    invitation_commission = db.Column(db.Float(10), default=0)
+    task_profit = db.Column(db.Float(10), default=0)
     balance = db.Column(db.Float, default=0)
 
-    def __init__(self, username, email, password, invitationCode, invitedFrom):
+    def __init__(self, username, email, password, invitation_code, invited_from):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password)
         self.created = datetime.now()
-        self.lastActive = datetime.now()
-        self.invitationCode = invitationCode
-        self.invitedFrom = invitedFrom
+        self.last_active = datetime.now()
+        self.invitation_code = invitation_code
+        self.invited_from = invited_from
 
     def __repr__(self):
         return '<User %r>' % self.username
 
     def init_balance(self):
         self.balance = 0
-        self.invitationCommision = 0
-        self.taskProfit = 0
+        self.invitation_commission = 0
+        self.task_profit = 0
 
     def get_data(self):
         return {
@@ -56,12 +56,12 @@ class User(db.Model):
             'bitcoin_address': self.bitcoin_address,
             'created': self.created,
             'level': self.level,
-            'lastActive': self.lastActive,
-            'invitationCode': self.invitationCode,
-            'invitedFrom': self.invitedFrom,
-            'invitationCommision': self.invitationCommision,
+            'last_active': self.last_active,
+            'invitation_code': self.invitation_code,
+            'invited_from': self.invited_from,
+            'invitation_commission': self.invitation_commission,
             'balance': self.balance,
-            'taskProfit': self.taskProfit,
+            'task_profit': self.task_profit,
             'tasks': get_user_tasks(self.id)
         }
 
@@ -71,13 +71,13 @@ class User(db.Model):
     def get_paid(self, amount, payment_type):
         self.balance += amount
         if payment_type == 'task':
-            self.taskProfit += amount
+            self.task_profit += amount
         elif payment_type == 'invite':
-            self.invitationCommision += amount
+            self.invitation_commission += amount
         # Give 2% to the invitor
-        if (self.invitedFrom != 'NOBODY'):
+        if (self.invited_from != 'NOBODY'):
             invitor_amount = amount*0.02
-            user = User.query.filter_by(invitationCode=self.invitedFrom).first()
+            user = User.query.filter_by(invitation_code=self.invited_from).first()
             if user:
                 user.get_paid(invitor_amount, 'invite')
         db.session.commit()
@@ -176,7 +176,7 @@ class Payment(db.Model):
         }
 
 # =========================USER==============================================
-def add_user(username, password, email, invitedFrom='NOBODY'):
+def add_user(username, password, email, invited_from='NOBODY'):
     """
         Tries to add the new entry
         Returns result or new user id
@@ -190,7 +190,7 @@ def add_user(username, password, email, invitedFrom='NOBODY'):
             return 'username_unavailable'
         elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
             return 'email_unavailable'
-        user = User(username=username, password=password, email=email, invitationCode=create_random_code(), invitedFrom=invitedFrom)
+        user = User(username=username, password=password, email=email, invitation_code=create_random_code(), invited_from=invited_from)
         db.session.add(user)
         db.session.commit()
         return user.id
@@ -219,7 +219,8 @@ def user_credentials_valid(password, **kwargs):
     try:
         try:
             user = User.query.filter_by(username=kwargs['username']).first()
-        except:
+        except Exception as e:
+            print(str(e))
             user = User.query.filter_by(id=kwargs['id']).first()
         if user.validate_password(password):
             return user.id
@@ -232,7 +233,7 @@ def create_random_code():
         chars=string.ascii_uppercase + string.digits
         size = 10
         code = ''.join(random.choice(chars) for _ in range(size))
-        while User.query.filter_by(invitationCode=code).first():
+        while User.query.filter_by(invitation_code=code).first():
             code = ''.join(random.choice(chars) for _ in range(size))
         return code
     except Exception as e:

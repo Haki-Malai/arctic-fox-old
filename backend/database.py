@@ -132,7 +132,7 @@ class Admin(db.Model):
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(25))
-    
+
     def __init__(self, username, password, email):
         self.username = username
         self.password = generate_password_hash(password)

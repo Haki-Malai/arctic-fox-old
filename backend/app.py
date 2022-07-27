@@ -288,7 +288,7 @@ def feed():
     start_time = datetime.now()
     wait = random.randint(1, 59)
     if len(feed_stack) == 0:
-        for _ in itertools.repeat(None, 6):
+        for _ in range(6):
             # Create random username and level
             username = random.choice(string.ascii_letters) + random.randint(7, 14)*"*" + random.choice(string.ascii_letters)
             upgraded_to = random.randint(2, 6)

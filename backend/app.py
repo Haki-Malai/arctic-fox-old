@@ -25,7 +25,10 @@ database.db.init_app(app)
 
 # Creates all database tables if they do not exist
 with app.app_context():
-    database.db.create_all()
+    try:
+        database.db.create_all()
+    except Exception as e:
+        print(str(e))
 
 # ==========================HELPER-FUNCTIONS=======================
 def allowed_file(filename):

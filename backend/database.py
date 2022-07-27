@@ -142,7 +142,7 @@ class Admin(db.Model):
 
     def __repr__(self):
         return '<Admin %r>' % self.username
-    
+
     def validate_password(self, password):
         return check_password_hash(self.password, password)
 
@@ -185,7 +185,7 @@ def add_user(username, password, email, invited_from='NOBODY'):
     """
     try:
         # Check for availability
-        email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        email_regex = '[^@]+@[^@]+\.[^@]+'
         if username == '' or password == '' or email == '':
             return 'empty_fields'
         elif User.query.filter_by(username=username).first():

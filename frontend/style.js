@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native'
 
-// Set"s width and height of the component
+// Set's width and height of the component
 const screenHeight = Dimensions.get('window').height
 let screenWidth = Dimensions.get('window').width
 let pressableWidth = screenWidth

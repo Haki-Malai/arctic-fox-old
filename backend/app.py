@@ -208,7 +208,7 @@ def payment_requests():
     """
     try:
         user_id = get_jwt_identity()
-        requests = database.get_payment_requests(user_id)
+        requests = database.get_user_payments(user_id, False)
         return jsonify(requests=requests)
     except Exception as e:
         print(str(e))
@@ -222,7 +222,7 @@ def payment_history():
     """
     try:
         user_id = get_jwt_identity()
-        payments = database.get_user_payments(user_id)
+        payments = database.get_user_payments(user_id, True)
         return jsonify(payments=payments)
     except Exception as e:
         print(str(e))

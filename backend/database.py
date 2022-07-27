@@ -282,20 +282,10 @@ def request_payment(user_id):
         print(str(e))
     return False
 
-def get_payment_requests(user_id):
+def get_user_payments(user_id, paid):
     try:
         payments = []
-        for payment in Payment.query.filter_by(user_id=user_id, paid=False).all():
-            payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
-        return payments
-    except Exception as e:
-        print(str(e))
-    return False
-
-def get_user_payments(user_id):
-    try:
-        payments = []
-        for payment in Payment.query.filter_by(user_id=user_id, paid=True).all():
+        for payment in Payment.query.filter_by(user_id=user_id, paid=paid).all():
             payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
         return payments
     except Exception as e:

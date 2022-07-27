@@ -397,11 +397,11 @@ def add_tasks():
     try:
         admin_id = get_jwt_identity()
         if request.method == "POST":
-                vulnerability = request.form['vulnerability']
-                days = request.form['days']
-                url = request.form['url']
-                notes = request.form['notes']
-                return render_template('addtasks.html', success=database.create_task(admin_id, vulnerability, url, days, notes), jwt=request.args.get('jwt'))
+            vulnerability = request.form['vulnerability']
+            days = request.form['days']
+            url = request.form['url']
+            notes = request.form['notes']
+            return render_template('addtasks.html', success=database.create_task(admin_id, vulnerability, url, days, notes), jwt=request.args.get('jwt'))
         return render_template('addtasks.html', jwt=request.args.get('jwt'))
     except Exception as e:
         print(str(e))

@@ -1,12 +1,10 @@
 # arctic-fox
-Application created with the intention to be exploitable and security testing
+Application created with the intention to be secured on vulnerabilities.
 
-## [Try it out](https://arcticfox.herokuapp.com/)!
+## [Try it out](https://arcticfox.herokuapp.com/)
 
-## Run the application on a docker container
-
-```
-#!/bin/bash
-docker build . -t arctic-fox
-docker run -p 5000:5000 arctic-fox
+### Run the application on a docker container
+```console
+foo@bar:~$ docker build . -t arctic-fox
+foo@bar:~$ docker run -p 5000:5000 arctic-fox
 ```

@@ -14,12 +14,15 @@ export default class Task extends React.Component {
             page: "process",
             tasks: "",
             accessToken: localStorage.getItem("token"),
+            getTasksTimeout: null,
         };
         this.setPage = this.setPage.bind(this);
     }
+
     setPage(page) {
         this.setState({ page: page });
     }
+
     fetchTasks() {
         // Retrieve tasks from server
         if (this.props.userData) {
@@ -52,12 +55,23 @@ export default class Task extends React.Component {
         } else {
             alert("Couldn't retrieve user data!");
         }
-        setTimeout(() => this.fetchTasks(), 10000);
+        // Refresh feed every 30 seconds and clears on unmount
+        this.setState({
+            getTasksTimeout: setTimeout(() => {
+                this.fetchTasks();
+            }, 30000),
+        });
     }
+
     componentDidMount() {
         this.fetchTasks();
         this.props.refreshUserData();
     }
+
+    componentWillUnmount() {
+        clearTimeout(this.state.getTasksTimeout);
+    }
+
     render() {
         var toRender = [];
         if (this.state.page === "process") {

@@ -156,7 +156,7 @@ class Payment(db.Model):
     paid = db.Column(db.Boolean, default=False)
     requested = db.Column(db.DateTime)
     pay_date = db.Column(db.DateTime)
-    
+
 
     def __init__(self, user_id, amount):
         self.user_id = user_id

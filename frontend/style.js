@@ -1,12 +1,12 @@
-import{ StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 // Set"s width and height of the component
-let ScreenHeight = Dimensions.get("window").height;
-let ScreenWidth = Dimensions.get("window").width;
-let PressableWidth = ScreenWidth;
-if (ScreenHeight < ScreenWidth){
-    PressableWidth = ScreenWidth/2
-    ScreenWidth = ScreenWidth/2
+let screenHeight = Dimensions.get("window").height;
+let screenWidth = Dimensions.get("window").width;
+let pressableWidth = screenWidth;
+if (screenHeight < screenWidth){
+    pressableWidth = screenWidth/2;
+    screenWidth = screenWidth/2;
 }
 
 const BLACK = "#242526";
@@ -17,9 +17,9 @@ const MORE_FADED_BLUE = "#8BB3B4";
 const EVEN_MORE_FADED_BLUE = "#B0D2CF";
 const SUPER_FADED_BLUE = "#CEE9EA";
 const WHITE = SUPER_FADED_BLUE;
-const navHeight = ScreenHeight / 20;
-const navIconDimensions = ScreenWidth / 20;
-const logoDimensions = ScreenHeight / 5;
+const navHeight = screenHeight / 20;
+const navIconDimensions = screenWidth / 20;
+const logoDimensions = screenHeight / 5;
 
 export default StyleSheet.create({
     menuContainer:{
@@ -30,7 +30,7 @@ export default StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         flexGrow: "row",
-        height: ScreenHeight,
+        height: screenHeight,
         alignItems: "center",
         backgroundColor: WHITE,
         paddingBottom: navIconDimensions
@@ -95,7 +95,7 @@ export default StyleSheet.create({
     menuPressable:{
         fontWeight: "bold",
         backgroundColor: BLUE,
-        minWidth: PressableWidth,
+        minWidth: pressableWidth,
         height: "4em",
         borderRadius: "1em",
         marginVertical: ".5em",
@@ -112,7 +112,7 @@ export default StyleSheet.create({
 
     menuInput:{
         textAlign: "center",
-        minWidth: ScreenWidth,
+        minWidth: screenWidth,
         borderRadius: "1em",
         marginVertical: ".5em",
         fontSize: "1.5em",
@@ -131,7 +131,7 @@ export default StyleSheet.create({
         position: "fixed",
         bottom: 0,
         justifyContent: "center",
-        width: ScreenWidth,
+        width: screenWidth,
         minHeight: navHeight,
         backgroundColor: BLUE
     },
@@ -164,7 +164,7 @@ export default StyleSheet.create({
 
     media:{
         flexDirection: "row",
-        width: ScreenWidth/1.1,
+        width: screenWidth/1.1,
         padding: ".4em",
         marginVertical: ".4em",
         borderRadius: ".4em",
@@ -213,7 +213,7 @@ export default StyleSheet.create({
         flexGrow: "column",
         flexDirection: "row",
         padding: ".2em",
-        maxWidth: ScreenWidth/1.3,
+        maxWidth: screenWidth/1.3,
         alignItems: "center",
         borderBottomColor: "grey",
         borderBottomWidth: ".1em"
@@ -228,7 +228,7 @@ export default StyleSheet.create({
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ACCOUNT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     accountScroll:{
         alignItems: "center",
-        minHeight: ScreenHeight,
+        minHeight: screenHeight,
     },
     account:{
         backgroundColor: WHITE,
@@ -239,7 +239,7 @@ export default StyleSheet.create({
         backgroundColor: FADED_BLUE,
         borderBottomLeftRadius: "7em",
         borderBottomRightRadius: "7em",
-        width: ScreenWidth,
+        width: screenWidth,
         padding: "1em",
         alignItems: "center",
         fontSize: "1em"
@@ -312,7 +312,7 @@ export default StyleSheet.create({
         borderColor: "grey",
     },
     accountTableItem:{
-        width: ScreenWidth/4,
+        width: screenWidth/4,
         fontSize: "1.5em",
         textAlign: "center",
     },
@@ -323,11 +323,11 @@ export default StyleSheet.create({
     },
     accountButtons:{
         flexDirection: "row",
-        width: ScreenWidth
+        width: screenWidth
     },
     accountButton:{
         textAlign: "center",
-        width: ScreenWidth/5,
+        width: screenWidth/5,
         alignItems: "center",
         marginVertical: ".5em",
     },
@@ -341,7 +341,7 @@ export default StyleSheet.create({
     },
     accountOption:{
         padding: ".3em",
-        width: ScreenWidth/1.1,
+        width: screenWidth/1.1,
         borderStyle: "solid",
         borderColor: "grey",
         borderBottomWidth: ".1em",
@@ -371,7 +371,7 @@ export default StyleSheet.create({
     optionContainer:{
         alignSelf: "center",
         alignItems: "center",
-        maxWidth: ScreenWidth/1.2,
+        maxWidth: screenWidth/1.2,
         textAlign: "center"
     },
     optionInput:{
@@ -437,14 +437,14 @@ export default StyleSheet.create({
     earnTitle:{
         backgroundColor: MORE_FADED_BLUE,
         height: navHeight,
-        width: ScreenWidth,
+        width: screenWidth,
         textAlign: "center",
         paddingTop: ".2em",
         fontSize: "1.2em"
     },
     earnTop:{
         backgroundColor: BLUE,
-        width: ScreenWidth,
+        width: screenWidth,
         alignItems: "center"
     },
     earnTextBig:{
@@ -462,17 +462,17 @@ export default StyleSheet.create({
     earnNavigator:{
         flexDirection: "row",
         zIndex: 1,
-        width: ScreenWidth,
+        width: screenWidth,
         backgroundColor: FADED_BLUE,
         paddingTop: ".5em",
     },
     earnNavPressable:{
-        width: ScreenWidth/6,
+        width: screenWidth/6,
         textAlign: "center",
         padding: ".1em"
     },
     earnNavPressablePressed:{
-        width: ScreenWidth/6,
+        width: screenWidth/6,
         textAlign: "center",
         padding: ".1em",
         borderBottomColor: "red",
@@ -483,7 +483,7 @@ export default StyleSheet.create({
     },
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~LEVEL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     level:{
-        width: ScreenWidth/1.1,
+        width: screenWidth/1.1,
         padding: ".5em",
         paddingRight: ".7em",
         margin: ".5em",
@@ -522,19 +522,19 @@ export default StyleSheet.create({
     taskNavigator:{
         flexDirection: "row",
         zIndex: 1,
-        width: ScreenWidth,
+        width: screenWidth,
         backgroundColor: BLUE,
         paddingTop: ".5em",
     },
     taskNavPressable:{
         marginTop: "1em",
-        width: ScreenWidth/4,
+        width: screenWidth/4,
         textAlign: "center",
         padding: ".2em"
     },
     taskNavPressablePressed:{
         marginTop: "1em",
-        width: ScreenWidth/4,
+        width: screenWidth/4,
         textAlign: "center",
         padding: ".2em",
         borderBottomColor: "red",
@@ -566,7 +566,7 @@ export default StyleSheet.create({
         cursor: "pointer"
     },
     uploadLinkTextTopWrapper:{
-        width: ScreenWidth/1.2,
+        width: screenWidth/1.2,
         alignText: "center",
     },
     uploadInput:{
@@ -577,7 +577,7 @@ export default StyleSheet.create({
         borderRadius: "1em",
         textAlign: "center",
         marginVertical: ".5em",
-        width: ScreenWidth/1.2
+        width: screenWidth/1.2
     },
     hidden:{
         display: "none"

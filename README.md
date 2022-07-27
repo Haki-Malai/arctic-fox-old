@@ -5,6 +5,6 @@ Application created with the intention to be secured on vulnerabilities.
 
 ### Run the application on a docker container
 ```console
-foo@bar:~$ docker build . -t arctic-fox
-foo@bar:~$ docker run -p 5000:5000 arctic-fox
+foo@bar:~$ docker build . -t arcticfox
+foo@bar:~$ docker run -p 5000:5000 arcticfox
 ```

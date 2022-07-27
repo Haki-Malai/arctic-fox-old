@@ -111,7 +111,6 @@ class Task(db.Model):
         return '<Task %r>' % self.id
 
     def get_json(self):
-        # Use camelCase for JSON
         return json.dumps({
             'id': self.id,
             'adminId': self.admin_id,
@@ -406,7 +405,7 @@ def get_pending_payments():
     try:
         pending_payments = []
         for payment in Payment.query.filter_by(paid=False).all():
-            pending_payments.append(payment.get_json())
+            pending_payments.append(json.loads(payment.get_json()))
         return pending_payments
     except Exception as e:
         print(str(e))

@@ -5,6 +5,8 @@ LABEL maintainer="Haki-Malai" email="hakimalaj@outlook.com"
 
 COPY frontend .
 
+RUN npm install
+
 RUN expo build:web
 
 # Build the flask app with the expo web build as static files

@@ -52,7 +52,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'confirmedEmail': self.confirmedEmail,
+            'confirmed_email': self.confirmed_email,
             'bitcoin_address': self.bitcoin_address,
             'created': self.created,
             'level': self.level,

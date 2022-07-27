@@ -47,23 +47,24 @@ class User(db.Model):
         self.invitation_commission = 0
         self.task_profit = 0
 
-    def get_data(self):
-        return {
+    def get_json(self):
+        # Use camelCase for JSON
+        return json.dumps({
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'confirmed_email': self.confirmed_email,
-            'bitcoin_address': self.bitcoin_address,
+            'confirmedEmail': self.confirmed_email,
+            'bitcoinAddress': self.bitcoin_address,
             'created': self.created,
             'level': self.level,
-            'last_active': self.last_active,
-            'invitation_code': self.invitation_code,
-            'invited_from': self.invited_from,
-            'invitation_commission': self.invitation_commission,
+            'lastActive': self.last_active,
+            'invitationCode': self.invitation_code,
+            'invitedFrom': self.invited_from,
+            'invitationCommission': self.invitation_commission,
             'balance': self.balance,
-            'task_profit': self.task_profit,
+            'taskProfit': self.task_profit,
             'tasks': get_user_tasks(self.id)
-        }
+        }, indent=4, sort_keys=True, default=str)
 
     def validate_password(self, password):
         return check_password_hash(self.password, password)
@@ -109,11 +110,12 @@ class Task(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
-    def get_data(self):
-        return {
+    def get_json(self):
+        # Use camelCase for JSON
+        return json.dumps({
             'id': self.id,
-            'admin_id': self.admin_id,
-            'user_id': self.user_id,
+            'adminId': self.admin_id,
+            'userId': self.user_id,
             'proof': self.proof,
             'vulnerability': self.vulnerability,
             'status': self.status,
@@ -123,7 +125,7 @@ class Task(db.Model):
             'url': self.url,
             'submited': self.submited,
             'notes': self.notes
-        }
+        }, indent=4, sort_keys=True, default=str)
 
 class Admin(db.Model):
     __talblename__ = "admin"
@@ -165,15 +167,15 @@ class Payment(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
-    def get_data(self):
-        return {
+    def get_json(self):
+        return json.dumps({
             'id': self.id,
-            'admin_id': self.admin_id,
-            'user_id': self.user_id,
+            'adminId': self.admin_id,
+            'userId': self.user_id,
             'amount': self.amount,
-            'tx_id': self.tx_id,
+            'txId': self.tx_id,
             'paid': self.paid
-        }
+        }, indent=4, sort_keys=True, default=str)
 
 # =========================USER==============================================
 def add_user(username, password, email, invited_from='NOBODY'):
@@ -210,7 +212,7 @@ def change_user_password(user_id, password):
 
 def get_user_json(user_id):
     try:
-        return json.dumps(User.query.filter_by(id=user_id).first().get_data(), indent=4, sort_keys=True, default=str)
+        return User.query.filter_by(id=user_id).first().get_json()
     except Exception as e:
         print(str(e))
     return False
@@ -287,7 +289,7 @@ def get_user_payments(user_id, paid):
     try:
         payments = []
         for payment in Payment.query.filter_by(user_id=user_id, paid=paid).all():
-            payments.append(json.dumps(payment.get_data(), indent=4, default=str, sort_keys=True))
+            payments.append(payment.get_json())
         return payments
     except Exception as e:
         print(str(e))
@@ -351,19 +353,19 @@ def create_task(admin_id, vulnerability, url, days, notes):
 def get_user_tasks(user_id):
     tasks = []
     for task in Task.query.filter_by(user_id = user_id).all():
-        tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
+        tasks.append(task.get_json())
     return tasks
 
 def get_available_tasks(vulnerability):
     tasks = []
     for task in Task.query.filter_by(vulnerability=vulnerability, user_id=None).all():
-        tasks.append(json.dumps(task.get_data(), indent=4, default=str, sort_keys=True))
+        tasks.append(task.get_json())
     return tasks
 
 def get_admin_tasks(admin_id, status):
     tasks = []
     for task in Task.query.filter_by(admin_id=admin_id, status=status).all():
-        tasks.append(task.get_data())
+        tasks.append(json.loads(task.get_json()))
     return tasks
 
 def delete_task(task_id):
@@ -404,7 +406,7 @@ def get_pending_payments():
     try:
         pending_payments = []
         for payment in Payment.query.filter_by(paid=False).all():
-            pending_payments.append(payment.get_data())
+            pending_payments.append(payment.get_json())
         return pending_payments
     except Exception as e:
         print(str(e))

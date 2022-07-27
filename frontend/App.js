@@ -75,7 +75,6 @@ export default class App extends React.Component {
     }
 
     refreshUserData() {
-        this._isMounted = true;
         // Authorization from saved cookie
         if (this.state.accessToken) {
             const requestOptions = {
@@ -91,17 +90,15 @@ export default class App extends React.Component {
             fetch(this.state.url + "user", requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
-                    if (this._isMounted) {
-                        if (data) {
-                            this.setState({
-                                userData: JSON.parse(data.userData),
-                            });
-                            this.setState({
-                                avatar: "data:image/jpg;base64," + data.avatar,
-                            });
-                        } else {
-                            this.setState({ page: "welcome" });
-                        }
+                    if (data) {
+                        this.setState({
+                            userData: JSON.parse(data.userData),
+                        });
+                        this.setState({
+                            avatar: "data:image/jpg;base64," + data.avatar,
+                        });
+                    } else {
+                        this.setState({ page: "welcome" });
                     }
                 });
         }

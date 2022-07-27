@@ -7,9 +7,9 @@
     {% for payment in pending_payments %}
         <form method="POST">
             <input type="hidden" name="pay_id" value="{{ payment.id }}">
-            <label for="tx_id">Amount: {{ payment.amount }}</label>
+            <label for="txId">Amount: {{ payment.amount }}</label>
             <br>
-            <input type="text" name="tx_id" placeholder="TX_ID" required>
+            <input type="text" name="txId" placeholder="TX_ID" required>
             <br>
             <input type="submit">
         </form>

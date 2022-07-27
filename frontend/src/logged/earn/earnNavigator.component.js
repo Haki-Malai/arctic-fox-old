@@ -1,47 +1,47 @@
-import React from 'react'
-import { View, Text, Pressable } from 'react-native'
-import style from '../../../style'
-import styles from '../../../style'
+import React from "react";
+import { View, Text, Pressable } from "react-native";
+import style from "../../../style";
+import styles from "../../../style";
 
 export default class EarnNavigator extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      loading: false,
-      style: []
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: false,
+            style: []
+        }
     }
-  }
 
-  componentDidMount () {
-    const style = []
-    for (let i = 0; i < 6; i++) {
-      this.props.userData.level - 1 === i ? style.push(styles.earnNavPressablePressed) : style.push(styles.earnNavPressable)
+    componentDidMount() {
+        var style = [];
+        for (let i=0; i<6; i++) {
+            this.props.userData.level-1===i? style.push(styles.earnNavPressablePressed): style.push(styles.earnNavPressable);
+        }
+        this.setState({style: style});
     }
-    this.setState({ style })
-  }
 
-  changeStyle (page) {
-    const newStyle = []
-    for (let i = 0; i < this.state.style.length; i++) {
-      newStyle.push(styles.earnNavPressable)
+    changeStyle(page) {
+        var newStyle = [];
+        for (let i=0; i<this.state.style.length; i++) {
+            newStyle.push(styles.earnNavPressable);
+        } 
+        newStyle[page] = styles.earnNavPressablePressed;
+        this.setState({style: newStyle});
     }
-    newStyle[page] = styles.earnNavPressablePressed
-    this.setState({ style: newStyle })
-  }
 
-  render () {
-    const pressables = []
-    for (let i = 0; i < this.props.level.length; i++) {
-      pressables.push(
-        <Pressable key={i} style={this.state.style[i]} onPress={() => { this.props.setPage(i + 1); this.changeStyle(i) }}>
-          <Text style={styles.earnNavPressableText}>{this.props.lang == 'en' ? 'Level' : 'Επίπεδο'} {i + 1}</Text>
-        </Pressable>
-      )
+    render() {
+        var pressables = [];
+        for (let i=0; i<this.props.level.length; i++) {
+            pressables.push(
+                <Pressable key={i} style={this.state.style[i]} onPress={() => {this.props.setPage(i+1); this.changeStyle(i);}} >
+                    <Text style={styles.earnNavPressableText}>{this.props.lang=="en"? "Level": "Επίπεδο"} {i+1}</Text>
+				</Pressable>
+            )
+        }
+        return(
+            <View style={styles.earnNavigator}>
+                {pressables}
+            </View>
+        );
     }
-    return (
-      <View style={styles.earnNavigator}>
-        {pressables}
-      </View>
-    )
-  }
 }

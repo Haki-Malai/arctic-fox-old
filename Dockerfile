@@ -1,5 +1,5 @@
 # Build the expo web app
-FROM patwoz/expo-cli:latest as web-build
+FROM patwoz/expo-cli:4 as web-build
 
 LABEL maintainer="Haki-Malai" email="hakimalaj@outlook.com"
 

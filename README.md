@@ -1,7 +1,7 @@
 # arctic-fox
 Application created with the intention to be secured on vulnerabilities.
 
-## [Try it out](https://arcticfox.herokuapp.com/) (very beta, better try locally with docker)
+## [Heroku](https://arcticfox.herokuapp.com/)
 
 ### Run the application on a docker container
 ```console

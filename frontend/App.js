@@ -123,10 +123,6 @@ export default class App extends React.Component {
         this.refreshUserData();
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
     render() {
         // Warn user if font didn"t load
         if (!this.state.fontsLoaded)

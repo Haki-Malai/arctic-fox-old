@@ -67,7 +67,7 @@ export default class Login extends React.Component {
                 .then((data) => {
                     if (data.access_token) {
                         localStorage.setItem("token", data.access_token);
-                        this.props.setPage("home");
+                        location.reload();
                     } else {
                         alert(
                             this.props.lang == "en"

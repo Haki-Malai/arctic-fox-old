@@ -14,6 +14,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_folder='static/web-build', static_url_path='/')
 jwt = JWTManager(app)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["JWT_SECRET_KEY"] = 'random key secret must change'
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "query_string"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"

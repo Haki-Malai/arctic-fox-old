@@ -16,12 +16,10 @@ jobs:
       actions: read
       contents: read
       security-events: write
-      steps:
-      - name: Bandit analysis
-        uses: jpetrucciani/bandit-check@master
-        uses: jpetrucciani/bandit-check@master
+      
+    steps:
+      - name: Bandit Check
+        uses: jpetrucciani/bandit-check@1.6.2
         with:
           path: 'backend'
-        uses: jpetrucciani/bandit-check@master
-        with:
-          bandit_flags: '-lll -o output.json -f json'
+          #bandit_flags: '-lll -o output.json -f json'

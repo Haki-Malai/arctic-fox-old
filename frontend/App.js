@@ -14,7 +14,7 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url: "http://localhost:8010/proxy/",
+            url: "/",
             lang: "en",
             fontsLoaded: false,
             page: "welcome",

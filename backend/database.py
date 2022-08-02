@@ -182,64 +182,44 @@ def add_user(username, password, email, invited_from='NOBODY'):
         Tries to add the new entry
         Returns result or new user id
     """
-    try:
-        # Check for availability
-        email_regex = '[^@]+@[^@]+\.[^@]+'
-        if username == '' or password == '' or email == '':
-            return 'empty_fields'
-        elif User.query.filter_by(username=username).first():
-            return 'username_unavailable'
-        elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
-            return 'email_unavailable'
-        user = User(username=username, password=password, email=email, invitation_code=create_random_code(), invited_from=invited_from)
-        db.session.add(user)
-        db.session.commit()
-        return user.id
-    except Exception as e:
-        print(str(e))
-        return str(e)
+    # Check for availability
+    email_regex = '[^@]+@[^@]+\.[^@]+'
+    if username == '' or password == '' or email == '':
+        return 'empty_fields'
+    elif User.query.filter_by(username=username).first():
+        return 'username_unavailable'
+    elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
+        return 'email_unavailable'
+    user = User(username=username, password=password, email=email, invitation_code=create_random_code(), invited_from=invited_from)
+    db.session.add(user)
+    db.session.commit()
+    return user.id
 
 def change_user_password(user_id, password):
-    try:
-        user = User.query.filter_by(id=user_id).first()
-        user.password = generate_password_hash(password)
-        db.session.commit()
-        return True
-    except Exception as e:
-        print(str(e))
-        return False
+    user = User.query.filter_by(id=user_id).first()
+    user.password = generate_password_hash(password)
+    db.session.commit()
+    return True
 
 def get_user_json(user_id):
-    try:
-        return User.query.filter_by(id=user_id).first().get_json()
-    except Exception as e:
-        print(str(e))
-    return False
+    return User.query.filter_by(id=user_id).first().get_json()
 
 def user_credentials_valid(password, **kwargs):
     try:
-        try:
-            user = User.query.filter_by(username=kwargs['username']).first()
-        except Exception as e:
-            print(str(e))
-            user = User.query.filter_by(id=kwargs['id']).first()
-        if user.validate_password(password):
-            return user.id
+        user = User.query.filter_by(username=kwargs['username']).first()
     except Exception as e:
         print(str(e))
-    return False
+        user = User.query.filter_by(id=kwargs['id']).first()
+    if user.validate_password(password):
+        return user.id
 
 def create_random_code():
-    try:
-        chars=string.ascii_uppercase + string.digits
-        size = 10
+    chars=string.ascii_uppercase + string.digits
+    size = 10
+    code = ''.join(random.choice(chars) for _ in range(size))
+    while User.query.filter_by(invitation_code=code).first():
         code = ''.join(random.choice(chars) for _ in range(size))
-        while User.query.filter_by(invitation_code=code).first():
-            code = ''.join(random.choice(chars) for _ in range(size))
-        return code
-    except Exception as e:
-        print(str(e))
-    return False
+    return code
 
 def set_user_avatar(user_id, image_name):
     user = User.query.filter_by(id=user_id).first()
@@ -253,101 +233,71 @@ def set_user_avatar(user_id, image_name):
     return False
 
 def get_user_avatar(user_id):
-    try:
-        user = User.query.filter_by(id=user_id).first()
-        with open(os.path.join(app.config['UPLOAD_FOLDER']+'avatars/'+user.avatar), 'rb') as image:
-            encoded_img = base64.b64encode(image.read())
-        return encoded_img.decode('utf-8')
-    except Exception as e:
-        print(str(e))
+    user = User.query.filter_by(id=user_id).first()
+    with open(os.path.join(app.config['UPLOAD_FOLDER']+'avatars/'+user.avatar), 'rb') as image:
+        encoded_img = base64.b64encode(image.read())
+    return encoded_img.decode('utf-8')
     
 def set_user_address(user_id, password, address):
-    try:
-        user = User.query.filter_by(id=user_id).first()
-        if user.validate_password(password):
-            user.bitcoin_address = address
-            db.session.commit()
-            return True
-    except Exception as e:
-        print(str(e))
-    return False
-
-def request_payment(user_id):
-    try:
-        user = User.query.filter_by(id=user_id).first()
-        payment = Payment(user_id=user.id, amount=user.balance)
-        user.init_balance()
-        db.session.add(payment)
+    user = User.query.filter_by(id=user_id).first()
+    if user.validate_password(password):
+        user.bitcoin_address = address
         db.session.commit()
         return True
-    except Exception as e:
-        print(str(e))
-    return False
+
+def request_payment(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    payment = Payment(user_id=user.id, amount=user.balance)
+    user.init_balance()
+    db.session.add(payment)
+    db.session.commit()
+    return True
 
 def get_user_payments(user_id, paid):
-    try:
-        payments = []
-        for payment in Payment.query.filter_by(user_id=user_id, paid=paid).all():
-            payments.append(payment.get_json())
-        return payments
-    except Exception as e:
-        print(str(e))
-    return False
+    payments = []
+    for payment in Payment.query.filter_by(user_id=user_id, paid=paid).all():
+        payments.append(payment.get_json())
+    return payments
 
 # ========================ADMIN-METHODS=========================================
 def add_admin(username, password, email):
-    try:
-        admin = Admin(username=username, password=password, email=email)
-        db.session.add(admin)
-        db.session.commit()
-        return admin.id
-    except Exception as e:
-        print(str(e))
-    return False
+    admin = Admin(username=username, password=password, email=email)
+    db.session.add(admin)
+    db.session.commit()
+    return admin.id
 
 def admin_credentials_valid(username, password):
-    try:
-        admin = Admin.query.filter_by(username=username).first()
-        if admin:
-            if admin.validate_password(password):
-                return admin.id
-    except Exception as e:
-        print(str(e))
+    admin = Admin.query.filter_by(username=username).first()
+    if admin:
+        if admin.validate_password(password):
+            return admin.id
     return False
 
 # ========================TASKS=================================================
 def assign_task(user_id, task_id):
-    try:
-        # Check if user is privileged to another task
-        user = User.query.filter_by(id=user_id).first()
-        yesterday = datetime.now() - timedelta(days = 1)
-        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).count())
-        if (user.level == 1 and today_done >= 3) or \
-                (user.level == 2 and today_done >= 5) or \
-                (user.level == 3 and today_done >= 8) or \
-                (user.level == 4 and today_done >= 15) or \
-                (user.level == 5 and today_done >= 22) or \
-                (user.level == 6 and today_done >= 60):
-            return False
-        else:
-            task = Task.query.filter_by(id=task_id).first()
-            task.user_id = user_id
-            task.assigned = datetime.now()
-            db.session.commit()
-            return True
-    except Exception as e:
-        print(str(e))
-    return False
-
-def create_task(admin_id, vulnerability, url, days, notes):
-    try:
-        task = Task(admin_id=admin_id, vulnerability=vulnerability, days=days, url=url, notes=notes)
-        db.session.add(task)
+    # Check if user is privileged to another task
+    user = User.query.filter_by(id=user_id).first()
+    yesterday = datetime.now() - timedelta(days = 1)
+    today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).count())
+    if (user.level == 1 and today_done >= 3) or \
+            (user.level == 2 and today_done >= 5) or \
+            (user.level == 3 and today_done >= 8) or \
+            (user.level == 4 and today_done >= 15) or \
+            (user.level == 5 and today_done >= 22) or \
+            (user.level == 6 and today_done >= 60):
+        return False
+    else:
+        task = Task.query.filter_by(id=task_id).first()
+        task.user_id = user_id
+        task.assigned = datetime.now()
         db.session.commit()
         return True
-    except Exception as e:
-        print(str(e))
-    return False
+
+def create_task(admin_id, vulnerability, url, days, notes):
+    task = Task(admin_id=admin_id, vulnerability=vulnerability, days=days, url=url, notes=notes)
+    db.session.add(task)
+    db.session.commit()
+    return True
 
 def get_user_tasks(user_id):
     tasks = []
@@ -368,57 +318,37 @@ def get_admin_tasks(admin_id, status):
     return tasks
 
 def delete_task(task_id):
-    try:
-        Task.query.filter_by(id=task_id).delete()
-        db.session.commit()
-        return True
-    except Exception as e:
-        print(str(e))
-    return False
+    Task.query.filter_by(id=task_id).delete()
+    db.session.commit()
+    return True
 
 def update_task(task_id, status):
-    try:
-        task = Task.query.filter_by(id=task_id).first()
-        task.status = status
-        task.submited = datetime.now()
-        if task.proof and status == 3:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/', task.proof))
-        db.session.commit()
-        return True
-    except Exception as e:
-        print(str(e))
-    return False
+    task = Task.query.filter_by(id=task_id).first()
+    task.status = status
+    task.submited = datetime.now()
+    if task.proof and status == 3:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/', task.proof))
+    db.session.commit()
+    return True
 
 def set_task_proof(task_id, image):
-    try:
-        task = Task.query.filter_by(id=task_id).first()
-        task.proof = image
-        db.session.commit()
-        update_task(task_id, 1)
-        return True
-    except Exception as e:
-        print(str(e))
-    return False
+    task = Task.query.filter_by(id=task_id).first()
+    task.proof = image
+    db.session.commit()
+    update_task(task_id, 1)
+    return True
 
 # ==========================PAYMENTS================================
 def get_pending_payments():
-    try:
-        pending_payments = []
-        for payment in Payment.query.filter_by(paid=False).all():
-            pending_payments.append(json.loads(payment.get_json()))
-        return pending_payments
-    except Exception as e:
-        print(str(e))
-    return False
+    pending_payments = []
+    for payment in Payment.query.filter_by(paid=False).all():
+        pending_payments.append(json.loads(payment.get_json()))
+    return pending_payments
 
 def update_payment(admin_id, pay_id, tx_id):
-    try:
-        payment = Payment.query.filter_by(id=pay_id).first()
-        payment.admin_id = admin_id
-        payment.tx_id = tx_id
-        payment.paid = True
-        db.session.commit()
-        return True
-    except Exception as e:
-        print(str(e))
-    return False
+    payment = Payment.query.filter_by(id=pay_id).first()
+    payment.admin_id = admin_id
+    payment.tx_id = tx_id
+    payment.paid = True
+    db.session.commit()
+    return True

@@ -48,10 +48,6 @@ def allowed_file(filename):
 def success_response(is_successful):
     return make_response(jsonify(success=is_successful), 200 if is_successful else 400)
 
-# https://app.securityforeveryone.com
-@app.route("/securityforeveryone-fxXkHO6tBLG4.html")
-def was():
-    return render_template('securityforeveryone-fxXkHO6tBLG4.html')
 # =============================POST-REQUESTS=============================
 @app.route("/")
 def index():

@@ -54,6 +54,9 @@ def was():
 # =============================POST-REQUESTS=============================
 @app.route("/")
 def index():
+    """
+        Returns the file build from `expo build:web` in ../frontend directory
+    """
     return app.send_static_file('index.html')
 
 @app.route("/user", methods=["GET"])
@@ -92,8 +95,8 @@ def login():
             access_token = create_access_token(identity=user_id)
             return make_response(
                 jsonify(
-                    access_token= access_token,
-                    user_data= database.get_user_json(user_id),
+                    access_token=access_token,
+                    user_data=database.get_user_json(user_id),
                 ), 200
             )
     except Exception as e:
@@ -116,10 +119,11 @@ def signup():
         if isinstance(db_response, int):
             access_token = create_access_token(identity=db_response)
             user_data = database.get_user_json(db_response)
-            return jsonify(
-                access_token=access_token,
-                user_data=user_data,
-                status=200
+            return make_response(
+                jsonify(
+                    access_token=access_token,
+                    user_data=user_data,
+                ), 200
             )
     except Exception as e:
         print(str(e))
@@ -151,7 +155,11 @@ def available_tasks():
     """
     try:
         vulnerability = request.json['vulnerability']
-        return jsonify(tasks=database.get_available_tasks(vulnerability))
+        return make_response(
+            jsonify(
+                tasks=database.get_available_tasks(vulnerability)
+            ), 200
+        )
     except Exception as e:
         print(str(e))
     return success_response(False)
@@ -165,7 +173,11 @@ def user_tasks():
     """
     try:
         user_id = get_jwt_identity()
-        return jsonify(tasks=database.get_user_tasks(user_id))
+        return make_response(
+            jsonify(
+                tasks=database.get_user_tasks(user_id)
+            ), 200
+        )
     except Exception as e:
         print(str(e))
     return success_response(False)
@@ -225,7 +237,9 @@ def payment_requests():
     try:
         user_id = get_jwt_identity()
         requests = database.get_user_payments(user_id, False)
-        return jsonify(requests=requests)
+        return make_response(
+            jsonify(requests=requests), 200
+        )
     except Exception as e:
         print(str(e))
     return success_response(False)
@@ -239,7 +253,9 @@ def payment_history():
     try:
         user_id = get_jwt_identity()
         payments = database.get_user_payments(user_id, True)
-        return jsonify(payments=payments)
+        return make_response(
+            jsonify(payments=payments), 200
+        )
     except Exception as e:
         print(str(e))
     return success_response(False)
@@ -308,7 +324,9 @@ def feed():
             username = random.choice(string.ascii_letters) + random.randint(7, 14)*"*" + random.choice(string.ascii_letters)
             upgraded_to = random.randint(2, 6)
             feed_stack.append([username, upgraded_to])
-        return jsonify(feed=feed_stack)
+        return make_response(
+            jsonify(feed=feed_stack), 200
+        )
     elif (start_time - datetime.now()).total_seconds() >= wait:
         feed_stack.pop()
         start_time = datetime.now()
@@ -317,8 +335,12 @@ def feed():
         username = random.choice(string.ascii_letters) + random.randint(7, 19)*"*" + random.choice(string.ascii_letters)
         upgraded_to = random.randint(2, 6)
         feed_stack.append([username, upgraded_to])
-        return jsonify(feed=feed_stack)
-    return jsonify(feed=feed_stack)
+        return make_response(
+            jsonify(feed=feed_stack), 200
+        )
+    return make_response(
+        jsonify(feed=feed_stack), 200
+    )
 
 @app.route('/guide', methods=['GET'])
 @jwt_required()
@@ -329,7 +351,9 @@ def guide():
     try:
         file = open('assets/guide.json')
         guide = json.load(file)
-        return jsonify(guide)
+        return make_response(
+            jsonify(guide), 200
+        )
     except Exception as e:
         print(str(e))
     return success_response(False)

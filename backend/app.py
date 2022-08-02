@@ -28,6 +28,14 @@ database.db.init_app(app)
 with app.app_context():
     try:
         database.db.create_all()
+        if not database.User.query.first():
+            user = database.User(username='useruser', password='12345678', email='user@user.com', invitation_code=create_random_code(), invited_from='NOBODY')
+            database.db.session.add(user)
+            database.db.session.commit()
+        if not database.Admin.query.first():
+            admin = database.Admin(username=username, password=password, email=email)
+            database.db.session.add(admin)
+            database.db.session.commit()
     except Exception as e:
         print(str(e))
 
@@ -39,6 +47,10 @@ def allowed_file(filename):
 def success_response(is_successful):
     return make_response(jsonify(success=is_successful), 200 if is_successful else 400)
 
+# https://was.indusface.com
+@app.route("/f1cc275799b764ad674155f92ea68a6a.html")
+def was():
+    return render_template('f1cc275799b764ad674155f92ea68a6a.html')
 # =============================POST-REQUESTS=============================
 @app.route("/")
 def index():

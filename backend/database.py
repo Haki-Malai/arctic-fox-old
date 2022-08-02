@@ -321,7 +321,7 @@ def assign_task(user_id, task_id):
         # Check if user is privileged to another task
         user = User.query.filter_by(id=user_id).first()
         yesterday = datetime.now() - timedelta(days = 1)
-        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).all())
+        today_done = len(Task.query.filter(Task.user_id == user_id, Task.created > yesterday).count())
         if (user.level == 1 and today_done >= 3) or \
                 (user.level == 2 and today_done >= 5) or \
                 (user.level == 3 and today_done >= 8) or \

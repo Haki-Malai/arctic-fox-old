@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, Image, Pressable, View } from "react-native";
-import Media from "./media.component";
 import styles from "../../../style";
 
 export default class Tasks extends React.Component {

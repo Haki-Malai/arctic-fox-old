@@ -28,6 +28,7 @@ database.db.init_app(app)
 with app.app_context():
     try:
         database.db.create_all()
+        # Creates an user and an admin if they do not exist
         if not database.User.query.first():
             user = database.User(username='useruser', password='12345678', email='user@user.com', invitation_code=create_random_code(), invited_from='NOBODY')
             database.db.session.add(user)

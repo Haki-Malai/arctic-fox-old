@@ -244,6 +244,7 @@ def set_user_address(user_id, password, address):
         user.bitcoin_address = address
         db.session.commit()
         return True
+    return False
 
 def request_payment(user_id):
     user = User.query.filter_by(id=user_id).first()

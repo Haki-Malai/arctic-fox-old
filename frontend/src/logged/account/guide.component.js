@@ -22,13 +22,7 @@ export default class Support extends React.Component {
         fetch(this.props.url + "guide", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                if (data.success === false) {
-                    alert(
-                        this.props.lang == "en"
-                            ? "There was an error."
-                            : "Σφάλμα."
-                    );
-                } else {
+                if (data.paragraphs) {
                     data.paragraphs.forEach((element, index) => {
                         this.setState({
                             text: [
@@ -39,6 +33,12 @@ export default class Support extends React.Component {
                             ],
                         });
                     });
+                } else {
+                    alert(
+                        this.props.lang == "en"
+                            ? "There was an error."
+                            : "Σφάλμα."
+                    );
                 }
             })
             .catch((e) => console.log(e));

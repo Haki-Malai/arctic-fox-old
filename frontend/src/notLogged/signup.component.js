@@ -43,7 +43,7 @@ export default class Signup extends React.Component {
                 if (data.access_token) {
                     localStorage.setItem("token", data.access_token);
                     location.reload();
-                } else if (data.success === false) {
+                } else {
                     // TODO validate input!
                     alert("Something went wrong, please try again");
                     console.log(data.error);

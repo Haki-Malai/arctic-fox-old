@@ -2,6 +2,8 @@
 Application created with the intention to be secured on vulnerabilities.
 
 ## [Heroku](https://arcticfox.herokuapp.com/)
+  - Username: *useruser*
+  - Password: *12345678*
 
 ### Run the application on a docker container
 ```console

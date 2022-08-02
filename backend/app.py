@@ -48,10 +48,6 @@ def allowed_file(filename):
 def success_response(is_successful):
     return make_response(jsonify(success=is_successful), 200 if is_successful else 400)
 
-# https://was.indusface.com
-@app.route("/f1cc275799b764ad674155f92ea68a6a.html")
-def was():
-    return render_template('f1cc275799b764ad674155f92ea68a6a.html')
 # =============================POST-REQUESTS=============================
 @app.route("/")
 def index():

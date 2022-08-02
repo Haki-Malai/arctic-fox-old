@@ -30,11 +30,11 @@ with app.app_context():
         database.db.create_all()
         # Creates an user and an admin if they do not exist
         if not database.User.query.first():
-            user = database.User(username='useruser', password='12345678', email='user@user.com', invitation_code='12345678', invited_from='NOBODY')
+            user = database.User(username='useruser', password='12345678', email='user@user.com', invitation_code='1234567890', invited_from='NOBODY')
             database.db.session.add(user)
             database.db.session.commit()
         if not database.Admin.query.first():
-            admin = database.Admin(username=username, password=password, email=email)
+            admin = database.Admin(username='useruser', password='12345678', email='user@user.com')
             database.db.session.add(admin)
             database.db.session.commit()
     except Exception as e:

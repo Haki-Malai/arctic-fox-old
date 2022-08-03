@@ -10,18 +10,19 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 app = Flask(__name__, static_folder="static/web-build", static_url_path="/")
 jwt = JWTManager(app)
 CORS(app)
+
 app.config["CORS_HEADERS"] = "Content-Type"
-app.config["JWT_SECRET_KEY"] = "random key secret must change"
+app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "query_string"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = str(Path(__file__).resolve().parent) + "/static/uploads/"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
+
 database.db.init_app(app)
 
 # Creates all database tables if they do not exist
@@ -42,6 +43,7 @@ with app.app_context():
 
 # ==========================HELPER-FUNCTIONS=======================
 def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
     return "." in filename and \
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -399,7 +401,7 @@ def admin_register():
             password = request.form["password"]
             email = request.form["email"]
             secret_password = request.form["secret_password"]
-            if secret_password == "TOPSECRETPASSWORD":
+            if secret_password == JWT_SECRET_KEY:
                 admin_id = database.add_admin(username, password, email)
                 if isinstance(admin_id, int):
                     access_token = create_access_token(identity=admin_id)

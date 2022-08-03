@@ -18,14 +18,14 @@ class User(db.Model):
     username = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(512))
     email = db.Column(db.String(50), unique=True)
-    avatar = db.Column(db.String(224), default='default.jpeg')
-    bitcoin_address = db.Column(db.String(40), default='none')
+    avatar = db.Column(db.String(224), default="default.jpeg")
+    bitcoin_address = db.Column(db.String(40), default="none")
     confirmed_email = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date)
     level = db.Column(db.Integer, default=1)
     last_active = db.Column(db.DateTime)
     invitation_code = db.Column(db.String(10), unique=True)
-    invited_from = db.Column(db.String(10), default='NOBODY')
+    invited_from = db.Column(db.String(10), default="NOBODY")
     invitation_commission = db.Column(db.Float(10), default=0)
     task_profit = db.Column(db.Float(10), default=0)
     balance = db.Column(db.Float, default=0)
@@ -40,7 +40,7 @@ class User(db.Model):
         self.invited_from = invited_from
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return "<User %r>" % self.username
 
     def init_balance(self):
         self.balance = 0
@@ -50,20 +50,20 @@ class User(db.Model):
     def get_json(self):
         # Use camelCase for JSON
         return json.dumps({
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-            'confirmedEmail': self.confirmed_email,
-            'bitcoinAddress': self.bitcoin_address,
-            'created': self.created,
-            'level': self.level,
-            'lastActive': self.last_active,
-            'invitationCode': self.invitation_code,
-            'invitedFrom': self.invited_from,
-            'invitationCommission': self.invitation_commission,
-            'balance': self.balance,
-            'taskProfit': self.task_profit,
-            'tasks': get_user_tasks(self.id)
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "confirmedEmail": self.confirmed_email,
+            "bitcoinAddress": self.bitcoin_address,
+            "created": self.created,
+            "level": self.level,
+            "lastActive": self.last_active,
+            "invitationCode": self.invitation_code,
+            "invitedFrom": self.invited_from,
+            "invitationCommission": self.invitation_commission,
+            "balance": self.balance,
+            "taskProfit": self.task_profit,
+            "tasks": get_user_tasks(self.id)
         }, indent=4, sort_keys=True, default=str)
 
     def validate_password(self, password):
@@ -71,27 +71,27 @@ class User(db.Model):
 
     def get_paid(self, amount, payment_type):
         self.balance += amount
-        if payment_type == 'task':
+        if payment_type == "task":
             self.task_profit += amount
-        elif payment_type == 'invite':
+        elif payment_type == "invite":
             self.invitation_commission += amount
         # Give 2% to the invitor
-        if (self.invited_from != 'NOBODY'):
+        if (self.invited_from != "NOBODY"):
             invitor_amount = amount*0.02
             user = User.query.filter_by(invitation_code=self.invited_from).first()
             if user:
-                user.get_paid(invitor_amount, 'invite')
+                user.get_paid(invitor_amount, "invite")
         db.session.commit()
 
 class Task(db.Model):
     __tablename__ = "task"
 
     id = db.Column(db.Integer, primary_key=True)
-    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
+    admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), default=None)
     vulnerability = db.Column(db.String(64))
     status = db.Column(db.Integer, default=0)
-    proof = db.Column(db.String(248), default='')
+    proof = db.Column(db.String(248), default="")
     created = db.Column(db.DateTime)
     assigned = db.Column(db.DateTime)
     days = db.Column(db.Integer)
@@ -108,22 +108,22 @@ class Task(db.Model):
         self.notes = notes
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return "<Task %r>" % self.id
 
     def get_json(self):
         return json.dumps({
-            'id': self.id,
-            'adminId': self.admin_id,
-            'userId': self.user_id,
-            'proof': self.proof,
-            'vulnerability': self.vulnerability,
-            'status': self.status,
-            'created': self.created,
-            'assigned': self.assigned,
-            'days': self.days,
-            'url': self.url,
-            'submited': self.submited,
-            'notes': self.notes
+            "id": self.id,
+            "adminId": self.admin_id,
+            "userId": self.user_id,
+            "proof": self.proof,
+            "vulnerability": self.vulnerability,
+            "status": self.status,
+            "created": self.created,
+            "assigned": self.assigned,
+            "days": self.days,
+            "url": self.url,
+            "submited": self.submited,
+            "notes": self.notes
         }, indent=4, sort_keys=True, default=str)
 
 class Admin(db.Model):
@@ -140,7 +140,7 @@ class Admin(db.Model):
         self.email = email
 
     def __repr__(self):
-        return '<Admin %r>' % self.username
+        return "<Admin %r>" % self.username
 
     def validate_password(self, password):
         return check_password_hash(self.password, password)
@@ -149,8 +149,8 @@ class Payment(db.Model):
     __tablename__ = "payment"
 
     id = db.Column(db.Integer, primary_key=True)
-    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     amount = db.Column(db.Float(64))
     tx_id = db.Column(db.String(64))
     paid = db.Column(db.Boolean, default=False)
@@ -164,32 +164,32 @@ class Payment(db.Model):
         self.requested = datetime.now()
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return "<Task %r>" % self.id
 
     def get_json(self):
         return json.dumps({
-            'id': self.id,
-            'adminId': self.admin_id,
-            'userId': self.user_id,
-            'amount': self.amount,
-            'txId': self.tx_id,
-            'paid': self.paid
+            "id": self.id,
+            "adminId": self.admin_id,
+            "userId": self.user_id,
+            "amount": self.amount,
+            "txId": self.tx_id,
+            "paid": self.paid
         }, indent=4, sort_keys=True, default=str)
 
 # =========================USER==============================================
-def add_user(username, password, email, invited_from='NOBODY'):
+def add_user(username, password, email, invited_from="NOBODY"):
     """
         Tries to add the new entry
         Returns result or new user id
     """
     # Check for availability
-    email_regex = '[^@]+@[^@]+\.[^@]+'
-    if username == '' or password == '' or email == '':
-        return 'empty_fields'
+    email_regex = "[^@]+@[^@]+\.[^@]+"
+    if username == "" or password == "" or email == "":
+        return "empty_fields"
     elif User.query.filter_by(username=username).first():
-        return 'username_unavailable'
+        return "username_unavailable"
     elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
-        return 'email_unavailable'
+        return "email_unavailable"
     user = User(username=username, password=password, email=email, invitation_code=create_random_code(), invited_from=invited_from)
     db.session.add(user)
     db.session.commit()
@@ -206,27 +206,27 @@ def get_user_json(user_id):
 
 def user_credentials_valid(password, **kwargs):
     try:
-        user = User.query.filter_by(username=kwargs['username']).first()
+        user = User.query.filter_by(username=kwargs["username"]).first()
     except Exception as e:
         print(str(e))
-        user = User.query.filter_by(id=kwargs['id']).first()
+        user = User.query.filter_by(id=kwargs["id"]).first()
     if user.validate_password(password):
         return user.id
 
 def create_random_code():
     chars=string.ascii_uppercase + string.digits
     size = 10
-    code = ''.join(random.choice(chars) for _ in range(size))
+    code = "".join(random.choice(chars) for _ in range(size))
     while User.query.filter_by(invitation_code=code).first():
-        code = ''.join(random.choice(chars) for _ in range(size))
+        code = "".join(random.choice(chars) for _ in range(size))
     return code
 
 def set_user_avatar(user_id, image_name):
     user = User.query.filter_by(id=user_id).first()
     if user:
         # Remove old image if not default
-        if user.avatar != 'default.jpeg' and user.avatar != image_name:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars/', user.avatar))
+        if user.avatar != "default.jpeg" and user.avatar != image_name:
+            os.remove(os.path.join(app.config["UPLOAD_FOLDER"], "avatars/", user.avatar))
         user.avatar = image_name
         db.session.commit()
         return True
@@ -234,9 +234,9 @@ def set_user_avatar(user_id, image_name):
 
 def get_user_avatar(user_id):
     user = User.query.filter_by(id=user_id).first()
-    with open(os.path.join(app.config['UPLOAD_FOLDER']+'avatars/'+user.avatar), 'rb') as image:
+    with open(os.path.join(app.config["UPLOAD_FOLDER"]+"avatars/"+user.avatar), "rb") as image:
         encoded_img = base64.b64encode(image.read())
-    return encoded_img.decode('utf-8')
+    return encoded_img.decode("utf-8")
     
 def set_user_address(user_id, password, address):
     user = User.query.filter_by(id=user_id).first()
@@ -328,7 +328,7 @@ def update_task(task_id, status):
     task.status = status
     task.submited = datetime.now()
     if task.proof and status == 3:
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'tasks/', task.proof))
+        os.remove(os.path.join(app.config["UPLOAD_FOLDER"], "tasks/", task.proof))
     db.session.commit()
     return True
 

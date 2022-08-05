@@ -11,7 +11,7 @@ foo@bar:~$ docker build . -f Dockerfile.local -t arcticfox
 foo@bar:~$ docker run --name arcticfox -p 5000:5000 --env JWT_SECRET_KEY=$(openssl rand -base64 21) arcticfox
 ```
 
-#### To get the JWT_SECRET_KEY:
+#### To get the JWT_SECRET_KEY
   ```console
   foo@bar:~$ docker exec -it arcticfox bash -c 'echo $JWT_SECRET_KEY'
   ```

@@ -14,8 +14,9 @@ app = Flask(__name__, static_folder="static/web-build", static_url_path="/")
 jwt = JWTManager(app)
 CORS(app)
 
+JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 app.config["CORS_HEADERS"] = "Content-Type"
-app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "query_string"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

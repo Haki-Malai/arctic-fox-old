@@ -115,7 +115,7 @@ class Task(db.Model):
             "id": self.id,
             "adminId": self.admin_id,
             "userId": self.user_id,
-            "proof": self.proof,
+            "proof": get_task_proof(self.id),
             "vulnerability": self.vulnerability,
             "status": self.status,
             "created": self.created,
@@ -338,6 +338,12 @@ def set_task_proof(task_id, image):
     db.session.commit()
     update_task(task_id, 1)
     return True
+
+def get_task_proof(task_id):
+    task = Task.query.filter_by(id=task_id).first()
+    with open(os.path.join(app.config["UPLOAD_FOLDER"]+"tasks/"+task.proof), "rb") as image:
+        encoded_img = base64.b64encode(image.read())
+    return encoded_img.decode("utf-8")
 
 # ==========================PAYMENTS================================
 def get_pending_payments():

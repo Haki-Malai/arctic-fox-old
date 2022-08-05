@@ -39,6 +39,12 @@ with app.app_context():
             admin = database.Admin(username="useruser", password="12345678", email="user@user.com")
             database.db.session.add(admin)
             database.db.session.commit()
+        task = database.Task(admin_id=1, vulnerability="Broken Access Control", days=12, url='http://google.com', notes='empty')
+        task.status = 1
+        task.user_id = 1
+        task.proof = 'dismiss.png'
+        database.db.session.add(task)
+        database.db.session.commit()
     except Exception as e:
         print(str(e))
 

@@ -62,11 +62,17 @@ export default class App extends React.Component {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data) {
-                        this.setState({ userData: JSON.parse(data.userData) });
-                        this.setState({
-                            avatar: "data:image/jpg;base64," + data.avatar,
-                        });
-                        this.setState({ page: "home" });
+                        try {
+
+                            this.setState({ userData: JSON.parse(data.userData) });
+                            this.setState({
+                                avatar: "data:image/jpg;base64," + data.avatar,
+                            });
+                            this.setState({ page: "home" });
+                        } catch (e) {
+                            print(e);
+                            this.setState({ page: "welcome" });
+                        }
                     } else {
                         this.setState({ page: "welcome" });
                     }

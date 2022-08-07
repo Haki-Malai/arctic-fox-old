@@ -11,5 +11,5 @@ Application created with the intention to be secured on vulnerabilities.
 foo@bar:~$ git clone https://github.com/Haki-Malai/arctic-fox
 foo@bar:~$ cd arctic-fox
 foo@bar:~$ docker build . -t arcticfox
-foo@bar:~$ docker run --name arcticfox -p 5000:5000 --env JWT_SECRET_KEY=$(openssl rand -base64 21) arcticfox
+foo@bar:~$ docker run -p 5000:5000 --env JWT_SECRET_KEY=$(openssl rand -base64 21) arcticfox
 ```

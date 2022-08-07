@@ -20,4 +20,4 @@ COPY --from=web-build /web-build ./static/web-build
 
 RUN pip install -r requirements.txt
 
-CMD ["gunicorn", "-b", ":5000", "-w", "10", "app:app"]
+CMD ["gunicorn", "app:app"]

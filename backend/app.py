@@ -355,8 +355,8 @@ def guide():
         Returns guide text for guide.json file
     """
     try:
-        file = open("assets/guide.json")
-        guide = json.load(file)
+        json_file = open("assets/guide.json")
+        guide = json.load(json_file)
         return make_response(
             jsonify(guide), 200
         )

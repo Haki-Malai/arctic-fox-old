@@ -78,7 +78,7 @@ def welcome():
         user_avatar = database.get_user_avatar(user_id)
         return make_response(
             jsonify(
-                userData=user_data,
+                user_data=user_data,
                 avatar=user_avatar,
             ), 200
         )

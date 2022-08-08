@@ -5,12 +5,12 @@ import os
 import json
 from pathlib import Path
 from datetime import datetime, timedelta
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, make_response
+from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static/web-build", static_url_path="/")
 jwt = JWTManager(app)
 CORS(app)
 
@@ -63,7 +63,7 @@ def index():
     """
         Returns the file build from `expo build:web` in ../frontend directory
     """
-    return send_from_directory("static/web-build", "index.html")
+    return app.send_static_file("index.html")
 
 @app.route("/user", methods=["GET"])
 @jwt_required()

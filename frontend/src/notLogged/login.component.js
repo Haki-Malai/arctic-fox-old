@@ -11,8 +11,6 @@ import {
 import Lang from "../lang.component";
 import styles from "../../style";
 
-var data = require("../../data.json");
-
 export default class Login extends React.Component {
     constructor(props) {
         super(props);

@@ -1,14 +1,15 @@
-# arctic-fox
+# ![favicon](https://github.com/Haki-Malai/arctic-fox/blob/main/frontend/assets/favicon-16x16.png?raw=true) Arctic-fox
 Application created with the intention to be secured on vulnerabilities.
 
-&nbsp;&nbsp;&nbsp;
-[![ci](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml)&nbsp;&nbsp;&nbsp;
-[![ci](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml)
+[![codeql](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml)
+&nbsp;
+[![heroku-deploy](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml)
 
 
 
-## [Heroku](https://arcticfox.herokuapp.com/)
-  #### For both user and /admin
+
+## [![heroku](https://github.com/heroku/favicon/blob/master/favicon.iconset/icon_16x16.png?raw=true)](https://arcticfox.herokuapp.com/) [Heroku](https://arcticfox.herokuapp.com/)
+  #### Login credentials for both user and /admin
   - Username: *useruser*
   - Password: *12345678*
 

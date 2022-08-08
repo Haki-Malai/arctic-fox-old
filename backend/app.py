@@ -10,7 +10,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__, static_folder="static/web-build", static_url_path="/")
+app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app)
 
@@ -63,7 +63,7 @@ def index():
     """
         Returns the file build from `expo build:web` in ../frontend directory
     """
-    return app.send_static_file("index.html")
+    return send_from_directory("static/web-build", "index.html")
 
 @app.route("/user", methods=["GET"])
 @jwt_required()
@@ -366,11 +366,6 @@ def guide():
     return success_response(False)
 
 # =============================ADMIN-PAGE=========================
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, "static"),
-                          "favicon.ico", mimetype="image/vnd.microsoft.icon")
-
 @app.route("/admin", methods=["GET"])
 def admin():
     """

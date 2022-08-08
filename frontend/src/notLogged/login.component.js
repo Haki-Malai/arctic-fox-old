@@ -111,9 +111,6 @@ export default class Login extends React.Component {
                 <View style={styles.loginCheckbox}>
                     <CheckBox
                         value={this.props.remember}
-                        onValueChange={() =>
-                            this.props.setRemember(!this.props.remember)
-                        }
                     ></CheckBox>
                     <Text style={styles.loginCheckboxLabel}>
                         {this.props.lang == "en" ? "Remember me" : "Θυμήσου με"}

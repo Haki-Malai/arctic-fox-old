@@ -62,7 +62,9 @@ export default class App extends React.Component {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.userData) {
-                        this.setState({ userData: JSON.parse(data.userData) });
+                        this.setState({
+                            userData: JSON.parse(data.userData) 
+                        });
                         this.setState({
                             avatar: "data:image/jpg;base64," + data.avatar,
                         });
@@ -124,7 +126,6 @@ export default class App extends React.Component {
         document.title = "Arctic Fox";
         this.loadFonts();
         this.getAuthorized();
-        this.refreshUserData();
     }
 
     render() {

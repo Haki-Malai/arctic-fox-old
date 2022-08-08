@@ -61,9 +61,9 @@ export default class App extends React.Component {
             fetch(this.state.url + "user", requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.userData) {
+                    if (data.user_data) {
                         this.setState({
-                            userData: JSON.parse(data.userData) 
+                            userData: JSON.parse(data.user_data) 
                         });
                         this.setState({
                             avatar: "data:image/jpg;base64," + data.avatar,

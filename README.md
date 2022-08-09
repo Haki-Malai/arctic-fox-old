@@ -1,6 +1,7 @@
 # ![favicon](https://github.com/Haki-Malai/arctic-fox/blob/main/frontend/assets/favicon-16x16.png?raw=true) Arctic-fox
 Application created with the intention to be secured on vulnerabilities.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3288a663dc474f16a9ab2ebf95d6b426)](https://app.codacy.com/gh/Haki-Malai/arctic-fox?utm_source=github.com&utm_medium=referral&utm_content=Haki-Malai/arctic-fox&utm_campaign=Badge_Grade_Settings)
 [![codeql](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml)
 &nbsp;
 [![heroku-deploy](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml)

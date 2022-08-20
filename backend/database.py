@@ -190,7 +190,7 @@ def add_user(username, password, email, invited_from="NOBODY"):
         return "username_unavailable"
     elif User.query.filter_by(email=email).first() or not re.search(email_regex, email):
         return "email_unavailable"
-    user = User(username=username, password=password, email=email, invitation_code=create_random_code(), invited_from=invited_from)
+    user = User(username=username, password=generate_password_hash(password), email=email, invitation_code=create_random_code(), invited_from=invited_from)
     db.session.add(user)
     db.session.commit()
     return user.id

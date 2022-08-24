@@ -10,7 +10,7 @@ RUN npm install
 RUN expo build:web
 
 # Build the flask app with the expo web build as static files
-FROM python:3.8.10
+FROM python:3.9.13
 
 LABEL maintainer="Haki-Malai" email="hakimalaj@outlook.com"
 

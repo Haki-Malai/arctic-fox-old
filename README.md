@@ -1,9 +1,9 @@
-# ![favicon](https://github.com/Haki-Malai/arctic-fox/blob/main/frontend/assets/favicon-16x16.png?raw=true) Arctic-fox
+# ![favicon](https://github.com/Haki-Malai/arctic-fox-old/blob/main/frontend/assets/favicon-16x16.png?raw=true) Arctic-fox
 Application created with the intention to be secured on vulnerabilities.
 
-[![codeql](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml)
+[![codeql](https://github.com/Haki-Malai/arctic-fox-old/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/codeql.yml)
 &nbsp;
-[![heroku-deploy](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml)
+[![heroku-deploy](https://github.com/Haki-Malai/arctic-fox-old/actions/workflows/docker-heroku-deploy.yml/badge.svg?branch=main)](https://github.com/Haki-Malai/arctic-fox/actions/workflows/docker-heroku-deploy.yml)
 
 
 
